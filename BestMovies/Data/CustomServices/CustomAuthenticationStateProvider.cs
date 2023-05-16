@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
-using Entities.Models;
+using BestMovies.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 
@@ -28,7 +28,7 @@ namespace BestMovies.Data.CustomServices
                 if (!string.IsNullOrEmpty(userAsJson))
                 {
                     User tmp = JsonSerializer.Deserialize<User>(userAsJson);
-                    await ValidateLogin(tmp.Username, tmp.Password);
+                    await ValidateLogin(tmp.Username, tmp.PasswordHash);
                 }
             }
             else
@@ -49,7 +49,7 @@ namespace BestMovies.Data.CustomServices
             try
             {
                 User user = await _userService.ValidateUser(new User
-                    {Username = username, Password = password, SecurityLevel = 0});
+                    {Username = username, PasswordHash = password, SecurityLevel = 0});
 
                 identity = SetupClaimsForUser(user);
                 string serialisedData = JsonSerializer.Serialize(user);
