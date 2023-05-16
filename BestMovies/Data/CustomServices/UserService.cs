@@ -5,6 +5,9 @@ namespace BestMovies.Data.CustomServices
     public class UserService : IUserService
     {
         
+        
+        
+        
         public Task<User> ValidateUser(User user)
         {
             if (!user.Username.Equals("admin") || !user.PasswordHash.Equals("admin")) return null;
