@@ -1,4 +1,4 @@
-using Entities.Models;
+using BestMovies.Models;
 
 namespace BestMovies.Data.CustomServices
 {
