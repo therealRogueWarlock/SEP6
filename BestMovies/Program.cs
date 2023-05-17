@@ -9,8 +9,9 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
 
+builder.Services.AddScoped<IUserDataAccess, UserDummyDataAccess>();
 // login
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorization(options =>
 {
