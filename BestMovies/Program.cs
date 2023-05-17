@@ -23,8 +23,9 @@ builder.Services.AddScoped<IApiDao, ApiDao>();
 // services
 builder.Services.AddScoped<ISearchService, SearchService>();
 
+builder.Services.AddScoped<IUserDataAccess, UserDummyDataAccess>();
 // login
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorization(options =>
 {
