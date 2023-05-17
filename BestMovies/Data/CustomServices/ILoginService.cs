@@ -2,7 +2,7 @@ using BestMovies.Models;
 
 namespace BestMovies.Data.CustomServices
 {
-    public interface IUserService
+    public interface ILoginService
     {
         Task<User>? ValidateUser(User user);
         User GetCurrentUser();

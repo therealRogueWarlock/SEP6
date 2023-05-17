@@ -9,13 +9,13 @@ namespace BestMovies.Data.CustomServices
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly IJSRuntime _jsRuntime;
-        private readonly IUserService _userService;
+        private readonly ILoginService _loginService;
         private User _cachedUser;
 
-        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, IUserService userService)
+        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, ILoginService loginService)
         {
             _jsRuntime = jsRuntime;
-            _userService = userService;
+            _loginService = loginService;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
