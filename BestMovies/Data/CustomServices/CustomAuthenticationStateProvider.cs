@@ -48,8 +48,7 @@ namespace BestMovies.Data.CustomServices
             ClaimsIdentity identity = new ClaimsIdentity();
             try
             {
-                User user = await _userService.ValidateUser(new User
-                    {Username = username, PasswordHash = password, SecurityLevel = 0});
+                User user = await _loginService.Validate(username, password);
 
                 identity = SetupClaimsForUser(user);
                 string serialisedData = JsonSerializer.Serialize(user);
