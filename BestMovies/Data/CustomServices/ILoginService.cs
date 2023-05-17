@@ -4,7 +4,6 @@ namespace BestMovies.Data.CustomServices
 {
     public interface ILoginService
     {
-        Task<User>? ValidateUser(User user);
-        User GetCurrentUser();
+        Task<User>? Validate(string username, string password);
     }
 }
