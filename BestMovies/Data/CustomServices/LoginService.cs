@@ -18,7 +18,12 @@ namespace BestMovies.Data.CustomServices
         {
             return _userDataAccess.GetUser(username,HashString(password,"sep6"));
         }
-        
+
+        public Task RegisterUser(User newUser)
+        {
+            throw new NotImplementedException();
+        }
+
         static string HashString(string text, string salt = "")
         {
             if (String.IsNullOrEmpty(text))
