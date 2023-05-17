@@ -1,4 +1,7 @@
+using BestMovies.Data;
 using BestMovies.Data.CustomServices;
+using BestMovies.DataAccess;
+using BestMovies.DataAccess.DataBaseAccess;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
 
@@ -8,6 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
+
+// data
+builder.Services.AddScoped<IDataBaseAccess, DataBaseAccess>();
+builder.Services.AddScoped<IUserData, UserDao>();
 
 // login
 builder.Services.AddScoped<IUserService, UserService>();

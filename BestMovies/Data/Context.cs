@@ -16,6 +16,7 @@ public class Context : DbContext
         modelBuilder.Entity<User>(x =>
         {
             x.HasKey(u => u.Id);
+            x.Property(u => u.ShowAdultContent).HasDefaultValue(false);
             x.HasMany<Review>(u => u.Reviews)
                 .WithOne()
                 .HasForeignKey(r => r.UserId)
