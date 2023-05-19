@@ -21,13 +21,12 @@ namespace BestMovies.Data.CustomServices
 
         public override async Task<AuthenticationState?> GetAuthenticationStateAsync()
         {
-            
-            string userAsJson = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "currentUser");
 
-            if (!string.IsNullOrEmpty(userAsJson))
+            var user = await _userService.GetCurrentUserAsync();
+            
+            if (user != null)
             {
-                User tmp = JsonSerializer.Deserialize<User>(userAsJson);
-                await ValidateLogin(tmp.Username, tmp.PasswordHash);
+                await ValidateLogin(user.Username, user.PasswordHash);
             }
             
             return await Task.FromResult(_cachedAuthenticationState);
@@ -44,8 +43,6 @@ namespace BestMovies.Data.CustomServices
             {
                 User user = await _userService.Validate(username, password);
                 identity = SetupClaimsForUser(user);
-                string serialisedData = JsonSerializer.Serialize(user);
-                await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", serialisedData);
             }
 
             catch (Exception e)
@@ -60,7 +57,7 @@ namespace BestMovies.Data.CustomServices
         public void Logout()
         {
             _cachedAuthenticationState = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-            _jsRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", "");
+            _userService.ClearCashedUser();
             NotifyAuthenticationStateChanged(Task.FromResult(_cachedAuthenticationState));
         }
 
