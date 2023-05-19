@@ -6,10 +6,10 @@ namespace BestMovies.Data.CustomServices
     {
 
         Task<User>? Validate(string username, string password);
-        
+
         Task RegisterUser(User newUser);
 
         User? GetCurrentUser();
-        
 
+    }
 }

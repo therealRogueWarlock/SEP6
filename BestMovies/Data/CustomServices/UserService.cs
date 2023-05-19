@@ -21,7 +21,12 @@ namespace BestMovies.Data.CustomServices
             _currentUser = await _userData.GetUser(username, password);
             return _currentUser;
         }
-        
+
+        public Task RegisterUser(User newUser)
+        {
+            throw new NotImplementedException();
+        }
+
         public User? GetCurrentUser()
         {
             return _currentUser;
