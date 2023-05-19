@@ -1,17 +1,23 @@
-@page "/UserPage"
+@page "/UserPage/{userOfPageID:guid?}"
 @using BestMovies.Models
 @using BestMovies.Data.CustomServices
 @using System.Security.Claims
 @using BestMovies.DataAccess
 
 
-@inject IUserService UserService
+@inject IUserLoginService UserLoginService
 @inject IUserData UserData
 
 @if (_loading)
 {
     <p>
         <em>Loading...</em>
+    </p>
+}
+else if(_userOfPage== null){
+    
+    <p>
+        <em>No User found :/</em>
     </p>
 }
 else
@@ -83,7 +89,10 @@ else
 }
 
 @code {
-
+    
+    [Parameter]
+    public Guid userOfPageID { get; set; }
+    
     bool _loading = true;
     
     User? _userOfPage;
@@ -95,14 +104,24 @@ else
     protected override async Task OnInitializedAsync()
     {
         
-        // how to get the selected user
-        _userOfPage = UserService.GetCurrentUser();
+        _currentUser = await UserLoginService.GetCurrentUserAsync();
         
-        _currentUser = UserService.GetCurrentUser();
-        Console.WriteLine(_currentUser?.Id);
-        Console.WriteLine(_userOfPage?.Id);
-        if(_userOfPage == null) return;
+        _userOfPage = _currentUser;
+        
+        if (!userOfPageID.Equals(new Guid()))
+        {
+            try
+            {
+                _userOfPage = await UserData.GetAsync(userOfPageID);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        } 
+        
         _loading = false;
+        
     }
     
     
