@@ -9,20 +9,20 @@ namespace BestMovies.Data.CustomServices
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly IJSRuntime _jsRuntime;
-        private readonly IUserService _userService;
+        private readonly IUserLoginService _userLoginService;
         private AuthenticationState? _cachedAuthenticationState;
 
-        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, IUserService userService)
+        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, IUserLoginService userLoginService)
         {
             _jsRuntime = jsRuntime;
-            _userService = userService;
+            _userLoginService = userLoginService;
             _cachedAuthenticationState = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
         public override async Task<AuthenticationState?> GetAuthenticationStateAsync()
         {
 
-            var user = await _userService.GetCurrentUserAsync();
+            var user = await _userLoginService.GetCurrentUserAsync();
             
             if (user != null)
             {
@@ -41,7 +41,7 @@ namespace BestMovies.Data.CustomServices
             ClaimsIdentity identity = new ClaimsIdentity();
             try
             {
-                User user = await _userService.Validate(username, password);
+                User user = await _userLoginService.Validate(username, password);
                 identity = SetupClaimsForUser(user);
             }
 
@@ -57,7 +57,7 @@ namespace BestMovies.Data.CustomServices
         public void Logout()
         {
             _cachedAuthenticationState = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-            _userService.ClearCashedUser();
+            _userLoginService.ClearCashedUser();
             NotifyAuthenticationStateChanged(Task.FromResult(_cachedAuthenticationState));
         }
 
