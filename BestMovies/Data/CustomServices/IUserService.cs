@@ -7,5 +7,6 @@ namespace BestMovies.Data.CustomServices
         Task<User?> Validate(string username, string password);
 
         User? GetCurrentUser();
+        
     }
 }
