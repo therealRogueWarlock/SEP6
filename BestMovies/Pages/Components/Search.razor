@@ -1,0 +1,19 @@
+﻿<MudPaper Outlined MaxHeight="50px">
+    <MudStack Row Spacing="0" Style="margin-left: 8px; margin-right: 8px">
+        <MudSelect T="string" AnchorOrigin="Origin.BottomCenter" Style="padding: 0"
+                   @bind-Value="SearchTerm" Margin="Margin.Dense">
+            <MudSelectItem Value="@("All")"/>
+            <MudSelectItem Value="@("Movies")"/>
+            <MudSelectItem Value="@("Tv-Shows")"/>
+            <MudSelectItem Value="@("Celebs")"/>
+        </MudSelect>
+        <MudTextField @bind-Value="SearchString" FullWidth Style="margin-top: 8px"
+                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"
+                      Margin="Margin.Dense"/>
+    </MudStack>
+</MudPaper>
+
+@code {
+    public string SearchTerm { get; set; } = "All";
+    public string SearchString { get; set; } = "";
+}
