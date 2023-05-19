@@ -1,16 +1,16 @@
 namespace BestMovies.DataAccess;
 
-public interface IDataAccess
+public interface IDataAccess<T>
 {
     
-    public Task<T> AddAsync<T>(T obj);
+    public Task<T> AddAsync(T obj);
     
-    public Task<T> DeleteAsync<T>(Guid guid);
+    public Task<T> DeleteAsync(Guid guid);
 
-    public Task<T> UpdateAsync<T>(T obj);
+    public Task<T> UpdateAsync(T obj);
 
-    public Task<T> GetAsync<T>(Guid guid);
+    public Task<T> GetAsync(Guid guid);
 
-    public Task<T> GetCollectionAsync<T>(Func<T> searchFunc);
+    public Task<T> GetCollectionAsync(Func<T> searchFunc);
     
 }
