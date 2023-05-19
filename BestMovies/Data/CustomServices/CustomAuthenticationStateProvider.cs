@@ -9,35 +9,29 @@ namespace BestMovies.Data.CustomServices
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly IJSRuntime _jsRuntime;
-        private readonly ILoginService _loginService;
-        private User _cachedUser;
+        private readonly IUserService _userService;
+        private AuthenticationState? _cachedAuthenticationState;
 
-        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, ILoginService loginService)
+        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, IUserService userService)
         {
             _jsRuntime = jsRuntime;
-            _loginService = loginService;
+            _userService = userService;
+            _cachedAuthenticationState = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
-        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+        public override async Task<AuthenticationState?> GetAuthenticationStateAsync()
         {
             
-            var identity = new ClaimsIdentity();
-            if (_cachedUser == null)
-            {
-                string userAsJson = await _jsRuntime.InvokeAsync<string>("sessionStorage.getItem", "currentUser");
-                if (!string.IsNullOrEmpty(userAsJson))
-                {
-                    User tmp = JsonSerializer.Deserialize<User>(userAsJson);
-                    await ValidateLogin(tmp.Username, tmp.PasswordHash);
-                }
-            }
-            else
-            {
-                identity = SetupClaimsForUser(_cachedUser);
-            }
+            string userAsJson = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "currentUser");
 
-            ClaimsPrincipal cachedClaimsPrincipal = new ClaimsPrincipal(identity);
-            return await Task.FromResult(new AuthenticationState(cachedClaimsPrincipal));
+            if (!string.IsNullOrEmpty(userAsJson))
+            {
+                User tmp = JsonSerializer.Deserialize<User>(userAsJson);
+                await ValidateLogin(tmp.Username, tmp.PasswordHash);
+            }
+            
+            return await Task.FromResult(_cachedAuthenticationState);
+            
         }
 
         public async Task ValidateLogin(string username, string password)
@@ -48,34 +42,33 @@ namespace BestMovies.Data.CustomServices
             ClaimsIdentity identity = new ClaimsIdentity();
             try
             {
-                User user = await _loginService.Validate(username, password);
-
+                User user = await _userService.Validate(username, password);
                 identity = SetupClaimsForUser(user);
                 string serialisedData = JsonSerializer.Serialize(user);
-                await _jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "currentUser", serialisedData);
-                _cachedUser = user;
+                await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", serialisedData);
             }
+
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
 
-            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(identity))));
+            _cachedAuthenticationState = new AuthenticationState(new ClaimsPrincipal(identity));
+            NotifyAuthenticationStateChanged(Task.FromResult(_cachedAuthenticationState));
         }
 
         public void Logout()
         {
-            _cachedUser = null;
-            var user = new ClaimsPrincipal(new ClaimsIdentity());
-            _jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "currentUser", "");
-            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
+            _cachedAuthenticationState = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            _jsRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", "");
+            NotifyAuthenticationStateChanged(Task.FromResult(_cachedAuthenticationState));
         }
 
         private ClaimsIdentity SetupClaimsForUser(User user)
         {
             List<Claim> claims = new List<Claim>();
             claims.Add(new Claim(ClaimTypes.Name, user.Username));
-           // claims.Add(new Claim("Role", user.Role));
+            claims.Add(new Claim(ClaimTypes.Sid, user.Id.ToString()));
             claims.Add(new Claim("Level", user.SecurityLevel.ToString()));
             ClaimsIdentity identity = new ClaimsIdentity(claims, "apiauth_type");
             return identity;
