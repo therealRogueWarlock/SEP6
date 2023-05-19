@@ -1,6 +1,22 @@
 @page "/UserPage"
 @using BestMovies.Models
+@using BestMovies.Data.CustomServices
+@using System.Security.Claims
+
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@{
+    if (_authenticationState != null) return;
+    Setup();
+}
+
+
+<div>claims</div>
+
+
 <h3>UserPage</h3>
+
 
 <MudGrid>
     <MudItem xs="12" md="6">
@@ -62,11 +78,22 @@
 
 
 @code {
-    User? _user;
+    CustomAuthenticationStateProvider? _customAuthenticationStateProvider;
+    
+    AuthenticationState? _authenticationState;
+    
+    User? _userOfPage;
+    User? _currentUser;
+    
     List<FanMovie>? _fanMovies;
     List<Movie>? _movies;
-    
-    
-    
-    
+
+    public async Task Setup()
+    {
+        _customAuthenticationStateProvider = (CustomAuthenticationStateProvider)AuthenticationStateProvider;
+        
+        Console.WriteLine("Setup methode");
+        _authenticationState = await _customAuthenticationStateProvider.GetAuthenticationStateAsync();
+        
+    }
 }
