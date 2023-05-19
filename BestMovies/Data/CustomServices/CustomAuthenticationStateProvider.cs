@@ -8,13 +8,11 @@ namespace BestMovies.Data.CustomServices
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private readonly IJSRuntime _jsRuntime;
         private readonly IUserLoginService _userLoginService;
         private AuthenticationState? _cachedAuthenticationState;
 
-        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, IUserLoginService userLoginService)
+        public CustomAuthenticationStateProvider( IUserLoginService userLoginService)
         {
-            _jsRuntime = jsRuntime;
             _userLoginService = userLoginService;
             _cachedAuthenticationState = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
