@@ -9,13 +9,13 @@ namespace BestMovies.Data.CustomServices
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly IJSRuntime _jsRuntime;
-        private readonly IUserService _userService;
+        private readonly ILoginService _loginService;
         private User _cachedUser;
 
-        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, IUserService userService)
+        public CustomAuthenticationStateProvider(IJSRuntime jsRuntime, ILoginService loginService)
         {
             _jsRuntime = jsRuntime;
-            _userService = userService;
+            _loginService = loginService;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -48,8 +48,7 @@ namespace BestMovies.Data.CustomServices
             ClaimsIdentity identity = new ClaimsIdentity();
             try
             {
-                User user = await _userService.ValidateUser(new User
-                    {Username = username, PasswordHash = password, SecurityLevel = 0});
+                User user = await _loginService.Validate(username, password);
 
                 identity = SetupClaimsForUser(user);
                 string serialisedData = JsonSerializer.Serialize(user);
@@ -58,7 +57,7 @@ namespace BestMovies.Data.CustomServices
             }
             catch (Exception e)
             {
-                throw e;
+                Console.WriteLine(e);
             }
 
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(identity))));
