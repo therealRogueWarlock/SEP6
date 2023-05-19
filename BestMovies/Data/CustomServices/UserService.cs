@@ -9,17 +9,24 @@ namespace BestMovies.Data.CustomServices
     {
         
         private readonly IUserData _userData;
+        private User? _cashedUser;
 
         public UserService(IUserData userData)
         {
             _userData = userData;
         }
         
-        public Task<User?> Validate(string username, string password)
+        public async Task<User?> Validate(string username, string password)
         {
-            return _userData.GetUser(username,password);
+            _cashedUser = await _userData.GetUser(username, password);
+            return _cashedUser;
         }
-
+        
+        public User? GetCurrentUser()
+        {
+            return _cashedUser;
+        }
+        
     }
     
 }
