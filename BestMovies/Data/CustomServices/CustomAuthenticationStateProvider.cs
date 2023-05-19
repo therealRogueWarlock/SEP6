@@ -2,7 +2,6 @@
 using System.Text.Json;
 using BestMovies.Models;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.JSInterop;
 
 namespace BestMovies.Data.CustomServices
 {

@@ -26,7 +26,12 @@ namespace BestMovies.Data.CustomServices
             await CashUser(_currentUser);
             return _currentUser;
         }
-        
+
+        public Task RegisterUser(User newUser)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<User?> GetCurrentUserAsync()
         {
             return _currentUser ?? await GetCachedUser();
