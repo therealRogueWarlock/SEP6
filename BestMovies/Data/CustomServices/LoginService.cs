@@ -8,16 +8,16 @@ namespace BestMovies.Data.CustomServices
     public class LoginService : ILoginService
     {
         
-        private readonly IDataBaseAccess _userDataAccess;
+        private readonly IUserData _userData;
 
-        public LoginService(IDataBaseAccess userDataAccess)
+        public LoginService(IUserData userData)
         {
-            _userDataAccess = userDataAccess;
+            _userData = userData;
         }
         
         public Task<User?> Validate(string username, string password)
         {
-            return _userDataAccess.GetUserAsync(username,HashString(password,"sep6"));
+            return _userData.GetUser(username,HashString(password,"sep6"));
         }
         
         static string HashString(string text, string salt = "")
