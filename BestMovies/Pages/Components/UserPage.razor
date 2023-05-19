@@ -1,86 +1,99 @@
-@page "/UserPage"
+@page "/UserPage/{userOfPageID:guid?}"
 @using BestMovies.Models
 @using BestMovies.Data.CustomServices
 @using System.Security.Claims
+@using BestMovies.DataAccess
 
 
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IUserLoginService UserLoginService
+@inject IUserData UserData
 
-@{
-    if (_authenticationState != null) return;
-    Setup();
+@if (_loading)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else if(_userOfPage== null){
+    
+    <p>
+        <em>No User found :/</em>
+    </p>
+}
+else
+{
+    <MudGrid href="@_currentUser">
+        <MudItem xs="12" md="6">
+            <MudCard>
+                <MudCardContent>
+                    <h3>User Details</h3>
+                    <!-- User information -->
+                    <p>Name: John Doe</p>
+                    <p>Email: john.doe@example.com</p>
+                    <p>Age: 30</p>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudCard>
+                <MudCardContent>
+                    <div style="border: 1px solid #ccc; padding: 10px;">
+                        <h3>Movie List</h3>
+                        <!-- Movie list -->
+                        @if (_movies != null)
+                        {
+                            <ul>
+                                @foreach (var movie in _movies)
+                                {
+                                    <li>@movie.Title</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p>No movies available.</p>
+                        }
+                    </div>
+                </MudCardContent>
+            </MudCard>
+            <MudCard style="margin-top: 20px;">
+                <MudCardContent>
+                    <div style="border: 1px solid #ccc; padding: 10px;">
+                        <h3>Fan Movie List</h3>
+                        <!-- Fan movie list -->
+                        @if (_fanMovies != null)
+                        {
+                            <ul>
+                                @foreach (var fanMovie in _fanMovies)
+                                {
+                                    <li>@fanMovie.Description</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p>No fan movies available.</p>
+                        }
+                    </div>
+
+                    @if (_currentUser.Id.Equals(_userOfPage.Id))
+                    {
+                        <MudButton Color="Color.Primary" Variant="Variant.Filled">Create Fan Movie</MudButton>
+                    }
+
+                </MudCardContent>
+            </MudCard>
+
+        </MudItem>
+    </MudGrid>
 }
 
-
-<div>claims</div>
-
-
-<h3>UserPage</h3>
-
-
-<MudGrid>
-    <MudItem xs="12" md="6">
-        <MudCard>
-            <MudCardContent>
-                <h3>User Details</h3>
-                <!-- User information -->
-                <p>Name: John Doe</p>
-                <p>Email: john.doe@example.com</p>
-                <p>Age: 30</p>
-            </MudCardContent>
-        </MudCard>
-    </MudItem>
-    <MudItem xs="12" md="6">
-        <MudCard>
-            <MudCardContent>
-                <div style="border: 1px solid #ccc; padding: 10px;">
-                    <h3>Movie List</h3>
-                    <!-- Movie list -->
-                    @if (_movies != null)
-                    {
-                        <ul>
-                            @foreach (var movie in _movies)
-                            {
-                                <li>@movie.Title</li>
-                            }
-                        </ul>
-                    }
-                    else
-                    {
-                        <p>No movies available.</p>
-                    }
-                </div>
-            </MudCardContent>
-        </MudCard>
-        <MudCard style="margin-top: 20px;">
-            <MudCardContent>
-                <div style="border: 1px solid #ccc; padding: 10px;">
-                    <h3>Fan Movie List</h3>
-                    <!-- Fan movie list -->
-                    @if (_fanMovies != null)
-                    {
-                        <ul>
-                            @foreach (var fanMovie in _fanMovies)
-                            {
-                                <li>@fanMovie.Description</li>
-                            }
-                        </ul>
-                    }
-                    else
-                    {
-                        <p>No fan movies available.</p>
-                    }
-                </div>
-            </MudCardContent>
-        </MudCard>
-    </MudItem>
-</MudGrid>
-
-
 @code {
-    CustomAuthenticationStateProvider? _customAuthenticationStateProvider;
     
-    AuthenticationState? _authenticationState;
+    [Parameter]
+    public Guid userOfPageID { get; set; }
+    
+    bool _loading = true;
     
     User? _userOfPage;
     User? _currentUser;
@@ -88,12 +101,31 @@
     List<FanMovie>? _fanMovies;
     List<Movie>? _movies;
 
-    public async Task Setup()
+    protected override async Task OnInitializedAsync()
     {
-        _customAuthenticationStateProvider = (CustomAuthenticationStateProvider)AuthenticationStateProvider;
         
-        Console.WriteLine("Setup methode");
-        _authenticationState = await _customAuthenticationStateProvider.GetAuthenticationStateAsync();
+        _currentUser = await UserLoginService.GetCurrentUserAsync();
+        
+        _userOfPage = _currentUser;
+        
+        if (!userOfPageID.Equals(new Guid()))
+        {
+            try
+            {
+                _userOfPage = await UserData.GetAsync(userOfPageID);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        } 
+        
+        _loading = false;
         
     }
+    
+    
+     
+    
+    
 }
