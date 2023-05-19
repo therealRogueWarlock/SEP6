@@ -25,7 +25,7 @@ builder.Services.AddScoped<ISearchService, SearchService>();
 
 builder.Services.AddScoped<IUserDataAccess, UserDummyDataAccess>();
 // login
-builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorization(options =>
 {
