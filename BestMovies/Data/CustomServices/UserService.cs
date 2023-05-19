@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using BestMovies.DataAccess;
 using BestMovies.DataAccess.DataBaseAccess;
 using BestMovies.Models;
@@ -9,8 +10,8 @@ namespace BestMovies.Data.CustomServices
     {
         
         private readonly IUserData _userData;
-        private User? _currentUser;
-
+        private User _currentUser;
+        
         public UserService(IUserData userData)
         {
             _userData = userData;
@@ -22,13 +23,11 @@ namespace BestMovies.Data.CustomServices
             return _currentUser;
         }
         
-        public User? GetCurrentUser()
+        public User GetCurrentUser()
         {
             return _currentUser;
         }
-        
     }
-    
 }
 
 
