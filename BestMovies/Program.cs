@@ -17,7 +17,7 @@ builder.Services.AddScoped<IDataBaseAccess, DataBaseAccess>();
 builder.Services.AddScoped<IUserData, UserDao>();
 
 // login
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorization(options =>
 {

@@ -2,14 +2,14 @@ using BestMovies.Models;
 
 namespace BestMovies.Data.CustomServices
 {
-    public interface IUserService
+    public interface IUserLoginService
     {
 
         Task<User>? Validate(string username, string password);
 
         Task RegisterUser(User newUser);
-
-        User? GetCurrentUser();
+        Task<User?> GetCurrentUserAsync();
+        void ClearCashedUser();
 
     }
 }
