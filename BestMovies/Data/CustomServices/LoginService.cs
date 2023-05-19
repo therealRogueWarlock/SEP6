@@ -1,4 +1,5 @@
 using BestMovies.DataAccess;
+using BestMovies.DataAccess.DataBaseAccess;
 using BestMovies.Models;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -7,16 +8,16 @@ namespace BestMovies.Data.CustomServices
     public class LoginService : ILoginService
     {
         
-        private readonly IUserDataAccess _userDataAccess;
+        private readonly IDataBaseAccess _userDataAccess;
 
-        public LoginService(IUserDataAccess userDataAccess)
+        public LoginService(IDataBaseAccess userDataAccess)
         {
             _userDataAccess = userDataAccess;
         }
         
-        public Task<User>? Validate(string username, string password)
+        public Task<User?> Validate(string username, string password)
         {
-            return _userDataAccess.GetUser(username,HashString(password,"sep6"));
+            return _userDataAccess.GetUserAsync(username,HashString(password,"sep6"));
         }
         
         static string HashString(string text, string salt = "")
@@ -44,27 +45,6 @@ namespace BestMovies.Data.CustomServices
         
     }
     
-    public interface IUserDataAccess
-    {
-        public Task<User> GetUser(string username,string password);
-    }
-
-    public class UserDummyDataAccess : IUserDataAccess
-    {
-        
-        public Task<User> GetUser(string username, string password)
-        {
-
-            if (username.Equals("admin") &&
-                password.Equals("29899A81012B8AC0815232E9452CE0A37F5D0CC72D9556AA09F1EF7619C2100D"))
-                return Task.FromResult(new User { Username = username, PasswordHash = password, SecurityLevel = 2 });
-            
-            return null;
-        }
-        
-    }
-
-
 }
 
 
