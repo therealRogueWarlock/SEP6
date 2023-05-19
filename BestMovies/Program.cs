@@ -12,7 +12,6 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
 
-
 // data
 builder.Services.AddScoped<IDataBaseAccess, DataBaseAccess>();
 builder.Services.AddScoped<IUserData, UserDao>();
