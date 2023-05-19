@@ -57,7 +57,7 @@ namespace BestMovies.Data.CustomServices
             }
             catch (Exception e)
             {
-                throw e;
+                Console.WriteLine(e);
             }
 
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(identity))));
