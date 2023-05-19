@@ -22,7 +22,7 @@ namespace BestMovies.Data.CustomServices
 
         public Task RegisterUser(User newUser)
         {
-            throw new NotImplementedException();
+            return _userData.AddAsync(newUser);
         }
 
         static string HashString(string text, string salt = "")
