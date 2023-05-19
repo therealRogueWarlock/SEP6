@@ -7,14 +7,14 @@ using Microsoft.JSInterop;
 
 namespace BestMovies.Data.CustomServices
 {
-    public class UserService : IUserService
+    public class UserLoginService : IUserLoginService
     {
         
         private readonly IJSRuntime _jsRuntime;
         private readonly IUserData _userData;
         private User? _currentUser;
 
-        public UserService(IJSRuntime jsRuntime, IUserData userData)
+        public UserLoginService(IJSRuntime jsRuntime, IUserData userData)
         {
             _userData = userData;
             _jsRuntime = jsRuntime;
