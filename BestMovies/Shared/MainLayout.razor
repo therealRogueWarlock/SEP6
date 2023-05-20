@@ -5,23 +5,21 @@
 <MudThemeProvider/>
 
 <MudAppBar Color="Color.Primary" Fixed="false">
-    <MudIconButton Icon="@Icons.Material.Filled.House" Edge="Edge.Start"/>
+    <MudIconButton Icon="@Icons.Material.Filled.House" Edge="Edge.Start" Href="/"/>
     <MudSpacer/>
-    <MudIconButton Icon="@Icons.Custom.Brands.GitHub"/>
+    <MudTextField T="string" @bind-value="SearchTerm" Label="Search" InputType="InputType.Search" Variant="Variant.Filled"/>
+    <MudSpacer/>
+    <MudIconButton Icon="@Icons.Material.Filled.Person" Href="/account"/>
 </MudAppBar>
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
+@Body
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+@code
+{
+    string SearchTerm { get; set; } = "N/A";
+    
+    void Search()
+    {
+        
+    }
+}

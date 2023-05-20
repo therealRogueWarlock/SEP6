@@ -1,15 +1,59 @@
 ﻿@page "/"
+@using System.ComponentModel
+@using BestMovies.Data
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Top Rated Movies</h1>
 
-Welcome to your new app.
-Thank you.
-<SurveyPrompt Title="How is Blazor working for you?"/>
+<MudProgressCircular Indeterminate="true" hidden="@_topRatedMovies.Any()"/>
+
+<MudList Items>
+    <TemplateColumn T="string">
+        <p>@context</p>
+    </TemplateColumn>
+</MudList>
+
+<MudStack Row="true" Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center" @bind-value="_topRatedMovies">
+</MudStack>
+
+<h1>Actors</h1>
+
+<MudProgressCircular Indeterminate="true"/>
+
+<h1>Directors</h1>
+
+<MudProgressCircular Indeterminate="true"/>
+
+<MudButton OnClick="AddMovie">Add Movie</MudButton>
 
 @code{
+    private BindingList<string> _topRatedMovies = new ();
+    private BindingList<string> _actors = new ();
+    private BindingList<string> _directors = new ();
 
+    
+    
+    protected override void OnInitialized()
+    {
+        _topRatedMovies.ListChanged += RefreshView;
+        
+        _topRatedMovies.Add("Top Gear 1");
+        _topRatedMovies.Add("Top Gear 2");
+        _topRatedMovies.Add("Top Gear 3");
+        _topRatedMovies.Add("Top Gear 4");
+        _topRatedMovies.Add("Top Gear 5");
+        base.OnInitialized();
+    }
 
+    private void RefreshView(object? sender, ListChangedEventArgs listChangedEventArgs)
+    {
+    
+    }
 
+    private void AddMovie()
+    {
+        Console.WriteLine("Adding a Movie");
+        _topRatedMovies.Add("New Movie!");
+    }
 }
