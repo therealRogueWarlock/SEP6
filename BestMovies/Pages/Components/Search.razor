@@ -1,8 +1,9 @@
 ﻿@using BestMovies.Models
 @using Microsoft.IdentityModel.Tokens
 @using BestMovies.Services
+@using System.Security.Cryptography
 @inject ISearchService SearchService
-
+@inject NavigationManager NavigationManager
 <MudPaper Outlined MaxHeight="50px">
     <MudStack Row Spacing="0" Style="margin-left: 8px; margin-right: 8px">
         <MudSelect T="string" AnchorOrigin="Origin.BottomCenter" @bind-Value="SearchTerm"
@@ -59,6 +60,9 @@
 
     private void ResultClickHandler(SearchResult result)
     {
+        // maybe we need another solution for this
+        
+        NavigationManager.NavigateTo("/MovieDetailsPage/" + result.Id);
         
     }
 
