@@ -1,11 +1,9 @@
 using System.Text.Json;
 using BestMovies.DataAccess;
-using BestMovies.DataAccess.DataBaseAccess;
 using BestMovies.Models;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.JSInterop;
 
-namespace BestMovies.Data.CustomServices
+namespace BestMovies.Services.CustomServices
 {
     public class UserLoginService : IUserLoginService
     {

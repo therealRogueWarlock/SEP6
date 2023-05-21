@@ -1,6 +1,6 @@
 using BestMovies.Models;
 
-namespace BestMovies.Data.CustomServices
+namespace BestMovies.Services.CustomServices
 {
     public interface IUserLoginService
     {

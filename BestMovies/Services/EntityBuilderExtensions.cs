@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BestMovies.Data;
+namespace BestMovies.Services;
 
 public static class EntityBuilderExtensions
 {
