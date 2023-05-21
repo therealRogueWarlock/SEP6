@@ -3,29 +3,37 @@
 
 <PageTitle>BestMovies</PageTitle>
 
-<MudThemeProvider/>
+<MudThemeProvider Theme="_theme"/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
 <MudAppBar Color="Color.Primary" Fixed="false">
     <MudIconButton Icon="@Icons.Material.Filled.House" Edge="Edge.Start"/>
+    <MudSpacer/>
+    <Search/>
     <MudSpacer/>
     <Login/>
     <MudIconButton Icon="@Icons.Custom.Brands.GitHub"/>
 </MudAppBar>
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-        
-    </div>
-
     <main>
-        <div class="top-row px-4">
-            
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-        
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
+
+@code {
+
+    private readonly MudTheme _theme = new()
+    {
+        Palette = new PaletteLight
+        {
+            Primary = "#16C172",
+            Secondary = "#2AFC98",
+            Tertiary = "#2DE1FC"
+        }
+    };
+
+}
