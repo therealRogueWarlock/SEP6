@@ -1,6 +1,5 @@
 ﻿using System.Text;
-using BestMovies.Data.CustomServices;
-using Microsoft.IdentityModel.Tokens;
+using BestMovies.Services.CustomServices;
 using RestSharp;
 
 namespace BestMovies.DataAccess.RestApiDataAccess;
