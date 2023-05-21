@@ -36,7 +36,7 @@ public class UserDao : IUserData
         throw new NotImplementedException();
     }
 
-    public Task<User> GetCollectionAsync(Func<User> searchFunc)
+    public Task<List<User>> GetCollectionAsync(Func<User> searchFunc)
     {
         throw new NotImplementedException();
     }
