@@ -1,5 +1,7 @@
-@page "/MovieDetailsPage/{userOfPageID:int?}"
+@page "/MovieDetailsPage/{MovieId:int?}"
 @using BestMovies.Models
+@using BestMovies.DataAccess
+@inject IMovieData MovieData
 
 <MudContainer>
     <MudPaper Elevation="3" Padding="24px">
@@ -47,11 +49,9 @@
 
 @code {
     
-    
     [Parameter]
     public int MovieId { get; set; }
 
-    
     public string comment { get; set; }
     
     List<Review> _reviews;
@@ -61,6 +61,11 @@
     {
         _reviews = new();
         _actors = new();
+        Console.WriteLine(MovieId);
+
+        //MovieData.GetAsync(Guid.NewGuid());
+
+        
     }
 
 }
