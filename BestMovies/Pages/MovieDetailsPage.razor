@@ -1,0 +1,66 @@
+@page "/MovieDetailsPage/{userOfPageID:int?}"
+@using BestMovies.Models
+
+<MudContainer>
+    <MudPaper Elevation="3" Padding="24px">
+        <!-- Movie Description -->
+        <div class="mb-4">
+            <h2 class="mb-2">Movie Title</h2>
+            <p>
+                Movie description goes here...
+            </p>
+        </div>
+        
+        
+        <!-- Actors List -->
+        <div class="mb-4">
+            <h3 class="mb-2">Cast</h3>
+            <div class="actors-list">
+                @foreach (var actor in _actors)
+                {
+                    <div class="actor-item">
+                        <img src="@actor.Id" alt="@actor.EntityId" />
+                        <h4>@actor.ReferenceId</h4>
+                    </div>
+                }
+            </div>
+        </div>
+        
+        <!-- Comment Section -->
+        <div>
+            <h3 class="mb-2">Reviews</h3>
+            <MudTextField @bind-Value="comment" Label="Comment" Multiline="true" Rows="4" />
+            <MudButton Color="Color.Primary" Variant="Variant.Filled">Post Comment</MudButton>
+            <div>
+                @foreach (var review in _reviews)
+                {
+                    <div class="mb-2">
+                        <h5>@review.UserId</h5>
+                        <p>@review.Comment</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </MudPaper>
+</MudContainer>
+
+
+@code {
+    
+    
+    [Parameter]
+    public int MovieId { get; set; }
+
+    
+    public string comment { get; set; }
+    
+    List<Review> _reviews;
+    List<LinkedEntity> _actors;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _reviews = new();
+        _actors = new();
+    }
+
+}
