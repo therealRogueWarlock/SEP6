@@ -1,8 +1,7 @@
 @page "/UserPage/{userOfPageID:guid?}"
 @using BestMovies.Models
-@using BestMovies.Data.CustomServices
-@using System.Security.Claims
 @using BestMovies.DataAccess
+@using BestMovies.Services.CustomServices
 
 
 @inject IUserLoginService UserLoginService
@@ -15,7 +14,6 @@
     </p>
 }
 else if(_userOfPage== null){
-    
     <p>
         <em>No User found :/</em>
     </p>
@@ -38,7 +36,7 @@ else
             <MudCard>
                 <MudCardContent>
                     <div style="border: 1px solid #ccc; padding: 10px;">
-                        <h3>Movie List</h3>
+                        <h3>Favorite Movies</h3>
                         <!-- Movie list -->
                         @if (_movies != null)
                         {

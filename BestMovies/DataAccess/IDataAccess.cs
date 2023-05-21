@@ -11,6 +11,6 @@ public interface IDataAccess<T>
 
     public Task<T> GetAsync(Guid guid);
 
-    public Task<T> GetCollectionAsync(Func<T> searchFunc);
+    public Task<List<T>> GetCollectionAsync(Func<T> searchFunc);
     
 }

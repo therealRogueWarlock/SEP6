@@ -1,7 +1,7 @@
 ﻿using BestMovies.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BestMovies.Data;
+namespace BestMovies.Services;
 
 public class Context : DbContext
 {
