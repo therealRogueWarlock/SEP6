@@ -11,8 +11,13 @@ namespace BestMovies.Data.CustomServices
 
             return GetAdminUser();
         }
-        
-        
+
+        public User GetCurrentUser()
+        {
+            throw new NotImplementedException();
+        }
+
+
         private Task<User> GetAdminUser() {
             return Task.FromResult<User>(new( ) { Username = "admin", PasswordHash = "admin", SecurityLevel = 2 });
         }

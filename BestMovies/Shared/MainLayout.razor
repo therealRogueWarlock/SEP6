@@ -3,7 +3,9 @@
 
 <PageTitle>BestMovies</PageTitle>
 
-<MudThemeProvider/>
+<MudThemeProvider Theme="_theme"/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
 <MudAppBar Color="Color.Primary" Fixed="false">
     <MudIconButton Icon="@Icons.Material.Filled.House" Edge="Edge.Start"/>
@@ -21,3 +23,17 @@
         </article>
     </main>
 </div>
+
+@code {
+
+    private readonly MudTheme _theme = new()
+    {
+        Palette = new PaletteLight
+        {
+            Primary = "#16C172",
+            Secondary = "#2AFC98",
+            Tertiary = "#2DE1FC"
+        }
+    };
+
+}
