@@ -23,7 +23,6 @@ builder.Services.AddScoped<IApiDao, ApiDao>();
 // services
 builder.Services.AddScoped<ISearchService, SearchService>();
 
-builder.Services.AddScoped<IUserDataAccess, UserDummyDataAccess>();
 // login
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
