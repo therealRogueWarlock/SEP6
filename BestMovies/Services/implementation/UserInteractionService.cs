@@ -27,7 +27,11 @@ public class UserInteractionService : IUserInteractionService
 
         List<Comment> _dummyComments = new List<Comment>();
         
-        _dummyComments.Add(new Comment{});
+        _dummyComments.Add(new Comment{Id = Guid.NewGuid(),SubjectId = "john", Text = "Hey this is a comment", UserId = Guid.NewGuid()});
+        _dummyComments.Add(new Comment{Id = Guid.NewGuid(),SubjectId = "john", Text = "Hey this is a comment1", UserId = Guid.NewGuid()});
+        _dummyComments.Add(new Comment{Id = Guid.NewGuid(),SubjectId = "john", Text = "Hey this is a comment2", UserId = Guid.NewGuid()});
+        _dummyComments.Add(new Comment{Id = Guid.NewGuid(),SubjectId = "john", Text = "Hey this is a comment3", UserId = Guid.NewGuid()});
+        _dummyComments.Add(new Comment{Id = Guid.NewGuid(),SubjectId = "john", Text = "Hey this is a comment4", UserId = Guid.NewGuid()});
 
         return _dummyComments;
     }
