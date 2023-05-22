@@ -11,5 +11,4 @@ namespace BestMovies.Services
         void ClearCashedUser();
 
     }
-} }
 }
