@@ -1,0 +1,74 @@
+﻿@page "/Search/"
+@page "/Search/{SearchWord}"
+@using BestMovies.Models
+@using BestMovies.Services
+
+@inject ISearchService SearchService
+
+<PageTitle>Search</PageTitle>
+
+<h1>Results</h1>
+
+@* Loading bar *@
+@if (_searching)
+{
+    <MudProgressCircular Indeterminate hidden="@(!_searching)"/>
+}
+else
+{
+@* List showing Entries *@
+    <MudPaper Elevation="0" hidden="@_searching">
+        <MudList Clickable="true" @bind-SelectedValue="SelectedValue">
+            @foreach (var result in Results)
+            {
+                <MudListItem Value="result.Id" OnClick="NavigateToID">
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <img src="@($"https://image.tmdb.org/t/p/w45{result.Image}")" alt="N/A"/>
+                        @result.Name
+                    </MudStack>
+                </MudListItem>
+            }
+        </MudList>
+    </MudPaper>
+}
+
+@code {
+
+    [Parameter]
+    public string SearchWord { get; set; }
+
+    private List<SearchResult> Results { get; set; } = new();
+    private bool _searching;
+
+
+    private int _selectedValue;
+    object SelectedValue
+    {
+        get => _selectedValue;
+        set => _selectedValue = (int)value;
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        FindResults();
+
+        return base.OnInitializedAsync();
+    }
+
+    async void FindResults()
+    {
+        _searching = true;
+        var searchResult = await SearchService.SearchAsync(SearchWord);
+        _searching = false;
+
+        Results = searchResult.Results;
+
+        StateHasChanged();
+    }
+
+    void NavigateToID()
+    {
+        // Navigate to the ID
+        Console.WriteLine($"Navigating to: {SelectedValue}");
+    }
+}

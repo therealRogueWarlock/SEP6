@@ -8,14 +8,17 @@
 
 <AuthorizeView>
     <NotAuthorized>
-        <MudStack Row="true">
-            <MudTextField T="string" @bind-value="_username" Placeholder="Username" Immediate="true" Variant="Variant.Filled" Margin="Margin.Dense" OnKeyDown="AttemptLogin"/>
-            <MudSpacer/>
-            <MudTextField T="string" @bind-value="_password" Placeholder="Password" Immediate="true" Variant="Variant.Filled" Margin="Margin.Dense" InputType="InputType.Password" OnKeyDown="AttemptLogin"/>
-        </MudStack>
+        <MudPaper>
+            <MudText Align="Align.Center">Login</MudText>
+            <MudStack>
+                <MudTextField T="string" @bind-value="_username" Placeholder="Username" Immediate="true" Variant="Variant.Filled" Margin="Margin.Dense" OnKeyDown="AttemptLogin"/>
+                <MudSpacer/>
+                <MudTextField T="string" @bind-value="_password" Placeholder="Password" Immediate="true" Variant="Variant.Filled" Margin="Margin.Dense" InputType="InputType.Password" OnKeyDown="AttemptLogin"/>
+            </MudStack>
+        </MudPaper>
     </NotAuthorized>
     <Authorized>
-        <a href="" @onclick="PerformLogout">Logout:</a>
+        
     </Authorized>
 </AuthorizeView>
 
@@ -26,10 +29,10 @@
 
     public void AttemptLogin(KeyboardEventArgs e)
     {
-        // If the User has pressed Enter, attempt a login
+    // If the User has pressed Enter, attempt a login
         if (e.Key == "Enter")
         {
-            Console.WriteLine($"User: {_username} - Pass: {_password}");   
+            Console.WriteLine($"User: {_username} - Pass: {_password}");
             PerformLogin();
         }
     }
@@ -73,14 +76,14 @@
             return string.Empty;
         }
 
-        // Uses SHA256 to create the hash
+    // Uses SHA256 to create the hash
         using (var sha = new System.Security.Cryptography.SHA256Managed())
         {
-            // Convert the string to a byte array first, to be processed
+    // Convert the string to a byte array first, to be processed
             byte[] textBytes = System.Text.Encoding.UTF8.GetBytes(text + salt);
             byte[] hashBytes = sha.ComputeHash(textBytes);
 
-            // Convert back to a string, removing the '-' that BitConverter adds
+    // Convert back to a string, removing the '-' that BitConverter adds
             string hash = BitConverter
                 .ToString(hashBytes)
                 .Replace("-", string.Empty);
