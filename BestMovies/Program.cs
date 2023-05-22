@@ -17,12 +17,14 @@ builder.Services.AddMudServices();
 builder.Services.AddScoped<IRestApiDataAccess, RestApiDataAccess>();
 builder.Services.AddScoped<IDataBaseAccess, DataBaseAccess>();
 builder.Services.AddScoped<IMovieDao, MovieRestApiDao>();
+builder.Services.AddScoped<IUserInteractionDao, UserInteractionDao>();
 builder.Services.AddScoped<IUserDao, UserDao>();
 builder.Services.AddScoped<IApiDao, ApiDao>();
 
 // services
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IUserInteractionService, UserInteractionService>();
 
 // login service
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
