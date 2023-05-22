@@ -1,10 +1,11 @@
 ﻿@page "/Account/{userOfPageID:guid?}"
+@using BestMovies.Models.ApiModels
+@using BestMovies.Models.DbModels
+@using BestMovies.Services
 @using BestMovies.DataAccess
-@using BestMovies.Data.CustomServices
-@using BestMovies.Models
 
 @inject IUserLoginService UserLoginService
-@inject IUserData UserData
+@inject IUserDao UserData
 
 <PageTitle>Account</PageTitle>
 
@@ -38,7 +39,7 @@
         {
             try
             {
-                _userOfPage = await UserData.GetAsync(userOfPageID);
+                _userOfPage = await UserData.GetAsync(userOfPageID.ToString());
             }
             catch (Exception e)
             {
