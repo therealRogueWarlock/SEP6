@@ -1,8 +1,9 @@
+using RestSharp;
+
 namespace BestMovies.DataAccess.RestApiDataAccess;
 
 public interface IRestApiDataAccess
 {
-    //Searching
-    Task<string> SearchAsync(string searchWord, string searchType, int page);
-    
+    Task<RestResponse> SendRequestAsync(string url);
+
 }

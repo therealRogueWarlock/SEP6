@@ -1,12 +1,11 @@
-@page "/UserPage/{userOfPageID:guid?}"
-@using BestMovies.Models
-@using BestMovies.Data.CustomServices
-@using System.Security.Claims
+@page "/UserPage/{userOfPageID?}"
 @using BestMovies.DataAccess
-
+@using BestMovies.Models.ApiModels
+@using BestMovies.Models.DbModels
+@using BestMovies.Services
 
 @inject IUserLoginService UserLoginService
-@inject IUserData UserData
+@inject IUserDao UserData
 
 @if (_loading)
 {
@@ -14,6 +13,7 @@
         <em>Loading...</em>
     </p>
 }
+
 else if (_userOfPage == null)
 {
     <p>
@@ -38,7 +38,7 @@ else
             <MudCard>
                 <MudCardContent>
                     <div style="border: 1px solid #ccc; padding: 10px;">
-                        <h3>Movie List</h3>
+                        <h3>Favorite Movies</h3>
                         <!-- Movie list -->
                         @if (_movies != null)
                         {
@@ -91,8 +91,8 @@ else
 @code {
 
     [Parameter]
-    public Guid userOfPageID { get; set; }
-
+    public string userOfPageID { get; set; }
+    
     bool _loading = true;
 
     User? _userOfPage;

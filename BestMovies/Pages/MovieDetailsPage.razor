@@ -1,0 +1,73 @@
+@page "/MovieDetailsPage/{MovieId?}"
+@using BestMovies.Services
+@using BestMovies.Models.DbModels
+@using BestMovies.Models.ApiModels
+@inject IMovieService MovieService
+
+<MudContainer>
+    <MudPaper Elevation="3" Padding="24px">
+        <!-- Movie Description -->
+        <div class="mb-4">
+            <h2 class="mb-2">@_movieData?.OriginalTitle</h2>
+            <p>
+                @_movieData?.Overview
+            </p>
+        </div>
+        
+        
+        <!-- Actors List -->
+        <div class="mb-4">
+            <h3 class="mb-2">Cast</h3>
+            <div class="actors-list">
+                @foreach (var actor in _actors)
+                {
+                    <div class="actor-item">
+                        <img src="@actor.Id" alt="@actor.SubjectId" />
+                        <h4>@actor.ReferenceId</h4>
+                    </div>
+                }
+            </div>
+        </div>
+        
+        <!-- Comment Section -->
+        <div>
+            <h3 class="mb-2">Reviews</h3>
+            <MudTextField @bind-Value="comment" Label="Comment" Multiline="true" Rows="4" />
+            <MudButton Color="Color.Primary" Variant="Variant.Filled">Post Comment</MudButton>
+            <div>
+                @foreach (var review in _reviews)
+                {
+                    <div class="mb-2">
+                        <h5>@review.UserId</h5>
+                        <p>@review.Rating</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </MudPaper>
+</MudContainer>
+
+
+@code {
+    
+    [Parameter]
+    public string MovieId { get; set; }
+
+    public string comment { get; set; }
+
+    Movie _movieData;
+    
+    List<Review> _reviews;
+    List<LinkedSubject> _actors;
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        _reviews = new();
+        _actors = new();
+        Console.WriteLine(MovieId);
+        
+        _movieData = await MovieService.GetMovieAsync(MovieId);
+        
+    }
+
+}

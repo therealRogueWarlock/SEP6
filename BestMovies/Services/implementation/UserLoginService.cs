@@ -1,20 +1,18 @@
 using System.Text.Json;
 using BestMovies.DataAccess;
-using BestMovies.DataAccess.DataBaseAccess;
-using BestMovies.Models;
-using Microsoft.EntityFrameworkCore.Storage;
+using BestMovies.Models.DbModels;
 using Microsoft.JSInterop;
 
-namespace BestMovies.Data.CustomServices
+namespace BestMovies.Services.implementation
 {
     public class UserLoginService : IUserLoginService
     {
         
         private readonly IJSRuntime _jsRuntime;
-        private readonly IUserData _userData;
+        private readonly IUserDao _userData;
         private User? _currentUser;
 
-        public UserLoginService(IJSRuntime jsRuntime, IUserData userData)
+        public UserLoginService(IJSRuntime jsRuntime, IUserDao userData)
         {
             _userData = userData;
             _jsRuntime = jsRuntime;
@@ -55,10 +53,7 @@ namespace BestMovies.Data.CustomServices
         {
             _jsRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", "");
         }
-        
-        
     }
-    
 }
 
 

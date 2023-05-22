@@ -1,7 +1,7 @@
-﻿using BestMovies.Models;
+﻿using BestMovies.Models.DbModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace BestMovies.Data;
+namespace BestMovies.DataAccess.DataBaseAccess.util;
 
 public class Context : DbContext
 {
@@ -33,13 +33,22 @@ public class Context : DbContext
         modelBuilder.Entity<FanMovie>(x =>
         {
             x.HasKey(fm => fm.Id);
-            x.HasMany<LinkedEntity>(fm => fm.LinkedEntities)
+            x.HasMany<LinkedSubject>(fm => fm.LinkedEntities)
                 .WithOne()
                 .HasForeignKey(le => le.ReferenceId)
                 .IsRequired();
         });
         modelBuilder.Entity<Favourite>().HasKey(x => x.Id);
         modelBuilder.Entity<Review>().HasKey(x => x.Id);
-        modelBuilder.Entity<LinkedEntity>().HasKey(x => x.Id);
+        modelBuilder.Entity<LinkedSubject>().HasKey(x => x.Id);
+        modelBuilder.Entity<Comment>(x =>
+        {
+            x.HasKey(c => c.Id);
+            x.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .IsRequired();
+            x.Property(c => c.SubjectId).IsRequired();
+        });
     }
 }

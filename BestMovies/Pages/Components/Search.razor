@@ -1,7 +1,10 @@
 ﻿@using BestMovies.Models
 @using Microsoft.IdentityModel.Tokens
 @using BestMovies.Services
+@using System.Security.Cryptography
+@using BestMovies.Models.ApiModels
 @inject ISearchService SearchService
+@inject NavigationManager NavigationManager
 @inject NavigationManager Navigation
 
 <MudPaper Outlined MaxHeight="50px">
@@ -48,7 +51,7 @@
     private string SearchTerm { get; set; } = "multi";
     private string SearchString { get; set; } = "";
     private List<SearchResult> SearchResults { get; set; } = new();
-
+    
     void CheckKeyDown(KeyboardEventArgs eventArgs)
     {
         if (eventArgs.Key == "Enter")
@@ -62,7 +65,7 @@
         if (result.KnownFor is not null) return Icons.Material.Filled.Person;
         return result.FirstAirDate is not null ? Icons.Material.Filled.Tv : Icons.Material.Filled.LocalMovies;
     }
-
+    
     private async Task SearchHandler()
     {
         if (SearchString.IsNullOrEmpty())
@@ -76,14 +79,21 @@
 
     private void ResultClickHandler(SearchResult result)
     {
+
+        // maybe we need another solution for this
+        
+        NavigationManager.NavigateTo("/MovieDetailsPage/" + result.Id);
+        
+
         Console.WriteLine($"Clicked Result: {result.Id}");
 
-    // Navigate to the selected item
+        // Navigate to the selected item
+
     }
 
     private void PerformSearch()
     {
-    // Navigate and clear the Search String
+        // Navigate and clear the Search String
         Navigation.NavigateTo($"/Search/{SearchTerm}/{SearchString}", true);
         StateHasChanged();
     }
