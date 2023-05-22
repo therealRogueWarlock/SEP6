@@ -14,19 +14,19 @@ public class LastEpisodeToAir
 
     [JsonProperty("vote_count")] public int? VoteCount { get; set; }
 
-    [JsonProperty("air_date")] public string AirDate { get; set; }
+    [JsonProperty("air_date")] public DateTime AirDate { get; set; }
 
     [JsonProperty("episode_number")] public int? EpisodeNumber { get; set; }
 
     [JsonProperty("production_code")] public string ProductionCode { get; set; }
 
-    [JsonProperty("runtime")] public object Runtime { get; set; }
+    [JsonProperty("runtime")] public int Runtime { get; set; }
 
     [JsonProperty("season_number")] public int? SeasonNumber { get; set; }
 
     [JsonProperty("show_id")] public int? ShowId { get; set; }
 
-    [JsonProperty("still_path")] public object StillPath { get; set; }
+    [JsonProperty("still_path")] public string StillPath { get; set; }
 }
 
 public class Network
@@ -46,7 +46,7 @@ public class TvShow
 
     [JsonProperty("backdrop_path")] public string BackdropPath { get; set; }
 
-    [JsonProperty("created_by")] public List<object> CreatedBy { get; set; }
+    [JsonProperty("created_by")] public List<Author> CreatedBy { get; set; }
 
     [JsonProperty("episode_run_time")] public List<int?> EpisodeRunTime { get; set; }
 
@@ -119,7 +119,20 @@ public class Season
 
     [JsonProperty("overview")] public string Overview { get; set; }
 
-    [JsonProperty("poster_path")] public object PosterPath { get; set; }
+    [JsonProperty("poster_path")] public string PosterPath { get; set; }
 
     [JsonProperty("season_number")] public int? SeasonNumber { get; set; }
+}
+
+public class Author
+{
+    [JsonProperty("id")] public int Id { get; set; }
+    
+    [JsonProperty("credit_id")] public string CreditId { get; set; }
+    
+    [JsonProperty("name")] public string Name { get; set; }
+    
+    [JsonProperty("gender")] public int Gender { get; set; }
+    
+    [JsonProperty("profile_path")] public string ProfilePath { get; set; }
 }

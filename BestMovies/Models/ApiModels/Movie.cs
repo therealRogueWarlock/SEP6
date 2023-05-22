@@ -2,7 +2,6 @@ using Newtonsoft.Json;
 
 namespace BestMovies.Models.ApiModels;
 
-// Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
 public class BelongsToCollection
 {
     [JsonProperty("id")] public int? Id { get; set; }

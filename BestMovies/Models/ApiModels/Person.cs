@@ -16,7 +16,7 @@ public class Person
 
     [JsonProperty("gender")] public int? Gender { get; set; }
 
-    [JsonProperty("homepage")] public object Homepage { get; set; }
+    [JsonProperty("homepage")] public string Homepage { get; set; }
 
     [JsonProperty("id")] public int? Id { get; set; }
 
