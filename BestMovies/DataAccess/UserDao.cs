@@ -1,5 +1,6 @@
 ﻿using BestMovies.DataAccess.DataBaseAccess;
 using BestMovies.Models;
+using BestMovies.Models.DbModels;
 
 namespace BestMovies.DataAccess;
 

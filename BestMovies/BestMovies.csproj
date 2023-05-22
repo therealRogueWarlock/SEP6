@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Data\CustomServices\" />
       <Folder Include="Data\Implementation" />
     </ItemGroup>
 

@@ -1,4 +1,5 @@
 using BestMovies.Models;
+using BestMovies.Models.DbModels;
 
 namespace BestMovies.Data.CustomServices
 {

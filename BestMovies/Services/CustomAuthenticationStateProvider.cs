@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using BestMovies.Models;
+using BestMovies.Models.DbModels;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 

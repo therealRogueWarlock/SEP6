@@ -2,6 +2,7 @@ using System.Text.Json;
 using BestMovies.DataAccess;
 using BestMovies.DataAccess.DataBaseAccess;
 using BestMovies.Models;
+using BestMovies.Models.DbModels;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.JSInterop;
 
