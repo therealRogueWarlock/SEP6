@@ -1,7 +1,6 @@
-using BestMovies.Models;
 using BestMovies.Models.DbModels;
 
-namespace BestMovies.Services.CustomServices
+namespace BestMovies.Services
 {
     public interface IUserLoginService
     {
@@ -12,4 +11,5 @@ namespace BestMovies.Services.CustomServices
         void ClearCashedUser();
 
     }
+} }
 }

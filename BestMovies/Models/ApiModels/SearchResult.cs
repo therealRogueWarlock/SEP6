@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BestMovies.Models;
+namespace BestMovies.Models.ApiModels;
 
 public class SearchResult
 {

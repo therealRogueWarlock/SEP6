@@ -1,5 +1,7 @@
 ﻿using BestMovies.Services;
 using BestMovies.Models.DbModels;
+using Microsoft.EntityFrameworkCore;
+
 namespace BestMovies.DataAccess.DataBaseAccess;
 
 public class DataBaseAccess : IDataBaseAccess

@@ -1,6 +1,6 @@
 using BestMovies.Models.DbModels;
 
-namespace BestMovies.DataAccess;
+namespace BestMovies.DataAccess.DataBaseAccess;
 
 public class FanMovieDao : IFanMovieDao
 {

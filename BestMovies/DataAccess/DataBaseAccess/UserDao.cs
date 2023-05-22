@@ -1,8 +1,6 @@
-﻿using BestMovies.DataAccess.DataBaseAccess;
-using BestMovies.Models;
-using BestMovies.Models.DbModels;
+﻿using BestMovies.Models.DbModels;
 
-namespace BestMovies.DataAccess;
+namespace BestMovies.DataAccess.DataBaseAccess;
 
 public class UserDao : IUserDao
 {

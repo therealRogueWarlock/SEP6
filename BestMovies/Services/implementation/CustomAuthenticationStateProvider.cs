@@ -1,9 +1,8 @@
 ﻿using System.Security.Claims;
-using BestMovies.Models;
 using BestMovies.Models.DbModels;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace BestMovies.Services.CustomServices
+namespace BestMovies.Services.implementation
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {

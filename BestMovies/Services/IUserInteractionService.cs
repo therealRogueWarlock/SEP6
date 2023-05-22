@@ -1,6 +1,6 @@
 namespace BestMovies.Services;
 
-public class IUserInteractionService
+public interface IUserInteractionService
 {
     
 }

@@ -1,6 +1,6 @@
 using BestMovies.Models.ApiModels;
 
-namespace BestMovies.DataAccess;
+namespace BestMovies.DataAccess.RestApiDataAccess;
 
 public class MovieRestApiDao : IMovieDao
 {

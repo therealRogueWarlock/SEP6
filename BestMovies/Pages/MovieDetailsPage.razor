@@ -1,7 +1,7 @@
 @page "/MovieDetailsPage/{MovieId:int?}"
-@using BestMovies.Models
-@using BestMovies.DataAccess
-@inject IMovieData MovieData
+@using BestMovies.Services
+@using BestMovies.Models.DbModels
+@inject IMovieService MovieService
 
 <MudContainer>
     <MudPaper Elevation="3" Padding="24px">
@@ -21,7 +21,7 @@
                 @foreach (var actor in _actors)
                 {
                     <div class="actor-item">
-                        <img src="@actor.Id" alt="@actor.EntityId" />
+                        <img src="@actor.Id" alt="@actor.SubjectId" />
                         <h4>@actor.ReferenceId</h4>
                     </div>
                 }
@@ -38,7 +38,7 @@
                 {
                     <div class="mb-2">
                         <h5>@review.UserId</h5>
-                        <p>@review.Comment</p>
+                        <p>@review.Rating</p>
                     </div>
                 }
             </div>
@@ -55,7 +55,7 @@
     public string comment { get; set; }
     
     List<Review> _reviews;
-    List<LinkedEntity> _actors;
+    List<LinkedSubject> _actors;
     
     protected override async Task OnInitializedAsync()
     {
