@@ -3,20 +3,39 @@
 
 <PageTitle>BestMovies</PageTitle>
 
-<MudThemeProvider/>
+<MudThemeProvider Theme="_theme"/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
 <MudAppBar Color="Color.Primary" Fixed="false">
     <MudIconButton Icon="@Icons.Material.Filled.House" Edge="Edge.Start" Href="/"/>
     <MudSpacer/>
-    <MudTextField T="string" @bind-value="SearchTerm" Immediate="true" Label="Search" InputType="InputType.Search" Variant="Variant.Filled" OnKeyDown="ShouldSearch"/>
+    <Search/>
     <MudSpacer/>
-    <MudIconButton Icon="@Icons.Material.Filled.Person" Href="/Account"/>
+    <Login/>
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub"/>
 </MudAppBar>
 
-@Body
+<div class="page">
+    <main>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
 
-@code
-{
+@code {
+
+    private readonly MudTheme _theme = new()
+    {
+        Palette = new PaletteLight
+        {
+            Primary = "#16C172",
+            Secondary = "#2AFC98",
+            Tertiary = "#2DE1FC"
+        }
+    };
+    
     string SearchTerm { get; set; } = "N/A";
 
     void ShouldSearch(KeyboardEventArgs e)

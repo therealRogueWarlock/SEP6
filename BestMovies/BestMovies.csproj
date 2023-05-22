@@ -13,7 +13,12 @@
       </PackageReference>
       <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
       <PackageReference Include="MudBlazor" Version="6.2.3" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="RestSharp" Version="110.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Data\Implementation" />
     </ItemGroup>
 
 </Project>
