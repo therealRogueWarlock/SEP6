@@ -1,15 +1,53 @@
 ﻿@page "/"
+@using System.ComponentModel
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Top Rated Movies</h1>
 
-Welcome to your new app.
-Thank you.
-<SurveyPrompt Title="How is Blazor working for you?"/>
+<MudProgressCircular Indeterminate="true" hidden="@_topRatedMovies.Any()"/>
+
+<p>Fancy list of movies</p>
+
+
+<h1>Actors</h1>
+
+<MudProgressCircular Indeterminate="true"/>
+
+<h1>Directors</h1>
+
+<MudProgressCircular Indeterminate="true"/>
+
+<MudButton OnClick="AddMovie">Add Movie</MudButton>
 
 @code{
+    private BindingList<string> _topRatedMovies = new ();
+    private BindingList<string> _actors = new ();
+    private BindingList<string> _directors = new ();
 
+    
+    
+    protected override void OnInitialized()
+    {
+        // Attempts at making a Dynamical list of Movies
+        _topRatedMovies.ListChanged += RefreshView;
+        
+        _topRatedMovies.Add("Top Gear 1");
+        _topRatedMovies.Add("Top Gear 2");
+        _topRatedMovies.Add("Top Gear 3");
+        _topRatedMovies.Add("Top Gear 4");
+        _topRatedMovies.Add("Top Gear 5");
+        base.OnInitialized();
+    }
 
+    private void RefreshView(object? sender, ListChangedEventArgs listChangedEventArgs)
+    {
+    
+    }
 
+    private void AddMovie()
+    {
+        Console.WriteLine("Adding a Movie");
+        _topRatedMovies.Add("New Movie!");
+    }
 }
