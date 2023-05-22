@@ -85,7 +85,7 @@
         switch (result.GetEntityType())
         {
             case EntityType.Movie:
-                NavigationManager.NavigateTo($"/Movie/{result.Id}");
+                NavigationManager.NavigateTo($"/Movie/{result.Id}", true);
                 break;
             case EntityType.Tv:
                 break;
