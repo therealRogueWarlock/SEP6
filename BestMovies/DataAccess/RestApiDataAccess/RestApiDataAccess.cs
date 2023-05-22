@@ -37,7 +37,5 @@ public class RestApiDataAccess : IRestApiDataAccess
         if (response.IsSuccessful) return response.Content!;
         throw new Exception("API ERROR");
     }
-
-    
     
 }

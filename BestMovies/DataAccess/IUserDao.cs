@@ -3,7 +3,7 @@ using BestMovies.Models.DbModels;
 
 namespace BestMovies.DataAccess;
 
-public interface IUserData : IDataAccess<User>
+public interface IUserDao : IDataCrud<User>
 {
     Task<User?> GetUser(string username, string password);
 }

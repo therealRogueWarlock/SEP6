@@ -12,10 +12,10 @@ namespace BestMovies.Data.CustomServices
     {
         
         private readonly IJSRuntime _jsRuntime;
-        private readonly IUserData _userData;
+        private readonly IUserDao _userData;
         private User? _currentUser;
 
-        public UserLoginService(IJSRuntime jsRuntime, IUserData userData)
+        public UserLoginService(IJSRuntime jsRuntime, IUserDao userData)
         {
             _userData = userData;
             _jsRuntime = jsRuntime;
@@ -56,10 +56,7 @@ namespace BestMovies.Data.CustomServices
         {
             _jsRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", "");
         }
-        
-        
     }
-    
 }
 
 
