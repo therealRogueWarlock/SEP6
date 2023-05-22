@@ -17,7 +17,7 @@ builder.Services.AddMudServices();
 // data
 builder.Services.AddScoped<IRestApiDataAccess, RestApiDataAccess>();
 builder.Services.AddScoped<IDataBaseAccess, DataBaseAccess>();
-builder.Services.AddScoped<IUserData, UserDao>();
+builder.Services.AddScoped<IUserDao, UserDao>();
 builder.Services.AddScoped<IApiDao, ApiDao>();
 
 // services
