@@ -1,5 +1,7 @@
-﻿@inherits LayoutComponentBase
-@using LoginComponent
+﻿@using BestMovies.Data.CustomServices
+@inherits LayoutComponentBase
+@* @inject NavigationManager Navigation *@
+@inject IUserLoginService LoginService
 
 <PageTitle>BestMovies</PageTitle>
 
@@ -8,12 +10,22 @@
 <MudSnackbarProvider/>
 
 <MudAppBar Color="Color.Primary" Fixed="false">
-    <MudIconButton Icon="@Icons.Material.Filled.House" Edge="Edge.Start"/>
+    <MudIconButton Icon="@Icons.Material.Filled.House" Edge="Edge.Start" Href="/"/>
     <MudSpacer/>
+    
+    @* Search Field *@
     <Search/>
     <MudSpacer/>
-    <Login/>
-    <MudIconButton Icon="@Icons.Custom.Brands.GitHub"/>
+    
+    @* Account *@
+    <AuthorizeView>
+        <Authorized>
+            <MudIconButton Icon="@Icons.Material.Filled.Person" href="/Account"/>
+        </Authorized>
+        <NotAuthorized>
+            <MudIconButton Icon="@Icons.Material.Filled.Person" href="/Login"/>
+        </NotAuthorized>
+    </AuthorizeView>
 </MudAppBar>
 
 <div class="page">

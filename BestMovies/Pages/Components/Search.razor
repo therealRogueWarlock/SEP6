@@ -5,6 +5,8 @@
 @using BestMovies.Models.ApiModels
 @inject ISearchService SearchService
 @inject NavigationManager NavigationManager
+@inject NavigationManager Navigation
+
 <MudPaper Outlined MaxHeight="50px">
     <MudStack Row Spacing="0" Style="margin-left: 8px; margin-right: 8px">
         <MudSelect T="string" AnchorOrigin="Origin.BottomCenter" @bind-Value="SearchTerm"
@@ -14,9 +16,17 @@
             <MudSelectItem Value="@("tv")">Tv-Shows</MudSelectItem>
             <MudSelectItem Value="@("person")">Celebs</MudSelectItem>
         </MudSelect>
-        <MudTextField @bind-Value="SearchString" FullWidth Style="margin-top: 8px; min-width: 400px"
-                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"
-                      Margin="Margin.Dense" DisableUnderLine Immediate TextChanged="SearchHandler"/>
+
+        @* Search Field *@
+        <MudTextField @bind-Value="SearchString"
+                      FullWidth Style="margin-top: 8px; min-width: 400px"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      Margin="Margin.Dense"
+                      DisableUnderLine
+                      DebounceInterval="1f"
+                      OnDebounceIntervalElapsed="SearchHandler"
+                      OnKeyDown="CheckKeyDown"/>
     </MudStack>
     @if (!SearchResults.IsNullOrEmpty())
     {
@@ -41,7 +51,21 @@
     private string SearchTerm { get; set; } = "multi";
     private string SearchString { get; set; } = "";
     private List<SearchResult> SearchResults { get; set; } = new();
+    
+    void CheckKeyDown(KeyboardEventArgs eventArgs)
+    {
+        if (eventArgs.Key == "Enter")
+        {
+            PerformSearch();
+        }
+    }
 
+    private string GetIcon(SearchResult result)
+    {
+        if (result.KnownFor is not null) return Icons.Material.Filled.Person;
+        return result.FirstAirDate is not null ? Icons.Material.Filled.Tv : Icons.Material.Filled.LocalMovies;
+    }
+    
     private async Task SearchHandler()
     {
         if (SearchString.IsNullOrEmpty())
@@ -55,11 +79,23 @@
 
     private void ResultClickHandler(SearchResult result)
     {
+
         // maybe we need another solution for this
         
         NavigationManager.NavigateTo("/MovieDetailsPage/" + result.Id);
         
+
+        Console.WriteLine($"Clicked Result: {result.Id}");
+
+        // Navigate to the selected item
+
+    }
+
+    private void PerformSearch()
+    {
+        // Navigate and clear the Search String
+        Navigation.NavigateTo($"/Search/{SearchTerm}/{SearchString}", true);
+        StateHasChanged();
     }
 
 }
-
