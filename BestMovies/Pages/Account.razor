@@ -1,4 +1,10 @@
-﻿@page "/Account"
+﻿@page "/Account/{userOfPageID:guid?}"
+@using BestMovies.DataAccess
+@using BestMovies.Data.CustomServices
+@using BestMovies.Models
+
+@inject IUserLoginService UserLoginService
+@inject IUserData UserData
 
 <PageTitle>Account</PageTitle>
 
@@ -7,5 +13,35 @@
 <MudButton Href="Account/Favourites" Variant="Variant.Outlined">Favourite Movies</MudButton>
 
 @code {
-    
+    [Parameter]
+    public Guid userOfPageID { get; set; }
+
+    bool _loading = true;
+
+    User? _userOfPage;
+    User? _currentUser;
+
+    List<FanMovie>? _fanMovies;
+    List<Movie>? _movies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _currentUser = await UserLoginService.GetCurrentUserAsync();
+
+        _userOfPage = _currentUser;
+
+        if (!userOfPageID.Equals(new Guid()))
+        {
+            try
+            {
+                _userOfPage = await UserData.GetAsync(userOfPageID);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        _loading = false;
+    }
 }

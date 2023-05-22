@@ -14,8 +14,8 @@
         <em>Loading...</em>
     </p>
 }
-else if(_userOfPage== null){
-    
+else if (_userOfPage == null)
+{
     <p>
         <em>No User found :/</em>
     </p>
@@ -89,25 +89,24 @@ else
 }
 
 @code {
-    
+
     [Parameter]
     public Guid userOfPageID { get; set; }
-    
+
     bool _loading = true;
-    
+
     User? _userOfPage;
     User? _currentUser;
-    
+
     List<FanMovie>? _fanMovies;
     List<Movie>? _movies;
 
     protected override async Task OnInitializedAsync()
     {
-        
         _currentUser = await UserLoginService.GetCurrentUserAsync();
-        
+
         _userOfPage = _currentUser;
-        
+
         if (!userOfPageID.Equals(new Guid()))
         {
             try
@@ -118,14 +117,8 @@ else
             {
                 Console.WriteLine(e);
             }
-        } 
-        
+        }
+
         _loading = false;
-        
     }
-    
-    
-     
-    
-    
 }

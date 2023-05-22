@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@using LoginComponent
 
 <PageTitle>BestMovies</PageTitle>
 
@@ -35,7 +36,7 @@
             Tertiary = "#2DE1FC"
         }
     };
-    
+
     string SearchTerm { get; set; } = "N/A";
 
     void ShouldSearch(KeyboardEventArgs e)
@@ -43,7 +44,7 @@
         if (e.Key == "Enter")
             Search();
     }
-    
+
     void Search()
     {
         Navigation.NavigateTo($"/Search/{SearchTerm}");
