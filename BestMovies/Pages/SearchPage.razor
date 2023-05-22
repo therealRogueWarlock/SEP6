@@ -1,5 +1,6 @@
 ﻿@page "/Search/"
 @page "/Search/{SearchWord}"
+@page "/Search/{SearchCategory}/{SearchWord}"
 @using BestMovies.Models
 @using BestMovies.Services
 
@@ -37,6 +38,9 @@ else
     [Parameter]
     public string SearchWord { get; set; }
 
+    [Parameter]
+    public string SearchCategory { get; set; } = "multi";
+
     private List<SearchResult> Results { get; set; } = new();
     private bool _searching;
 
@@ -58,7 +62,7 @@ else
     async void FindResults()
     {
         _searching = true;
-        var searchResult = await SearchService.SearchAsync(SearchWord);
+        var searchResult = await SearchService.SearchAsync(SearchWord, SearchCategory);
         _searching = false;
 
         Results = searchResult.Results;

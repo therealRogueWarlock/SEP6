@@ -13,7 +13,7 @@
             <MudSelectItem Value="@("tv")">Tv-Shows</MudSelectItem>
             <MudSelectItem Value="@("person")">Celebs</MudSelectItem>
         </MudSelect>
-        
+
         @* Search Field *@
         <MudTextField @bind-Value="SearchString"
                       FullWidth Style="margin-top: 8px; min-width: 400px"
@@ -54,9 +54,9 @@
         if (eventArgs.Key == "Enter")
         {
             PerformSearch();
-        }   
+        }
     }
-    
+
     private string GetIcon(SearchResult result)
     {
         if (result.KnownFor is not null) return Icons.Material.Filled.Person;
@@ -77,15 +77,15 @@
     private void ResultClickHandler(SearchResult result)
     {
         Console.WriteLine($"Clicked Result: {result.Id}");
-        
-        // Navigate to the selected item
+
+    // Navigate to the selected item
     }
 
     private void PerformSearch()
     {
-        Navigation.NavigateTo($"/Search/{SearchString}", true);
-        SearchString = "";
-        
+    // Navigate and clear the Search String
+        Navigation.NavigateTo($"/Search/{SearchTerm}/{SearchString}", true);
         StateHasChanged();
     }
+
 }
