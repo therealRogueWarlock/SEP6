@@ -1,21 +1,14 @@
 ﻿@page "/"
 @using System.ComponentModel
-@using BestMovies.Data
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home</PageTitle>
 
 <h1>Top Rated Movies</h1>
 
 <MudProgressCircular Indeterminate="true" hidden="@_topRatedMovies.Any()"/>
 
-<MudList Items>
-    <TemplateColumn T="string">
-        <p>@context</p>
-    </TemplateColumn>
-</MudList>
+<p>Fancy list of movies</p>
 
-<MudStack Row="true" Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center" @bind-value="_topRatedMovies">
-</MudStack>
 
 <h1>Actors</h1>
 
@@ -36,6 +29,7 @@
     
     protected override void OnInitialized()
     {
+        // Attempts at making a Dynamical list of Movies
         _topRatedMovies.ListChanged += RefreshView;
         
         _topRatedMovies.Add("Top Gear 1");

@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
 
 <PageTitle>BestMovies</PageTitle>
 
@@ -7,9 +8,9 @@
 <MudAppBar Color="Color.Primary" Fixed="false">
     <MudIconButton Icon="@Icons.Material.Filled.House" Edge="Edge.Start" Href="/"/>
     <MudSpacer/>
-    <MudTextField T="string" @bind-value="SearchTerm" Label="Search" InputType="InputType.Search" Variant="Variant.Filled"/>
+    <MudTextField T="string" @bind-value="SearchTerm" Immediate="true" Label="Search" InputType="InputType.Search" Variant="Variant.Filled" OnKeyDown="ShouldSearch"/>
     <MudSpacer/>
-    <MudIconButton Icon="@Icons.Material.Filled.Person" Href="/account"/>
+    <MudIconButton Icon="@Icons.Material.Filled.Person" Href="/Account"/>
 </MudAppBar>
 
 @Body
@@ -17,9 +18,16 @@
 @code
 {
     string SearchTerm { get; set; } = "N/A";
+
+    void ShouldSearch(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            Search();
+    }
     
     void Search()
     {
-        
+        Navigation.NavigateTo($"/Search/{SearchTerm}");
     }
+
 }
