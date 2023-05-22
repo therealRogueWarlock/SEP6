@@ -1,7 +1,7 @@
 ﻿using BestMovies.DataAccess;
 using BestMovies.Models;
 
-namespace BestMovies.Services;
+namespace BestMovies.Services.implementation;
 
 public class SearchService : ISearchService
 {
@@ -12,8 +12,8 @@ public class SearchService : ISearchService
         _api = api;
     }
 
-    public async Task<ResultWrapper> SearchAsync(string searchWord, string searchType = "multi", int page = 1)
+    public async Task<ResultWrapper> SearchAsync(string searchWord, string searchType = "multi", int page = 1, bool adult = false)
     {
-        return await _api.SearchAsync(searchWord, searchType, page);
+        return await _api.SearchAsync(searchWord, searchType, page, adult);
     }
 }

@@ -1,8 +1,8 @@
-﻿using BestMovies.DataAccess.RestApiDataAccess;
+﻿using System.Text;
 using BestMovies.Models;
 using Newtonsoft.Json;
 
-namespace BestMovies.DataAccess;
+namespace BestMovies.DataAccess.RestApiDataAccess;
 
 public class ApiDao : IApiDao
 {
@@ -13,10 +13,16 @@ public class ApiDao : IApiDao
         _api = api;
     }
 
-    public async Task<ResultWrapper> SearchAsync(string searchWord, string searchType, int page)
+    public async Task<ResultWrapper> SearchAsync(string searchWord, string searchType, int page, bool adult)
     {
-        var resultString = await _api.SearchAsync(searchWord, searchType, page);
-        var result = JsonConvert.DeserializeObject<ResultWrapper>(resultString);
+        var url = new StringBuilder();
+        url.Append($"search/{searchType}");
+        url.Append($"?query={searchWord}");
+        url.Append($"&include_adult={adult}");
+        url.Append($"&page={page}");
+
+        var response = await _api.SendRequestAsync(url.ToString());
+        var result = JsonConvert.DeserializeObject<ResultWrapper>(response.Content!);
         return result ?? new ResultWrapper();
     }
 }
