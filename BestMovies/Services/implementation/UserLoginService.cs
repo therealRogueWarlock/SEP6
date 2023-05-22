@@ -1,11 +1,7 @@
 using System.Text.Json;
+using BestMovies.Data.CustomServices;
 using BestMovies.DataAccess;
-using BestMovies.Models;
-<<<<<<<< HEAD:BestMovies/Services/CustomServices/UserLoginService.cs
-========
 using BestMovies.Models.DbModels;
-using Microsoft.EntityFrameworkCore.Storage;
->>>>>>>> BES-18-Design-and-implementation-of-data-layer:BestMovies/Services/implementation/UserLoginService.cs
 using Microsoft.JSInterop;
 
 namespace BestMovies.Services.CustomServices
