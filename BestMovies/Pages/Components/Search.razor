@@ -51,7 +51,7 @@
     private string SearchTerm { get; set; } = "multi";
     private string SearchString { get; set; } = "";
     private List<SearchResult> SearchResults { get; set; } = new();
-    
+
     void CheckKeyDown(KeyboardEventArgs eventArgs)
     {
         if (eventArgs.Key == "Enter")
@@ -65,7 +65,7 @@
         if (result.KnownFor is not null) return Icons.Material.Filled.Person;
         return result.FirstAirDate is not null ? Icons.Material.Filled.Tv : Icons.Material.Filled.LocalMovies;
     }
-    
+
     private async Task SearchHandler()
     {
         if (SearchString.IsNullOrEmpty())
@@ -79,21 +79,30 @@
 
     private void ResultClickHandler(SearchResult result)
     {
+    // maybe we need another solution for this
 
-        // maybe we need another solution for this
-        
-        NavigationManager.NavigateTo("/MovieDetailsPage/" + result.Id);
-        
-
-        Console.WriteLine($"Clicked Result: {result.Id}");
-
-        // Navigate to the selected item
-
+    // Navigate to the selected item
+        switch (result.GetEntityType())
+        {
+            case EntityType.Movie:
+                NavigationManager.NavigateTo($"/Movie/{result.Id}");
+                break;
+            case EntityType.Tv:
+                break;
+            case EntityType.Actor:
+                break;
+            case EntityType.Director:
+                break;
+            case EntityType.Producer:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
     private void PerformSearch()
     {
-        // Navigate and clear the Search String
+    // Navigate and clear the Search String
         Navigation.NavigateTo($"/Search/{SearchTerm}/{SearchString}", true);
         StateHasChanged();
     }
