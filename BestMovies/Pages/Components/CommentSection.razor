@@ -1,0 +1,72 @@
+@page "/CommentSection/{subjectId?}"
+@using BestMovies.Models.DbModels
+@using BestMovies.Services
+
+@inject IUserService UserService
+@inject IUserInteractionService UserInteractionService
+
+<MudCard>
+    <MudCardHeader>
+        <h3>Comments</h3>
+    </MudCardHeader>
+    <MudCardContent>
+            <div>
+                    @foreach (var comment in _comments)
+                    {
+                        <div>
+                            @GetNameOfUser(comment.UserId.ToString())
+                            <p>@comment.UserId</p>
+                            <p>@comment.Text</p>
+                            <hr/>
+                        </div>
+                    }
+                </div>
+        
+        
+        <MudTextField @bind-Value="@_newCommentText" Label="Add a comment" Multiline="true" Rows="3" Variant="Variant.Filled"/>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@string.IsNullOrEmpty(_newCommentText)" @onclick="AddComment">Post Comment</MudButton>
+        
+    </MudCardContent>
+</MudCard>
+
+
+@code {
+    
+    [Parameter]
+    public string SubjectId { get; set; }
+
+    string _newCommentText;
+
+    List<Comment> _comments;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _comments = UserInteractionService.GetCommentsOf(SubjectId);
+        
+    }
+        
+    protected override async Task OnParametersSetAsync()
+    {
+        
+        
+        
+    }
+
+
+    void AddComment()
+    {
+
+        Console.WriteLine("Create new comment " + _newCommentText);
+        
+    }
+
+    async Task<string> GetNameOfUser(string userid)
+    {
+        var user = await UserService.GetAsync(userid);
+        return user.Username;
+    }
+    
+
+
+}
