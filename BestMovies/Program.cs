@@ -16,15 +16,15 @@ builder.Services.AddMudServices();
 // data
 builder.Services.AddScoped<IRestApiDataAccess, RestApiDataAccess>();
 builder.Services.AddScoped<IDataBaseAccess, DataBaseAccess>();
-
+builder.Services.AddScoped<IMovieDao, MovieRestApiDao>();
 builder.Services.AddScoped<IUserDao, UserDao>();
-
 builder.Services.AddScoped<IApiDao, ApiDao>();
 
 // services
 builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<IMovieService, MovieService>();
 
-// login
+// login service
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorization(options =>
