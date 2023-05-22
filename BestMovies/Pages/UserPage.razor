@@ -1,11 +1,12 @@
-@page "/UserPage/{userOfPageID:guid?}"
-@using BestMovies.Models
+@page "/UserPage/{userOfPageID?}"
 @using BestMovies.DataAccess
 @using BestMovies.Services.CustomServices
+@using BestMovies.Models.ApiModels
+@using BestMovies.Models.DbModels
 
 
 @inject IUserLoginService UserLoginService
-@inject IUserData UserData
+@inject IUserDao UserData
 
 @if (_loading)
 {
@@ -89,7 +90,7 @@ else
 @code {
     
     [Parameter]
-    public Guid userOfPageID { get; set; }
+    public string userOfPageID { get; set; }
     
     bool _loading = true;
     

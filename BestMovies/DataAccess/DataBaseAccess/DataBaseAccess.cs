@@ -1,8 +1,5 @@
-﻿using BestMovies.Data;
-using BestMovies.Models;
-using BestMovies.Services;
-using Microsoft.EntityFrameworkCore;
-
+﻿using BestMovies.Services;
+using BestMovies.Models.DbModels;
 namespace BestMovies.DataAccess.DataBaseAccess;
 
 public class DataBaseAccess : IDataBaseAccess

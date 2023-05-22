@@ -1,11 +1,9 @@
-using System.Collections.Immutable;
-using BestMovies.Data;
 using BestMovies.DataAccess;
 using BestMovies.DataAccess.DataBaseAccess;
 using BestMovies.DataAccess.RestApiDataAccess;
 using BestMovies.Services;
-using BestMovies.DummyData;
 using BestMovies.Services.CustomServices;
+using BestMovies.Services.implementation;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
 
@@ -19,8 +17,8 @@ builder.Services.AddMudServices();
 // data
 builder.Services.AddScoped<IRestApiDataAccess, RestApiDataAccess>();
 builder.Services.AddScoped<IDataBaseAccess, DataBaseAccess>();
-builder.Services.AddScoped<IUserData, UserDao>();
-builder.Services.AddScoped<IMovieData, MovieDummyData>();
+
+builder.Services.AddScoped<IUserDao, UserDao>();
 
 builder.Services.AddScoped<IApiDao, ApiDao>();
 

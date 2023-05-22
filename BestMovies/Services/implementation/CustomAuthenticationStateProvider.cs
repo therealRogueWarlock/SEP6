@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using BestMovies.Models;
+using BestMovies.Models.DbModels;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace BestMovies.Services.CustomServices

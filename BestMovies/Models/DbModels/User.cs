@@ -1,4 +1,4 @@
-﻿namespace BestMovies.Models;
+﻿namespace BestMovies.Models.DbModels;
 
 public class User
 {
