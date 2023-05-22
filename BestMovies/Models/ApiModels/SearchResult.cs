@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace BestMovies.Models.ApiModels;
 
@@ -20,19 +21,30 @@ public class SearchResult
     {
         set => Image = value;
     }
-    
-    [JsonProperty("known_for_department")]
-    public string? KnownFor { get; set; }
-    
-    [JsonProperty("first_air_date")]
-    public DateTime? FirstAirDate { get; set; }
+
+    [JsonProperty("known_for_department")] public string? KnownFor { get; set; }
+
+    [JsonProperty("first_air_date")] public DateTime? FirstAirDate { get; set; }
+
+    public EntityType GetEntityType()
+    {
+        if (!KnownFor.IsNullOrEmpty())
+        {
+            return KnownFor switch
+            {
+                "Acting" => EntityType.Actor,
+                "Directing" => EntityType.Director,
+                _ => EntityType.Producer
+            };
+        }
+
+        return FirstAirDate is not null ? EntityType.Tv : EntityType.Movie;
+    }
 }
 
 public class ResultWrapper
 {
-    [JsonProperty("results")]
-    public List<SearchResult> Results { get; set; }
-    
-    [JsonProperty("page")]
-    public int Page { get; set; }
+    [JsonProperty("results")] public List<SearchResult> Results { get; set; }
+
+    [JsonProperty("page")] public int Page { get; set; }
 }

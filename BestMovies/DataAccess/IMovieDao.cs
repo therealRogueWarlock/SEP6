@@ -4,6 +4,7 @@ namespace BestMovies.DataAccess;
 
 public interface IMovieDao
 {
-    public Task<Movie> GetMovieAsync(string idString);
-    
+    Task<Movie> GetMovieAsync(string idString);
+    Task<List<Movie>> GetTrendingMoviesAsync();
+
 }

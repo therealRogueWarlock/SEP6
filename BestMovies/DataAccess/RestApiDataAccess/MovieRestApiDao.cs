@@ -23,4 +23,9 @@ public class MovieRestApiDao : IMovieDao
         var movie = JsonConvert.DeserializeObject<Movie>(response.Content!);
         return movie ?? new Movie();
     }
+
+    public Task<List<Movie>> GetTrendingMoviesAsync()
+    {
+        throw new NotImplementedException();
+    }
 }
