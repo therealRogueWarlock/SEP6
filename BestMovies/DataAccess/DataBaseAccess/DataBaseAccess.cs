@@ -26,6 +26,32 @@ public class DataBaseAccess : IDataBaseAccess
             .SingleOrDefaultAsync();
     }
 
+    public async Task<TEntity> UpdateAsync<TEntity>(TEntity entity) where TEntity : class
+    {
+        if (entity is null) throw new Exception("Bad entity");
+        var info = typeof(TEntity).GetProperty("Id");
+        await using var context = new Context();
+        var dbEntity = await context.Set<TEntity>()
+            .Where(x => info!.GetValue(x) == info.GetValue(entity))
+            .SingleOrDefaultAsync();
+
+        dbEntity = entity;
+        await context.SaveChangesAsync();
+        return dbEntity;
+    }
+
+    public async Task RemoveAsync<TEntity>(string id) where TEntity : class
+    {
+        if (!Guid.TryParse(id, out var guid)) throw new Exception("Invalid Id");
+        var info = typeof(TEntity).GetProperty("Id");
+        await using var context = new Context();
+        var entity = await context.Set<TEntity>()
+            .Where(x => (Guid) info!.GetValue(x)! == guid)
+            .SingleAsync();
+        context.Remove(entity);
+        await context.SaveChangesAsync();
+    }
+
     public async Task<User?> GetUserAsync(string username, string password)
     {
         await using var context = new Context();
