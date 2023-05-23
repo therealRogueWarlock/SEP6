@@ -1,7 +1,8 @@
-using BestMovies.Data;
-using BestMovies.Data.CustomServices;
 using BestMovies.DataAccess;
 using BestMovies.DataAccess.DataBaseAccess;
+using BestMovies.DataAccess.RestApiDataAccess;
+using BestMovies.Services;
+using BestMovies.Services.implementation;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
 
@@ -13,10 +14,20 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
 
 // data
+builder.Services.AddScoped<IRestApiDataAccess, RestApiDataAccess>();
 builder.Services.AddScoped<IDataBaseAccess, DataBaseAccess>();
-builder.Services.AddScoped<IUserData, UserDao>();
+builder.Services.AddScoped<IMovieDao, MovieRestApiDao>();
+builder.Services.AddScoped<IUserInteractionDao, UserInteractionDao>();
+builder.Services.AddScoped<IUserDao, UserDao>();
+builder.Services.AddScoped<IApiDao, ApiDao>();
 
-// login
+// services
+builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IUserInteractionService, UserInteractionService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+// login service
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorization(options =>

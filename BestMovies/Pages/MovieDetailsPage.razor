@@ -1,0 +1,235 @@
+@page "/Movie/{MovieId?}"
+@using BestMovies.Services
+@using BestMovies.Models.DbModels
+@using BestMovies.Models.ApiModels
+@using Microsoft.IdentityModel.Tokens
+@using System.Globalization
+@using BestMovies.Models
+
+@inject IMovieService MovieService
+
+<MudContainer>
+    <MudStack Row AlignItems="AlignItems.Center">
+        <MudTooltip Text="@_originalTitle" Arrow="true">
+            <MudText Align="Align.Center" Typo="Typo.h2">@_title</MudText>
+        </MudTooltip>
+        <div hidden="@(!_adultRating)">
+            <MudChip Text="ADULT MOVIE" Color="Color.Error" hidden="@(!_adultRating)" Variant="Variant.Filled"/>
+        </div>
+    </MudStack>
+
+    <MudTabs Centered Rounded>
+        @* Details Page + Comments *@
+        <MudTabPanel Text="Details">
+            <MudPaper Elevation="3" Style="padding: 1em; margin-bottom: 3em;">
+                <MudStack Row>
+                    <MudStack>
+                        @* Summary *@
+                        <MudPaper Elevation="0">
+                            <MudText Typo="Typo.button">
+                                Summary
+                            </MudText>
+
+                            <MudText Typo="Typo.body1">
+                                @_movieData?.Overview
+                            </MudText>
+                        </MudPaper>
+
+                        @* Director[s] *@
+                        <MudStack>
+                            <MudText Typo="Typo.button">Director</MudText>
+                            <MudStack Row AlignItems="AlignItems.Center">
+                                <MudImage Width="80" Src="@(ConfigVariables.NoImage)"/>
+                                <MudText>NAME OF DIRECTOR</MudText>
+                            </MudStack>
+                        </MudStack>
+                    </MudStack>
+
+                    <MudDivider Vertical="true" FlexItem="true"/>
+
+                    @* Right side [Poster, Genre, Stats] *@
+                    <MudStack AlignItems="AlignItems.Center">
+                        <MudImage Width="250" disabled="@_imagePath.IsNullOrEmpty()" Src="@_imagePath"/>
+
+                        <MudChipSet ReadOnly>
+                            @foreach (var genre in _genres)
+                            {
+                                <MudChip Value="@(genre.Id)" Text="@(genre.Name)"/>
+                            }
+                        </MudChipSet>
+
+                        <MudSimpleTable Dense Bordered Striped>
+                            <tbody>
+                            <MudTr>
+                                <MudTd Style="font-weight: bold;">Language</MudTd><MudTd Style="font-weight: lighter">@_originalLanguage</MudTd>
+                            </MudTr>
+                            <MudTr>
+                                <MudTd Style="font-weight: bold;">Runtime</MudTd><MudTd Style="font-weight: lighter">@_runtime min</MudTd>
+                            </MudTr>
+                            <MudTr>
+                                <MudTd Style="font-weight: bold;">Released</MudTd><MudTd Style="font-weight: lighter">@_releaseDate</MudTd>
+                            </MudTr>
+                            <MudTr>
+                                <MudTd Style="font-weight: bold;">Budget</MudTd><MudTd Style="font-weight: lighter">@_budget</MudTd>
+                            </MudTr>
+                            <MudTr>
+                                <MudTd Style="font-weight: bold;">Revenue</MudTd><MudTd Style="font-weight: lighter">@_revenue</MudTd>
+                            </MudTr>
+                            </tbody>
+                        </MudSimpleTable>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+
+            <CommentSection SubjectId="@MovieId"/>
+        </MudTabPanel>
+
+        @* Cast Page *@
+        <MudTabPanel Text="Cast">
+            <MudPaper Style="padding-top: .1em; padding-bottom: .1em;">
+                @foreach (var actor in _actors)
+                {
+                    <MudStack Row Style="margin: 1em;">
+                        <MudImage Src="@ConfigVariables.NoImage" Height="80" Alt="@($"Image of {actor.Id}")"/>
+                        <MudText Typo="Typo.overline">@actor.Id</MudText>
+                        <MudSpacer/>
+                        <MudText Typo="Typo.body1">Role</MudText>
+                    </MudStack>
+                }
+            </MudPaper>
+        </MudTabPanel>
+
+        @* Review Page *@
+        <MudTabPanel Text="Reviews">
+            <MudPaper>
+                @foreach (var review in _reviews)
+                {
+                    <MudStack Row Style="margin: 1em;">
+                        <MudStack>
+                            <MudAvatar Src="@ConfigVariables.NoImage" Height="48" Alt="@($"Image of {review.UserId}")"/>
+                            <MudRating MaxValue="5" ReadOnly>2</MudRating>
+                        </MudStack>
+                        <MudStack>
+                            <MudText Typo="Typo.overline">@review.UserId</MudText>
+                            <MudText Typo="Typo.body1">this is a long and complicated review</MudText>
+                        </MudStack>
+                    </MudStack>
+                }
+            </MudPaper>
+        </MudTabPanel>
+
+    </MudTabs>
+</MudContainer>
+
+
+@code {
+
+    [Parameter]
+    public string MovieId { get; set; }
+
+    private Movie _movieData;
+    private string _title = "?";
+
+    #region Details
+
+    private string _originalTitle = "?";
+    private string _originalLanguage = "?";
+    private string _imagePath = ConfigVariables.NoImage;
+    private List<Genre> _genres = new();
+    private bool _adultRating;
+    private int _budget;
+    private int _revenue;
+    private int _runtime;
+    private DateOnly _releaseDate;
+
+    private async Task SetupDetails()
+    {
+        _title = _movieData.Title;
+        _originalTitle = _movieData.OriginalTitle;
+
+        _imagePath = $"https://image.tmdb.org/t/p/w200{_movieData.PosterPath}";
+
+        _runtime = _movieData.Runtime ?? -1;
+
+        _genres = _movieData.Genres;
+
+        _adultRating = _movieData.Adult ?? false;
+
+        _releaseDate = DateOnly.Parse(_movieData.ReleaseDate);
+
+    // Language
+        var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+        var culture = cultures.First(c => c.TwoLetterISOLanguageName == _movieData.OriginalLanguage);
+        _originalLanguage = culture.DisplayName;
+
+    // Money
+        _budget = _movieData.Budget ?? -1;
+        _revenue = _movieData.Revenue ?? -1;
+    }
+
+    #endregion Details
+
+    #region Cast
+
+    private List<LinkedSubject> _actors;
+
+    private async Task SetupCast()
+    {
+        _actors = new();
+
+    // Add some bogus data
+        for (int i = 0; i < 10; i++)
+        {
+            _actors.Add(new()
+            {
+                Id = new(),
+                ReferenceId = new(),
+                SubjectId = Random.Shared.NextInt64(long.MaxValue),
+                Type = EntityType.Actor,
+            });
+        }
+    }
+
+    #endregion Cast
+
+    #region Reviews
+
+    private List<Review> _reviews;
+    public string UserComment { get; set; }
+
+    private async Task SetupReviews()
+    {
+        _reviews = new();
+
+    // Add some bogus data
+        for (int i = 0; i < 10; i++)
+        {
+            _reviews.Add(new()
+            {
+                Comment = new()
+                {
+                    Id = new(),
+                    SubjectId = "??",
+                    Text = "Random Review",
+                    UserId = new()
+                },
+                Id = new(),
+                MovieId = new(),
+                Rating = (float)Random.Shared.NextDouble() * 5f,
+                UserId = new()
+            });
+        }
+    }
+
+    #endregion Reviews
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _movieData = await MovieService.GetMovieAsync(MovieId);
+
+        SetupDetails();
+        SetupCast();
+        SetupReviews();
+    }
+
+}

@@ -1,0 +1,121 @@
+﻿@using BestMovies.Models
+@using Microsoft.IdentityModel.Tokens
+@using BestMovies.Services
+@using System.Security.Cryptography
+@using BestMovies.Models.ApiModels
+@inject ISearchService SearchService
+@inject NavigationManager NavigationManager
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<MudPaper Outlined MaxHeight="50px">
+    <MudStack Row Spacing="0" Style="margin-left: 8px; margin-right: 8px">
+        <MudSelect T="string" AnchorOrigin="Origin.BottomCenter" @bind-Value="SearchTerm"
+                   DisableUnderLine Margin="Margin.Dense" Style="min-width: 100px; width: 100px">
+            <MudSelectItem Value="@("multi")">All</MudSelectItem>
+            <MudSelectItem Value="@("movie")">Movies</MudSelectItem>
+            <MudSelectItem Value="@("tv")">Tv-Shows</MudSelectItem>
+            <MudSelectItem Value="@("person")">Celebs</MudSelectItem>
+        </MudSelect>
+
+        @* Search Field *@
+        <MudTextField @bind-Value="SearchString"
+                      FullWidth Style="margin-top: 8px; min-width: 400px"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      Margin="Margin.Dense"
+                      DisableUnderLine
+                      DebounceInterval="1f"
+                      OnDebounceIntervalElapsed="SearchHandler"
+                      OnKeyDown="CheckKeyDown"/>
+    </MudStack>
+    @if (!SearchResults.IsNullOrEmpty())
+    {
+        <MudPaper Elevation="0">
+            <MudList Clickable Style="max-width: 400px">
+                @foreach (var result in SearchResults)
+                {
+                    <MudListItem OnClick="@(() => ResultClickHandler(result))">
+                        <MudStack Row AlignItems="AlignItems.Center">
+                            <img src="@($"https://image.tmdb.org/t/p/w45{result.Image}")" alt="poster"/>
+                            @result.Name
+                        </MudStack>
+                    </MudListItem>
+                }
+            </MudList>
+        </MudPaper>
+    }
+</MudPaper>
+
+
+@code {
+    private string SearchTerm { get; set; } = "multi";
+    private string SearchString { get; set; } = "";
+    private List<SearchResult> SearchResults { get; set; } = new();
+
+    void CheckKeyDown(KeyboardEventArgs eventArgs)
+    {
+        if (eventArgs.Key == "Enter")
+        {
+            try
+            {
+                PerformSearch();
+            }
+            catch (ArgumentException e)
+            {
+                Snackbar.Add("Field cannot be empty", Severity.Error, key: "SearchError");
+            }
+        }
+    }
+
+    private string GetIcon(SearchResult result)
+    {
+        if (result.KnownFor is not null) return Icons.Material.Filled.Person;
+        return result.FirstAirDate is not null ? Icons.Material.Filled.Tv : Icons.Material.Filled.LocalMovies;
+    }
+
+    private async Task SearchHandler()
+    {
+        if (SearchString.IsNullOrEmpty())
+            SearchResults = new List<SearchResult>();
+        else
+        {
+            var result = await SearchService.SearchAsync(SearchString, SearchTerm);
+            SearchResults = result.Results.Take(8).ToList();
+        }
+    }
+
+    private void ResultClickHandler(SearchResult result)
+    {
+    // maybe we need another solution for this
+
+    // Navigate to the selected item
+        switch (result.GetEntityType())
+        {
+            case EntityType.Movie:
+                NavigationManager.NavigateTo($"/Movie/{result.Id}", true);
+                break;
+            case EntityType.Tv:
+                break;
+            case EntityType.Actor:
+                break;
+            case EntityType.Director:
+                break;
+            case EntityType.Producer:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void PerformSearch()
+    {
+    // Navigate and clear the Search String
+        if (SearchString.IsNullOrEmpty())
+            throw new ArgumentException("Argument cannot be empty", nameof(SearchString));
+        
+        Navigation.NavigateTo($"/Search/{SearchTerm}/{SearchString}", true);
+        StateHasChanged();
+    }
+
+}

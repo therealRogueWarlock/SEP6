@@ -1,0 +1,124 @@
+@page "/UserPage/{userOfPageID?}"
+@using BestMovies.DataAccess
+@using BestMovies.Models.ApiModels
+@using BestMovies.Models.DbModels
+@using BestMovies.Services
+
+@inject IUserLoginService UserLoginService
+@inject IUserDao UserData
+
+@if (_loading)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+
+else if (_userOfPage == null)
+{
+    <p>
+        <em>No User found :/</em>
+    </p>
+}
+else
+{
+    <MudGrid href="@_currentUser">
+        <MudItem xs="12" md="6">
+            <MudCard>
+                <MudCardContent>
+                    <h3>User Details</h3>
+                    <!-- User information -->
+                    <p>Name: John Doe</p>
+                    <p>Email: john.doe@example.com</p>
+                    <p>Age: 30</p>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudCard>
+                <MudCardContent>
+                    <div style="border: 1px solid #ccc; padding: 10px;">
+                        <h3>Favorite Movies</h3>
+                        <!-- Movie list -->
+                        @if (_movies != null)
+                        {
+                            <ul>
+                                @foreach (var movie in _movies)
+                                {
+                                    <li>@movie.Title</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p>No movies available.</p>
+                        }
+                    </div>
+                </MudCardContent>
+            </MudCard>
+            <MudCard style="margin-top: 20px;">
+                <MudCardContent>
+                    <div style="border: 1px solid #ccc; padding: 10px;">
+                        <h3>Fan Movie List</h3>
+                        <!-- Fan movie list -->
+                        @if (_fanMovies != null)
+                        {
+                            <ul>
+                                @foreach (var fanMovie in _fanMovies)
+                                {
+                                    <li>@fanMovie.Description</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p>No fan movies available.</p>
+                        }
+                    </div>
+
+                    @if (_currentUser.Id.Equals(_userOfPage.Id))
+                    {
+                        <MudButton Color="Color.Primary" Variant="Variant.Filled">Create Fan Movie</MudButton>
+                    }
+
+                </MudCardContent>
+            </MudCard>
+
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+
+    [Parameter]
+    public string userOfPageID { get; set; }
+    
+    bool _loading = true;
+
+    User? _userOfPage;
+    User? _currentUser;
+
+    List<FanMovie>? _fanMovies;
+    List<Movie>? _movies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _currentUser = await UserLoginService.GetCurrentUserAsync();
+
+        _userOfPage = _currentUser;
+
+        if (!userOfPageID.Equals(new Guid()))
+        {
+            try
+            {
+                _userOfPage = await UserData.GetAsync(userOfPageID);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        _loading = false;
+    }
+}

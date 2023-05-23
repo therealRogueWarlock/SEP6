@@ -1,31 +1,51 @@
-﻿@inherits LayoutComponentBase
-@using LoginComponent
+﻿@using BestMovies.Services
+@inherits LayoutComponentBase
+@* @inject NavigationManager Navigation *@
+@inject IUserLoginService LoginService
 
 <PageTitle>BestMovies</PageTitle>
 
-<MudThemeProvider/>
+<MudThemeProvider Theme="_theme"/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
 <MudAppBar Color="Color.Primary" Fixed="false">
-    <MudIconButton Icon="@Icons.Material.Filled.House" Edge="Edge.Start"/>
+    <MudIconButton Icon="@Icons.Material.Filled.House" Edge="Edge.Start" Href="/"/>
     <MudSpacer/>
-    <Login/>
-    <MudIconButton Icon="@Icons.Custom.Brands.GitHub"/>
+    
+    @* Search Field *@
+    <Search/>
+    <MudSpacer/>
+    
+    @* Account *@
+    <AuthorizeView>
+        <Authorized>
+            <MudIconButton Icon="@Icons.Material.Filled.Person" href="/Account"/>
+        </Authorized>
+        <NotAuthorized>
+            <MudIconButton Icon="@Icons.Material.Filled.Person" href="/Login"/>
+        </NotAuthorized>
+    </AuthorizeView>
 </MudAppBar>
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-        
-    </div>
-
     <main>
-        <div class="top-row px-4">
-            
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-        
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
+
+@code {
+
+    private readonly MudTheme _theme = new()
+    {
+        Palette = new PaletteLight
+        {
+            Primary = "#16C172",
+            Secondary = "#2AFC98",
+            Tertiary = "#2DE1FC"
+        }
+    };
+
+}
