@@ -5,7 +5,7 @@
 @inject IUserService UserService
 @inject IUserInteractionService UserInteractionService
 @inject IUserLoginService UserLoginService
-
+@inject NavigationManager NavigationManager
 
 <MudCard>
     <MudCardHeader>
@@ -27,7 +27,9 @@
             {
                 <MudStack Row Style="margin: 1em;">
                     <MudStack AlignItems="AlignItems.Center" Style="@("background-color: var(--mud-palette-primary-lighten); border-radius: .2em; padding: .2em")">
-                        <MudAvatar>@GetNameOfUser(comment.UserId.ToString()).Result[0]</MudAvatar>
+                        <MudButton @onclick="() => NavigateToUser(comment)">
+                            <MudAvatar>@GetNameOfUser(comment.UserId.ToString()).Result[0]</MudAvatar>
+                        </MudButton>
                         <MudText>@GetNameOfUser(comment.UserId.ToString()).Result</MudText>
                     </MudStack>
                     <MudText Typo="Typo.body1">@comment.Text</MudText>
@@ -81,6 +83,11 @@
         {
             return "Not Yet Implemented";
         }
+    }
+
+    void NavigateToUser(Comment comment)
+    {
+        NavigationManager.NavigateTo("/UserPage/"+comment.UserId);
     }
 
     DateOnly GetDate(DateTime dateTime)
