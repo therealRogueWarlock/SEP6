@@ -24,8 +24,12 @@ public class MovieRestApiDao : IMovieDao
         return movie ?? new Movie();
     }
 
-    public Task<List<Movie>> GetTrendingMoviesAsync()
+    public async Task<List<Movie>> GetTrendingMoviesAsync()
     {
-        throw new NotImplementedException();
+        var url = new StringBuilder("movie/week");
+        var response = await _api.SendRequestAsync(url.ToString());
+
+        var movies = JsonConvert.DeserializeObject<List<Movie>>(response.Content!);
+        return movies ?? new List<Movie>();
     }
 }
