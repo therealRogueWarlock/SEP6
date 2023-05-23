@@ -1,5 +1,3 @@
-using BestMovies.Data;
-using BestMovies.Data.CustomServices;
 using BestMovies.DataAccess;
 using BestMovies.DataAccess.DataBaseAccess;
 using BestMovies.DataAccess.RestApiDataAccess;
@@ -18,13 +16,18 @@ builder.Services.AddMudServices();
 // data
 builder.Services.AddScoped<IRestApiDataAccess, RestApiDataAccess>();
 builder.Services.AddScoped<IDataBaseAccess, DataBaseAccess>();
+builder.Services.AddScoped<IMovieDao, MovieRestApiDao>();
+builder.Services.AddScoped<IUserInteractionDao, UserInteractionDao>();
 builder.Services.AddScoped<IUserDao, UserDao>();
 builder.Services.AddScoped<IApiDao, ApiDao>();
 
 // services
 builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IUserInteractionService, UserInteractionService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
-// login
+// login service
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorization(options =>

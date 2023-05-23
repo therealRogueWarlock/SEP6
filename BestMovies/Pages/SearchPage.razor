@@ -1,0 +1,104 @@
+﻿@page "/Search/"
+@page "/Search/{SearchWord}"
+@page "/Search/{SearchCategory}/{SearchWord}"
+@using BestMovies.Services
+@using BestMovies.Models.ApiModels
+@using BestMovies.Models
+@using Microsoft.IdentityModel.Tokens
+
+@inject ISearchService SearchService
+@inject NavigationManager Navigation
+
+<PageTitle>Search</PageTitle>
+
+<h1>Results</h1>
+
+@* Loading bar *@
+@if (_searching)
+{
+    <MudProgressCircular Indeterminate hidden="@(!_searching)"/>
+}
+else
+{
+@* List showing Entries *@
+    <MudPaper Elevation="0" hidden="@_searching">
+        <MudList Clickable="true" @bind-SelectedValue="SelectedValue">
+            @foreach (var result in Results)
+            {
+                <MudListItem Value="result" OnClick="NavigateToID">
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <img src="@GetImage(result.Image)" width="45" alt="N/A"/>
+                        @result.Name
+                    </MudStack>
+                </MudListItem>
+            }
+        </MudList>
+    </MudPaper>
+}
+
+@code {
+
+    [Parameter]
+    public string SearchWord { get; set; }
+
+    [Parameter]
+    public string SearchCategory { get; set; } = "multi";
+
+    private List<SearchResult> Results { get; set; } = new();
+    private bool _searching;
+
+
+    private SearchResult _selectedValue;
+
+    private object SelectedValue
+    {
+        get => _selectedValue;
+        set => _selectedValue = (SearchResult)value;
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        FindResults();
+
+        return base.OnInitializedAsync();
+    }
+
+    async void FindResults()
+    {
+        _searching = true;
+        var searchResult = await SearchService.SearchAsync(SearchWord, SearchCategory);
+        _searching = false;
+
+        Results = searchResult.Results;
+
+        StateHasChanged();
+    }
+
+    private string GetImage(string? imagePath)
+    {
+        if (imagePath.IsNullOrEmpty()) return ConfigVariables.NoImage;
+        else return $"https://image.tmdb.org/t/p/w45{imagePath}";
+    }
+    
+    void NavigateToID()
+    {
+    // Navigate to the ID
+        switch (_selectedValue.GetEntityType())
+        {
+            case EntityType.Movie:
+                Navigation.NavigateTo($"/Movie/{_selectedValue.Id}");
+                break;
+            case EntityType.Tv:
+                break;
+            case EntityType.Actor:
+                break;
+            case EntityType.Producer:
+                break;
+            case EntityType.Director:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+}

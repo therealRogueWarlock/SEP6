@@ -73,7 +73,7 @@ public class Movie
 
     [JsonProperty("release_date")] public string ReleaseDate { get; set; }
 
-    [JsonProperty("revenue")] public int? Revenue { get; set; }
+    [JsonProperty("revenue")] public long? Revenue { get; set; }
 
     [JsonProperty("runtime")] public int? Runtime { get; set; }
 

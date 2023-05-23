@@ -1,0 +1,82 @@
+@page "/CommentSection/{subjectId?}"
+@using BestMovies.Models.DbModels
+@using BestMovies.Services
+
+@inject IUserService UserService
+@inject IUserInteractionService UserInteractionService
+@inject IUserLoginService UserLoginService
+
+
+<MudCard>
+    <MudCardHeader>
+        <MudText Typo="Typo.h3">Comments</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        @* Writing a new comment *@
+        <Authorized>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudTextField @bind-Value="@_newCommentText" Immediate Label="Add a comment" Multiline="true" Rows="3" Variant="Variant.Filled"/>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="@string.IsNullOrEmpty(_newCommentText)" @onclick="AddComment">Post Comment</MudButton>
+            </MudStack>
+            <MudDivider/>
+        </Authorized>
+
+        @* List of all comments *@
+        <div>
+            @foreach (var comment in _comments)
+            {
+                <MudStack Row Style="margin: 1em;">
+                    <MudStack AlignItems="AlignItems.Center" Style="@("background-color: var(--mud-palette-primary-lighten); border-radius: .2em; padding: .2em")">
+                        <MudAvatar>@GetNameOfUser(comment.UserId.ToString()).Result[0]</MudAvatar>
+                        <MudText>@GetNameOfUser(comment.UserId.ToString()).Result</MudText>
+                    </MudStack>
+                    <MudText Typo="Typo.body1">@comment.Text</MudText>
+                </MudStack>
+            }
+        </div>
+    </MudCardContent>
+</MudCard>
+
+
+@code {
+
+    [Parameter]
+    public string SubjectId { get; set; }
+
+    string _newCommentText;
+
+    List<Comment> _comments = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine($"Movie Id: {SubjectId}");
+        _comments = await UserInteractionService.GetCommentsOfAsync(SubjectId);
+
+        Console.WriteLine($"Comments: {_comments.Count}");
+    // _comments.Reverse();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+    }
+
+
+    async Task AddComment()
+    {
+        Console.WriteLine("Create new comment " + _newCommentText);
+        var currentUser = await UserLoginService.GetCurrentUserAsync();
+        UserInteractionService.AddCommentAsync(new Comment { Id = Guid.Empty, SubjectId = SubjectId, UserId = currentUser.Id, Text = _newCommentText });
+    }
+
+    async Task<string> GetNameOfUser(string userid)
+    {
+        try
+        {
+            return await UserService.GetUserName(userid);
+        }
+        catch (NotImplementedException e)
+        {
+            return "Not Yet Implemented";
+        }
+    }
+}

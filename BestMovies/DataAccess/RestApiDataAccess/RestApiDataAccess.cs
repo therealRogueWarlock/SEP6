@@ -1,5 +1,4 @@
-﻿using RestSharp;
-
+using RestSharp;
 namespace BestMovies.DataAccess.RestApiDataAccess;
 
 public class RestApiDataAccess : IRestApiDataAccess

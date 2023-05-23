@@ -17,7 +17,7 @@ public class UserInteractionDao : IUserInteractionDao
         return await _dataBaseAccess.GetReviewsOfAsync(subjectId);
     }
 
-    public async Task<List<Comment>> GetCommentsOf(string subjectId)
+    public async Task<List<Comment>> GetCommentsOfAsync(string subjectId)
     {
         return await _dataBaseAccess.GetCommentsOfAsync(subjectId);
     }
