@@ -40,12 +40,12 @@ namespace BestMovies.Services.implementation
                 User user = await _userLoginService.Validate(username, password);
                 identity = SetupClaimsForUser(user);
             }
-
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                throw;
             }
-
+            
             _cachedAuthenticationState = new AuthenticationState(new ClaimsPrincipal(identity));
             NotifyAuthenticationStateChanged(Task.FromResult(_cachedAuthenticationState));
         }
