@@ -6,5 +6,5 @@ namespace BestMovies.DataAccess;
 public interface IUserDao : IDataCrud<User>
 {
     Task<User?> GetUser(string username, string password);
-    Task<string> GetUsernameFromId(Guid id);
+    Task<string> GetUsernameFromIdAsync(Guid id);
 }

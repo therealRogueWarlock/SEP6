@@ -16,14 +16,14 @@ public class DataBaseAccess : IDataBaseAccess
         return entity;
     }
 
-    public async Task<TEntity?> GetAsync<TEntity>(string id) where TEntity : class
+    public async Task<TEntity> GetAsync<TEntity>(string id) where TEntity : class
     {
         if (!Guid.TryParse(id, out var guid)) throw new Exception("Invalid Id");
         var info = typeof(TEntity).GetProperty("Id");
         await using var context = new Context();
         return await context.Set<TEntity>()
             .Where(x => (Guid) info!.GetValue(x)! == guid)
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync() ?? Activator.CreateInstance<TEntity>();
     }
 
     public async Task<TEntity> UpdateAsync<TEntity>(TEntity entity) where TEntity : class
@@ -40,7 +40,7 @@ public class DataBaseAccess : IDataBaseAccess
         return dbEntity;
     }
 
-    public async Task RemoveAsync<TEntity>(string id) where TEntity : class
+    public async Task DeleteAsync<TEntity>(string id) where TEntity : class
     {
         if (!Guid.TryParse(id, out var guid)) throw new Exception("Invalid Id");
         var info = typeof(TEntity).GetProperty("Id");
