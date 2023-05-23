@@ -17,4 +17,12 @@
       <PackageReference Include="RestSharp" Version="110.2.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Images\No_Image_Available.jpg" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\images\No_Image_Available.jpg" />
+    </ItemGroup>
+
 </Project>

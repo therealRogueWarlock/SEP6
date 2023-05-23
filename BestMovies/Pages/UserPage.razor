@@ -1,11 +1,8 @@
 @page "/UserPage/{userOfPageID?}"
-@using BestMovies.Models
-@using BestMovies.Data.CustomServices
-@using System.Security.Claims
 @using BestMovies.DataAccess
 @using BestMovies.Models.ApiModels
 @using BestMovies.Models.DbModels
-
+@using BestMovies.Services
 
 @inject IUserLoginService UserLoginService
 @inject IUserDao UserData
@@ -16,8 +13,9 @@
         <em>Loading...</em>
     </p>
 }
-else if(_userOfPage== null){
-    
+
+else if (_userOfPage == null)
+{
     <p>
         <em>No User found :/</em>
     </p>
@@ -40,7 +38,7 @@ else
             <MudCard>
                 <MudCardContent>
                     <div style="border: 1px solid #ccc; padding: 10px;">
-                        <h3>Movie List</h3>
+                        <h3>Favorite Movies</h3>
                         <!-- Movie list -->
                         @if (_movies != null)
                         {
@@ -91,25 +89,24 @@ else
 }
 
 @code {
-    
+
     [Parameter]
     public string userOfPageID { get; set; }
     
     bool _loading = true;
-    
+
     User? _userOfPage;
     User? _currentUser;
-    
+
     List<FanMovie>? _fanMovies;
     List<Movie>? _movies;
 
     protected override async Task OnInitializedAsync()
     {
-        
         _currentUser = await UserLoginService.GetCurrentUserAsync();
-        
+
         _userOfPage = _currentUser;
-        
+
         if (!userOfPageID.Equals(new Guid()))
         {
             try
@@ -120,14 +117,8 @@ else
             {
                 Console.WriteLine(e);
             }
-        } 
-        
+        }
+
         _loading = false;
-        
     }
-    
-    
-     
-    
-    
 }

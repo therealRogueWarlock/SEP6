@@ -1,5 +1,6 @@
 ﻿using BestMovies.DataAccess;
 using BestMovies.Models;
+using BestMovies.Models.ApiModels;
 
 namespace BestMovies.Services.implementation;
 

@@ -1,7 +1,12 @@
 ﻿@using BestMovies.Models
 @using Microsoft.IdentityModel.Tokens
 @using BestMovies.Services
+@using System.Security.Cryptography
+@using BestMovies.Models.ApiModels
 @inject ISearchService SearchService
+@inject NavigationManager NavigationManager
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
 
 <MudPaper Outlined MaxHeight="50px">
     <MudStack Row Spacing="0" Style="margin-left: 8px; margin-right: 8px">
@@ -12,9 +17,17 @@
             <MudSelectItem Value="@("tv")">Tv-Shows</MudSelectItem>
             <MudSelectItem Value="@("person")">Celebs</MudSelectItem>
         </MudSelect>
-        <MudTextField @bind-Value="SearchString" FullWidth Style="margin-top: 8px; min-width: 400px"
-                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"
-                      Margin="Margin.Dense" DisableUnderLine Immediate TextChanged="SearchHandler"/>
+
+        @* Search Field *@
+        <MudTextField @bind-Value="SearchString"
+                      FullWidth Style="margin-top: 8px; min-width: 400px"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      Margin="Margin.Dense"
+                      DisableUnderLine
+                      DebounceInterval="1f"
+                      OnDebounceIntervalElapsed="SearchHandler"
+                      OnKeyDown="CheckKeyDown"/>
     </MudStack>
     @if (!SearchResults.IsNullOrEmpty())
     {
@@ -24,7 +37,7 @@
                 {
                     <MudListItem OnClick="@(() => ResultClickHandler(result))">
                         <MudStack Row AlignItems="AlignItems.Center">
-                            <img src="@($"https://image.tmdb.org/t/p/w45{result.Image}")" alt="poster"/>
+                            <img src="@GetImage(result.Image)" width="45" alt="poster"/>
                             @result.Name
                         </MudStack>
                     </MudListItem>
@@ -40,6 +53,27 @@
     private string SearchString { get; set; } = "";
     private List<SearchResult> SearchResults { get; set; } = new();
 
+    void CheckKeyDown(KeyboardEventArgs eventArgs)
+    {
+        if (eventArgs.Key == "Enter")
+        {
+            try
+            {
+                PerformSearch();
+            }
+            catch (ArgumentException e)
+            {
+                Snackbar.Add("Field cannot be empty", Severity.Error, key: "SearchError");
+            }
+        }
+    }
+
+    private string GetIcon(SearchResult result)
+    {
+        if (result.KnownFor is not null) return Icons.Material.Filled.Person;
+        return result.FirstAirDate is not null ? Icons.Material.Filled.Tv : Icons.Material.Filled.LocalMovies;
+    }
+
     private async Task SearchHandler()
     {
         if (SearchString.IsNullOrEmpty())
@@ -53,8 +87,41 @@
 
     private void ResultClickHandler(SearchResult result)
     {
+    // maybe we need another solution for this
+
+    // Navigate to the selected item
+        switch (result.GetEntityType())
+        {
+            case EntityType.Movie:
+                NavigationManager.NavigateTo($"/Movie/{result.Id}", true);
+                break;
+            case EntityType.Tv:
+                break;
+            case EntityType.Actor:
+                break;
+            case EntityType.Director:
+                break;
+            case EntityType.Producer:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private string GetImage(string? imagePath)
+    {
+        if (imagePath.IsNullOrEmpty()) return ConfigVariables.NoImage;
+        else return $"https://image.tmdb.org/t/p/w45{imagePath}";
+    }
+    
+    private void PerformSearch()
+    {
+    // Navigate and clear the Search String
+        if (SearchString.IsNullOrEmpty())
+            throw new ArgumentException("Argument cannot be empty", nameof(SearchString));
         
+        Navigation.NavigateTo($"/Search/{SearchTerm}/{SearchString}", true);
+        StateHasChanged();
     }
 
 }
-

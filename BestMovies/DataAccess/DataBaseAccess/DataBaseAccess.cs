@@ -1,4 +1,4 @@
-﻿using BestMovies.DataAccess.DataBaseAccess.util;
+using BestMovies.DataAccess.DataBaseAccess.util;
 using Microsoft.EntityFrameworkCore;
 
 namespace BestMovies.DataAccess.DataBaseAccess;

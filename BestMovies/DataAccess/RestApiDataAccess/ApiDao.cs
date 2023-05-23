@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using BestMovies.Models;
+using BestMovies.Models.ApiModels;
 using Newtonsoft.Json;
 
 namespace BestMovies.DataAccess.RestApiDataAccess;
