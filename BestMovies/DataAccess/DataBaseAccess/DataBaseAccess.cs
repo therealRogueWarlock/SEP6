@@ -1,6 +1,4 @@
-﻿using BestMovies.Data;
-using BestMovies.DataAccess.DataBaseAccess.util;
-using BestMovies.Models;
+﻿using BestMovies.DataAccess.DataBaseAccess.util;
 using BestMovies.Models.DbModels;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +6,26 @@ namespace BestMovies.DataAccess.DataBaseAccess;
 
 public class DataBaseAccess : IDataBaseAccess
 {
-    
+
+    public async Task<TEntity> AddAsync<TEntity>(TEntity entity)
+    {
+        if (entity is null) throw new Exception("Bad entity");
+        await using var context = new Context();
+        await context.AddAsync(entity);
+        await context.SaveChangesAsync();
+        return entity;
+    }
+
+    public async Task<TEntity?> GetAsync<TEntity>(string id) where TEntity : class
+    {
+        if (!Guid.TryParse(id, out var guid)) throw new Exception("Invalid Id");
+        var info = typeof(TEntity).GetProperty("Id");
+        await using var context = new Context();
+        return await context.Set<TEntity>()
+            .Where(x => (Guid) info!.GetValue(x)! == guid)
+            .SingleOrDefaultAsync();
+    }
+
     public async Task<User?> GetUserAsync(string username, string password)
     {
         await using var context = new Context();
@@ -29,5 +46,23 @@ public class DataBaseAccess : IDataBaseAccess
             .SingleAsync();
 
         return user.Username;
+    }
+
+    public async Task<List<Review>> GetReviewsOfAsync(string subjectId)
+    {
+        if (!int.TryParse(subjectId, out var id)) throw new Exception("Invalid Id");
+
+        await using var context = new Context();
+        return await context.Set<Review>()
+            .Where(r => r.MovieId == id)
+            .ToListAsync();
+    }
+
+    public async Task<List<Comment>> GetCommentsOfAsync(string subjectId)
+    {
+        await using var context = new Context();
+        return await context.Set<Comment>()
+            .Where(c => c.SubjectId == subjectId)
+            .ToListAsync();
     }
 }
