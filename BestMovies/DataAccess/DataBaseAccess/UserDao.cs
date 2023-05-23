@@ -16,34 +16,29 @@ public class UserDao : IUserDao
         return await _dataBaseAccess.GetUserAsync(username, password);
     }
 
-    public Task<string> GetUsernameFromId(Guid id)
+    public async Task<string> GetUsernameFromIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.GetUsernameFromIdAsync(id);
     }
 
-    public Task<User> AddAsync(User obj)
+    public async Task<User> AddAsync(User obj)
     {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.AddAsync(obj);
     }
 
-    public Task<User> DeleteAsync(string guid)
+    public async Task DeleteAsync(string guid)
     {
-        throw new NotImplementedException();
+        await _dataBaseAccess.DeleteAsync<User>(guid);
     }
     
-    public Task<User> UpdateAsync(User obj)
+    public async Task<User> UpdateAsync(User obj)
     {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.UpdateAsync(obj);
     }
 
-    public Task<User> GetAsync(string guid)
+    public async Task<User?> GetAsync(string guid)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<User>> GetCollectionAsync(Func<User> searchFunc)
-    {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.GetAsync<User>(guid);
     }
     
 }
