@@ -9,6 +9,6 @@ public interface IDataCrud<T>
 
     public Task<T> UpdateAsync(T obj);
 
-    public Task<T> GetAsync(string guid);
+    public Task<T?> GetAsync(string guid);
     
 }

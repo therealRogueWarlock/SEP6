@@ -20,7 +20,7 @@ public class FanMovieDao : IFanMovieDao
         throw new NotImplementedException();
     }
 
-    public Task<FanMovie> GetAsync(string guid)
+    public Task<FanMovie?> GetAsync(string guid)
     {
         throw new NotImplementedException();
     }
