@@ -9,25 +9,25 @@ namespace BestMovies.Services.implementation
     {
         
         private readonly IJSRuntime _jsRuntime;
-        private readonly IUserDao _userData;
+        private readonly IUserDao _userDao;
         private User? _currentUser;
 
-        public UserLoginService(IJSRuntime jsRuntime, IUserDao userData)
+        public UserLoginService(IJSRuntime jsRuntime, IUserDao userDao)
         {
-            _userData = userData;
+            _userDao = userDao;
             _jsRuntime = jsRuntime;
         }
         
         public async Task<User?> Validate(string username, string password)
         {
-            _currentUser = await _userData.GetUser(username, password);
+            _currentUser = await _userDao.GetUser(username, password);
             await CashUser(_currentUser);
             return _currentUser;
         }
 
-        public Task RegisterUser(User newUser)
+        public async Task RegisterUser(User newUser)
         {
-            throw new NotImplementedException();
+            await _userDao.AddAsync(newUser);
         }
 
         public async Task<User?> GetCurrentUserAsync()
