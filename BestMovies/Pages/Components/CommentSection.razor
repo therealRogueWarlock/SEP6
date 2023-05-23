@@ -14,8 +14,11 @@
     <MudCardContent>
         @* Writing a new comment *@
         <Authorized>
-            <MudTextField @bind-Value="@_newCommentText" Label="Add a comment" Multiline="true" Rows="3" Variant="Variant.Filled"/>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@string.IsNullOrEmpty(_newCommentText)" @onclick="AddComment">Post Comment</MudButton>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudTextField @bind-Value="@_newCommentText" Immediate Label="Add a comment" Multiline="true" Rows="3" Variant="Variant.Filled"/>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="@string.IsNullOrEmpty(_newCommentText)" @onclick="AddComment">Post Comment</MudButton>
+            </MudStack>
+            <MudDivider/>
         </Authorized>
 
         @* List of all comments *@
@@ -23,7 +26,7 @@
             @foreach (var comment in _comments)
             {
                 <MudStack Row Style="margin: 1em;">
-                    <MudStack Style="@("background-color: var(--mud-palette-primary); border-radius: .2em; padding: .2em")">
+                    <MudStack AlignItems="AlignItems.Center" Style="@("background-color: var(--mud-palette-primary-lighten); border-radius: .2em; padding: .2em")">
                         <MudAvatar>@GetNameOfUser(comment.UserId.ToString()).Result[0]</MudAvatar>
                         <MudText>@GetNameOfUser(comment.UserId.ToString()).Result</MudText>
                     </MudStack>
@@ -50,7 +53,7 @@
         _comments = await UserInteractionService.GetCommentsOfAsync(SubjectId);
 
         Console.WriteLine($"Comments: {_comments.Count}");
-        // _comments.Reverse();
+    // _comments.Reverse();
     }
 
     protected override async Task OnParametersSetAsync()
@@ -76,5 +79,4 @@
             return "Not Yet Implemented";
         }
     }
-
 }
