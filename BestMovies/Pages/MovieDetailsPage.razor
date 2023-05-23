@@ -44,7 +44,8 @@
                             </MudStack>
                         </MudStack>
                     </MudStack>
-
+                    
+                    <MudSpacer/>
                     <MudDivider Vertical="true" FlexItem="true"/>
 
                     @* Right side [Poster, Genre, Stats] *@
@@ -147,7 +148,8 @@
         _title = _movieData.Title;
         _originalTitle = _movieData.OriginalTitle;
 
-        _imagePath = $"https://image.tmdb.org/t/p/w200{_movieData.PosterPath}";
+        // Sets the Image to "No Image" default if no poster is found
+        _imagePath = _movieData.PosterPath.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w200{_movieData.PosterPath}";
 
         _runtime = _movieData.Runtime ?? -1;
 
