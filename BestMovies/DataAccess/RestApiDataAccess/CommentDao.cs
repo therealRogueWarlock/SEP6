@@ -16,9 +16,9 @@ public class CommentDao : ICommentDao
         _dataBaseAccess = dataBaseAccess;
     }
     
-    public Task<Comment> AddAsync(Comment obj)
+    public async Task<Comment> AddAsync(Comment obj)
     {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.AddAsync(obj);
     }
 
     public Task DeleteAsync(string guid)
