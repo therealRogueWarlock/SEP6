@@ -1,4 +1,6 @@
-﻿using BestMovies.Models.DbModels;
+﻿using BestMovies.DataAccess.DataBaseAccess.util;
+using BestMovies.Models.DbModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace BestMovies.DataAccess.DataBaseAccess;
 
@@ -10,15 +12,27 @@ public class UserDao : IUserDao
     {
         _dataBaseAccess = dataBaseAccess;
     }
-
-    public async Task<User?> GetUser(string username, string password)
+    
+    public async Task<User?> GetUserAsync(string username, string password)
     {
-        return await _dataBaseAccess.GetUserAsync(username, password);
+        await using var context = new Context();
+        return await context.Set<User>()
+            .Where(u => u.Username == username && u.PasswordHash == password)
+            .Include(u => u.Favourites)
+            .Include(u => u.Reviews)
+            .Include(u => u.FanMovies)
+            .ThenInclude(fm => fm.LinkedEntities)
+            .SingleOrDefaultAsync();
     }
 
     public async Task<string> GetUsernameFromIdAsync(Guid id)
     {
-        return await _dataBaseAccess.GetUsernameFromIdAsync(id);
+        await using var context = new Context();
+        var user = await context.Set<User>()
+            .Where(u => u.Id == id)
+            .SingleAsync();
+
+        return user.Username;
     }
 
     public async Task<User> AddAsync(User obj)
