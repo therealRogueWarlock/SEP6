@@ -32,7 +32,7 @@
                     </MudStack>
                     <MudText Typo="Typo.body1">@comment.Text</MudText>
                     <MudSpacer/>
-                    @* <MudText Typo="Typo.overline">@GetDate(comment.Timestamp)</MudText> *@
+                    <MudText Typo="Typo.overline">@GetDate(comment.Timestamp)</MudText>
                 </MudStack>
             }
         </div>
@@ -55,11 +55,9 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        Console.WriteLine($"Movie Id: {SubjectId}");
         _comments = await UserInteractionService.GetCommentsOfAsync(SubjectId);
 
-        Console.WriteLine($"Comments: {_comments.Count}");
-    // _comments.Reverse();
+        _comments.Reverse();
     }
 
 
@@ -67,8 +65,10 @@
     {
         Console.WriteLine("Create new comment " + _newCommentText);
         var currentUser = await UserLoginService.GetCurrentUserAsync();
-        var newComment = new Comment { Id = Guid.Empty, SubjectId = SubjectId, UserId = currentUser.Id, Text = _newCommentText, /*Timestamp = DateTime.UtcNow*/ };
+        Comment newComment = new Comment { Id = Guid.Empty, SubjectId = SubjectId, UserId = currentUser.Id, Text = _newCommentText, Timestamp = DateTime.UtcNow };
         UserInteractionService.AddCommentAsync(newComment);
+        _comments.Insert(0,newComment);
+        _newCommentText = "";
     }
 
     async Task<string> GetNameOfUser(string userid)

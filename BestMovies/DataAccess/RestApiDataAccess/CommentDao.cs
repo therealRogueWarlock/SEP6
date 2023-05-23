@@ -41,6 +41,7 @@ public class CommentDao : ICommentDao
         await using var context = new Context();
         return await context.Set<Comment>()
             .Where(c => c.SubjectId == subjectId)
+            .OrderBy(c => c.Timestamp)
             .ToListAsync();
     }
 }

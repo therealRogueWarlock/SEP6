@@ -68,12 +68,6 @@
         }
     }
 
-    private string GetIcon(SearchResult result)
-    {
-        if (result.KnownFor is not null) return Icons.Material.Filled.Person;
-        return result.FirstAirDate is not null ? Icons.Material.Filled.Tv : Icons.Material.Filled.LocalMovies;
-    }
-
     private async Task SearchHandler()
     {
         if (SearchString.IsNullOrEmpty())
