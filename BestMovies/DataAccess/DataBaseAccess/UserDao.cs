@@ -1,4 +1,6 @@
-﻿using BestMovies.Models.DbModels;
+﻿using BestMovies.DataAccess.DataBaseAccess.util;
+using BestMovies.Models.DbModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace BestMovies.DataAccess.DataBaseAccess;
 
@@ -10,40 +12,47 @@ public class UserDao : IUserDao
     {
         _dataBaseAccess = dataBaseAccess;
     }
-
-    public async Task<User?> GetUser(string username, string password)
+    
+    public async Task<User?> GetUserAsync(string username, string password)
     {
-        return await _dataBaseAccess.GetUserAsync(username, password);
+        await using var context = new Context();
+        return await context.Set<User>()
+            .Where(u => u.Username == username && u.PasswordHash == password)
+            .Include(u => u.Favourites)
+            .Include(u => u.Reviews)
+            .Include(u => u.FanMovies)
+            .ThenInclude(fm => fm.LinkedEntities)
+            .SingleOrDefaultAsync();
     }
 
-    public Task<string> GetUsernameFromId(Guid id)
+    public async Task<string> GetUsernameFromIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        await using var context = new Context();
+        var user = await context.Set<User>()
+            .Where(u => u.Id == id)
+            .SingleAsync();
+
+        return user.Username;
     }
 
-    public Task<User> AddAsync(User obj)
+    public async Task<User> AddAsync(User obj)
     {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.AddAsync(obj);
     }
 
-    public Task<User> DeleteAsync(string guid)
+    public async Task DeleteAsync(string guid)
     {
-        throw new NotImplementedException();
+        await _dataBaseAccess.DeleteAsync<User>(guid);
     }
     
-    public Task<User> UpdateAsync(User obj)
+    public async Task<User> UpdateAsync(User obj)
     {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.UpdateAsync(obj);
     }
 
-    public Task<User> GetAsync(string guid)
+    public async Task<User?> GetAsync(string guid)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<User>> GetCollectionAsync(Func<User> searchFunc)
-    {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.GetAsync<User>(guid);
     }
     
 }
