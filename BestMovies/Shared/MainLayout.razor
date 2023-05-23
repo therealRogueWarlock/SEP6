@@ -1,8 +1,9 @@
 ﻿@using BestMovies.Services
+@using BestMovies.Services.implementation
 @inherits LayoutComponentBase
 @* @inject NavigationManager Navigation *@
 @inject IUserLoginService LoginService
-
+@inject AuthenticationStateProvider AuthenticationStateProvider
 <PageTitle>BestMovies</PageTitle>
 
 <MudThemeProvider Theme="_theme"/>
@@ -21,9 +22,10 @@
     <AuthorizeView>
         <Authorized>
             <MudIconButton Icon="@Icons.Material.Filled.Person" href="/Account"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Logout" href="/" OnClick="PerformLogout"/>
         </Authorized>
         <NotAuthorized>
-            <MudIconButton Icon="@Icons.Material.Filled.Person" href="/Login"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Login" href="/Login"/>
         </NotAuthorized>
     </AuthorizeView>
 </MudAppBar>
@@ -48,4 +50,10 @@
         }
     };
 
+
+    public async Task PerformLogout()
+    {
+        
+        ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Logout();
+    }
 }
