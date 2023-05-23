@@ -1,6 +1,7 @@
 @page "/CreateUser"
 @using System.Text.RegularExpressions
 @using BestMovies.Models.DbModels
+@using BestMovies.Pages.util
 @using BestMovies.Services
 
 @inject NavigationManager NavigationManager
@@ -46,7 +47,7 @@
         form.Validate();
         if(!form.IsValid) return;
         
-        LoginService.RegisterUser(new User{Username = userName.Text, PasswordHash = pwField1.Text,SecurityLevel = 1});
+        LoginService.RegisterUser(new User{Username = userName.Text, PasswordHash = PasswordHashing.HashString(pwField1.Text),SecurityLevel = 1});
         
         NavigationManager.NavigateTo(NavigateTo ?? "/");
     }
@@ -74,7 +75,6 @@
             return "Passwords don't match";
         return null;
     }
-    
 }
 
 
