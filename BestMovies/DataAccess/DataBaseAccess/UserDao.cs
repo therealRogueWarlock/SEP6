@@ -36,7 +36,7 @@ public class UserDao : IUserDao
         return await _dataBaseAccess.UpdateAsync(obj);
     }
 
-    public async Task<User> GetAsync(string guid)
+    public async Task<User?> GetAsync(string guid)
     {
         return await _dataBaseAccess.GetAsync<User>(guid);
     }

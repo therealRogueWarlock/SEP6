@@ -12,5 +12,5 @@ public interface IDataBaseAccess
     Task<TEntity> AddAsync<TEntity>(TEntity obj);
     Task DeleteAsync<TEntity>(string guid) where TEntity : class;
     Task<TEntity> UpdateAsync<TEntity>(TEntity obj) where TEntity : class;
-    Task<TEntity> GetAsync<TEntity>(string guid) where TEntity : class;
+    Task<TEntity?> GetAsync<TEntity>(string guid) where TEntity : class;
 }
