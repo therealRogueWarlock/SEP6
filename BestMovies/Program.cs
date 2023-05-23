@@ -25,6 +25,7 @@ builder.Services.AddScoped<IApiDao, ApiDao>();
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IUserInteractionService, UserInteractionService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // login service
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();

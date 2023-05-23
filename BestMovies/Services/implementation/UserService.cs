@@ -6,14 +6,17 @@ namespace BestMovies.Services.implementation;
 public class UserService : IUserService
 {
     
-    
-    private readonly IUserDao _userInteractionDao;
-
+    private readonly IUserDao _userDao;
     
     
     public Task<User> GetAsync(string guid)
     {
+        
+        return _userDao.GetAsync(guid);
+    }
+
+    public Task<string> GetUserName(string guid)
+    {
         throw new NotImplementedException();
     }
-    
 }
