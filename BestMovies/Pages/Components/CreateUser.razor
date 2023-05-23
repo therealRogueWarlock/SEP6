@@ -30,8 +30,10 @@
 </MudGrid>
 
 
-
 @code {
+    
+    [Parameter]
+    public string? NavigateTo { get; set; }
     
     bool success;
     MudTextField<string> userName;
@@ -46,6 +48,7 @@
         
         LoginService.RegisterUser(new User{Username = userName.Text, PasswordHash = pwField1.Text,SecurityLevel = 1});
         
+        NavigationManager.NavigateTo(NavigateTo ?? "/");
     }
     
     private IEnumerable<string> PasswordStrength(string pw)
