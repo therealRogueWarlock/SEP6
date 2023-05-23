@@ -55,19 +55,5 @@
             Snackbar.Add("Invalid login!", Severity.Error, key: "LoginError");
         }
     }
-
-    public async Task PerformLogout()
-    {
-        _errorMessage = "";
-        _username = "";
-        _password = "";
-        try
-        {
-            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Logout();
-            NavigationManager.NavigateTo("/");
-        }
-        catch (Exception e)
-        {
-        }
-    }
+    
 }
