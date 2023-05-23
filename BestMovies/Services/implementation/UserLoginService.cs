@@ -23,7 +23,7 @@ namespace BestMovies.Data.CustomServices
         
         public async Task<User?> Validate(string username, string password)
         {
-            _currentUser = await _userData.GetUser(username, password);
+            _currentUser = await _userData.GetUserAsync(username, password);
             await CashUser(_currentUser);
             return _currentUser;
         }
