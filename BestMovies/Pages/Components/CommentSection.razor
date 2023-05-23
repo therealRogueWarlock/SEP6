@@ -65,7 +65,10 @@
     {
         Console.WriteLine("Create new comment " + _newCommentText);
         var currentUser = await UserLoginService.GetCurrentUserAsync();
-        UserInteractionService.AddCommentAsync(new Comment { Id = Guid.Empty, SubjectId = SubjectId, UserId = currentUser.Id, Text = _newCommentText });
+        Comment newComment = new Comment { Id = Guid.Empty, SubjectId = SubjectId, UserId = currentUser.Id, Text = _newCommentText };
+        UserInteractionService.AddCommentAsync(newComment);
+        _comments.Insert(0,newComment);
+        _newCommentText = "";
     }
 
     async Task<string> GetNameOfUser(string userid)
