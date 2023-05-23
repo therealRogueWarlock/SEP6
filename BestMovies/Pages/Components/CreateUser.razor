@@ -49,7 +49,8 @@
         
         LoginService.RegisterUser(new User{Username = userName.Text, PasswordHash = PasswordHashing.HashString(pwField1.Text),SecurityLevel = 1});
         
-        NavigationManager.NavigateTo(NavigateTo ?? "/");
+        NavigationManager.NavigateTo(NavigateTo ?? "/Login");
+        
     }
     
     private IEnumerable<string> PasswordStrength(string pw)

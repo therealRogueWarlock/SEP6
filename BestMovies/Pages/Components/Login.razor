@@ -47,11 +47,12 @@
             _username = "";
             _password = "";
             NavigationManager.NavigateTo("/");
+            Snackbar.Add("login successful!", Severity.Info);
         }
         catch (Exception e)
         {
             _errorMessage = e.Message;
-            Snackbar.Add(_errorMessage, Severity.Error, key: "LoginError");
+            Snackbar.Add("Invalid login!", Severity.Error, key: "LoginError");
         }
     }
 
