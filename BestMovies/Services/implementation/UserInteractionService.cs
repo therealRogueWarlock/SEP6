@@ -7,8 +7,7 @@ public class UserInteractionService : IUserInteractionService
 {
 
     private readonly IUserInteractionDao _userInteractionDao;
-    List<Comment> _dummyComments = new List<Comment>();
-
+    
     public UserInteractionService(IUserInteractionDao userInteractionDao)
     {
         _userInteractionDao = userInteractionDao;
@@ -16,34 +15,22 @@ public class UserInteractionService : IUserInteractionService
 
     public List<Review> GetReviewsOf(string subjectId)
     {
-        //return _userInteractionDao.GetReviewsOf(subjectId);
-        List<Review> _dummyReviews = new List<Review>();
-
-        return _dummyReviews;
+        return _userInteractionDao.GetReviewsOf(subjectId);
     }
 
     public List<Comment> GetCommentsOf(string subjectId)
     {
-        //return _userInteractionDao.GetCommentsOf(subjectId);
-
-        
-        _dummyComments.Add(new Comment{Id = Guid.NewGuid(),SubjectId = "john", Text = "Hey this is a comment", UserId = Guid.NewGuid()});
-        _dummyComments.Add(new Comment{Id = Guid.NewGuid(),SubjectId = "john", Text = "Hey this is a comment1", UserId = Guid.NewGuid()});
-        _dummyComments.Add(new Comment{Id = Guid.NewGuid(),SubjectId = "john", Text = "Hey this is a comment2", UserId = Guid.NewGuid()});
-        _dummyComments.Add(new Comment{Id = Guid.NewGuid(),SubjectId = "john", Text = "Hey this is a comment3", UserId = Guid.NewGuid()});
-        _dummyComments.Add(new Comment{Id = Guid.NewGuid(),SubjectId = "john", Text = "Hey this is a comment4", UserId = Guid.NewGuid()});
-
-        return _dummyComments;
+        return _userInteractionDao.GetCommentsOf(subjectId);
     }
 
-    public void AddReviewAsync(Review obj)
+    public async Task AddReviewAsync(Review obj)
     {
-        throw new NotImplementedException();
+        await _userInteractionDao.AddAsync(obj);
     }
 
-    public void AddCommentAsync(Comment obj)
+    public async Task AddCommentAsync(Comment obj)
     {
-        _dummyComments.Add(obj);
+        await _userInteractionDao.AddAsync(obj);
     }
 
     public Task<Comment> DeleteCommentAsync(string guid)

@@ -9,10 +9,10 @@ public interface IUserInteractionService
     
     public List<Comment> GetCommentsOf(string subjectId);
     
-    //fix
-    public void AddReviewAsync(Review obj);
+    
+    public Task AddReviewAsync(Review obj);
   
-    public void AddCommentAsync(Comment obj);
+    public Task AddCommentAsync(Comment obj);
     
     public Task<Comment> DeleteCommentAsync(string guid);
     
