@@ -7,6 +7,7 @@
 @using BestMovies.Models
 
 @inject IMovieService MovieService
+@inject IUserService UserService
 
 <MudContainer>
     <MudStack Row AlignItems="AlignItems.Center">
@@ -16,6 +17,12 @@
         <div hidden="@(!_adultRating)">
             <MudChip Text="ADULT MOVIE" Color="Color.Error" hidden="@(!_adultRating)" Variant="Variant.Filled"/>
         </div>
+        <MudSpacer/>
+        <Authorized>
+            <MudTooltip Text="Favourite">
+                <MudToggleIconButton @bind-Toggled="@Favourite" Size="Size.Large" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Star" ToggledIcon="@Icons.Material.Filled.Star" Color="Color.Secondary"/>
+            </MudTooltip>
+        </Authorized>
     </MudStack>
 
     <MudTabs Centered Rounded>
@@ -44,7 +51,7 @@
                             </MudStack>
                         </MudStack>
                     </MudStack>
-                    
+
                     <MudSpacer/>
                     <MudDivider Vertical="true" FlexItem="true"/>
 
@@ -131,6 +138,17 @@
     private Movie _movieData;
     private string _title = "?";
 
+    private bool _favourite;
+    bool Favourite
+    {
+        get => _favourite;
+        set
+        {
+            _favourite = value;
+            SetFavouriteAsync();
+        }
+    }
+
     #region Details
 
     private string _originalTitle = "?";
@@ -148,7 +166,7 @@
         _title = _movieData.Title;
         _originalTitle = _movieData.OriginalTitle;
 
-        // Sets the Image to "No Image" default if no poster is found
+    // Sets the Image to "No Image" default if no poster is found
         _imagePath = _movieData.PosterPath.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w200{_movieData.PosterPath}";
 
         _runtime = _movieData.Runtime ?? -1;
@@ -202,7 +220,7 @@
 
     private List<Review> _reviews;
     public string UserComment { get; set; }
-
+    
     private async Task SetupReviews()
     {
         _reviews = new();
@@ -236,6 +254,24 @@
         SetupDetails();
         SetupCast();
         SetupReviews();
+
+        _favourite = false; // TODO: Change this to use the Service instead
+    }
+
+    private async Task SetFavouriteAsync()
+    {
+        if (!_favourite)
+        {
+            // TODO: Add this Movie to the User Favourites
+            Console.WriteLine($"Adding {_title} as Favourite");
+        }
+        else
+        {
+            // TODO: Remove the Movie from the User Favourites
+            Console.WriteLine($"Removing {_title} from Favourites");
+        }
+
+    // UserService.AddFavourite(MovieID);
     }
 
 }
