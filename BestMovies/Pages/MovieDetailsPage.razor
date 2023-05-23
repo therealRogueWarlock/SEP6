@@ -44,7 +44,8 @@
                             </MudStack>
                         </MudStack>
                     </MudStack>
-
+                    
+                    <MudSpacer/>
                     <MudDivider Vertical="true" FlexItem="true"/>
 
                     @* Right side [Poster, Genre, Stats] *@
@@ -138,7 +139,7 @@
     private List<Genre> _genres = new();
     private bool _adultRating;
     private int _budget;
-    private int _revenue;
+    private long _revenue;
     private int _runtime;
     private DateOnly _releaseDate;
 
@@ -147,13 +148,18 @@
         _title = _movieData.Title;
         _originalTitle = _movieData.OriginalTitle;
 
-        _imagePath = $"https://image.tmdb.org/t/p/w200{_movieData.PosterPath}";
+        // Sets the Image to "No Image" default if no poster is found
+        _imagePath = _movieData.PosterPath.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w200{_movieData.PosterPath}";
 
         _runtime = _movieData.Runtime ?? -1;
 
         _genres = _movieData.Genres;
 
         _adultRating = _movieData.Adult ?? false;
+        if (_adultRating)
+        {
+            Console.WriteLine("ITS PORN");
+        }
 
         _releaseDate = DateOnly.Parse(_movieData.ReleaseDate);
 

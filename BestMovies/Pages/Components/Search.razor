@@ -37,7 +37,7 @@
                 {
                     <MudListItem OnClick="@(() => ResultClickHandler(result))">
                         <MudStack Row AlignItems="AlignItems.Center">
-                            <img src="@($"https://image.tmdb.org/t/p/w45{result.Image}")" alt="poster"/>
+                            <img src="@GetImage(result.Image)" width="45" alt="poster"/>
                             @result.Name
                         </MudStack>
                     </MudListItem>
@@ -108,6 +108,12 @@
         }
     }
 
+    private string GetImage(string? imagePath)
+    {
+        if (imagePath.IsNullOrEmpty()) return ConfigVariables.NoImage;
+        else return $"https://image.tmdb.org/t/p/w45{imagePath}";
+    }
+    
     private void PerformSearch()
     {
     // Navigate and clear the Search String
