@@ -22,15 +22,13 @@ else if (_userOfPage == null)
 }
 else
 {
-    <MudGrid href="@_currentUser">
+    <MudGrid href="@_userOfPage">
         <MudItem xs="12" md="6">
             <MudCard>
                 <MudCardContent>
                     <h3>User Details</h3>
                     <!-- User information -->
-                    <p>Name: John Doe</p>
-                    <p>Email: john.doe@example.com</p>
-                    <p>Age: 30</p>
+                    <p>Name: @_userOfPage.Username</p>
                 </MudCardContent>
             </MudCard>
         </MudItem>
@@ -106,19 +104,20 @@ else
         _currentUser = await UserLoginService.GetCurrentUserAsync();
 
         _userOfPage = _currentUser;
-
-        if (!userOfPageID.Equals(new Guid()))
+        Console.WriteLine(userOfPageID);
+        if (userOfPageID != null)
         {
             try
             {
                 _userOfPage = await UserData.GetAsync(userOfPageID);
+                Console.WriteLine(_userOfPage.Username);
+                _fanMovies = _userOfPage.FanMovies;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
         }
-
         _loading = false;
     }
 }
