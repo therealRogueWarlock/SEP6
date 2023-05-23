@@ -23,13 +23,13 @@ public class MovieRestApiDao : IMovieDao
         return movie ?? new Movie();
     }
 
-    public async Task<List<Movie>> GetTrendingMoviesAsync()
+    public async Task<TrendingMovieWrapper> GetTrendingMoviesAsync()
     {
-        var url = "movie/week";
+        var url = "trending/movie/week";
         var response = await _api.SendRequestAsync(url);
 
-        var movies = JsonConvert.DeserializeObject<List<Movie>>(response.Content!);
-        return movies ?? new List<Movie>();
+        var movies = JsonConvert.DeserializeObject<TrendingMovieWrapper>(response.Content!);
+        return movies ?? new TrendingMovieWrapper();
     }
 
     public async Task<Credits> GetCreditsFromMovie(string idString)

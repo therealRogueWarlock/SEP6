@@ -6,7 +6,7 @@ namespace BestMovies.Services.implementation;
 public class MovieService : IMovieService
 {
 
-    private IMovieDao _movieDao;
+    private readonly IMovieDao _movieDao;
 
 
     public MovieService(IMovieDao movieDao)
@@ -17,5 +17,10 @@ public class MovieService : IMovieService
     public Task<Movie> GetMovieAsync(string idString)
     {
         return _movieDao.GetMovieAsync(idString);
+    }
+
+    public Task<TrendingMovieWrapper> GetTrendingMoviesAsync()
+    {
+        return _movieDao.GetTrendingMoviesAsync();
     }
 }
