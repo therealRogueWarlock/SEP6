@@ -13,24 +13,24 @@ public class UserInteractionService : IUserInteractionService
         _userInteractionDao = userInteractionDao;
     }
 
-    public List<Review> GetReviewsOf(string subjectId)
+    public async Task<List<Review>> GetReviewsOfAsync(string subjectId)
     {
-        return _userInteractionDao.GetReviewsOf(subjectId);
+        return await _userInteractionDao.GetReviewsOfAsync(subjectId);
     }
 
-    public List<Comment> GetCommentsOf(string subjectId)
+    public async Task<List<Comment>> GetCommentsOfAsync(string subjectId)
     {
-        return _userInteractionDao.GetCommentsOf(subjectId);
+        return await _userInteractionDao.GetCommentsOfAsync(subjectId);
     }
 
     public async Task AddReviewAsync(Review obj)
     {
-        await _userInteractionDao.AddAsync(obj);
+        // await _userInteractionDao.AddAsync(obj);
     }
 
     public async Task AddCommentAsync(Comment obj)
     {
-        await _userInteractionDao.AddAsync(obj);
+        // await _userInteractionDao.AddAsync(obj);
     }
 
     public Task<Comment> DeleteCommentAsync(string guid)

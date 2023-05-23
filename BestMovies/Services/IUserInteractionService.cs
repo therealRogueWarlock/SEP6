@@ -5,9 +5,9 @@ namespace BestMovies.Services;
 public interface IUserInteractionService
 {
     
-    public List<Review> GetReviewsOf(string subjectId);
+    public Task<List<Review>> GetReviewsOfAsync(string subjectId);
     
-    public List<Comment> GetCommentsOf(string subjectId);
+    public Task<List<Comment>> GetCommentsOfAsync(string subjectId);
     
     
     public Task AddReviewAsync(Review obj);

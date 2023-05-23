@@ -81,7 +81,7 @@
                 </MudStack>
             </MudPaper>
             
-            <CommentSection SubjectId="MovieId"/>
+            <CommentSection SubjectId="@MovieId"/>
         </MudTabPanel>
 
         @* Cast Page *@
@@ -226,7 +226,6 @@
     protected override async Task OnParametersSetAsync()
     {
         _movieData = await MovieService.GetMovieAsync(MovieId);
-
 
         SetupDetails();
         SetupCast();

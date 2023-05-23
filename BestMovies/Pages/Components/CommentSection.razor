@@ -22,13 +22,14 @@
         <div>
             @foreach (var comment in _comments)
             {
-                <MudStack Row Style="margin: 1em;">
-                    <MudStack Style="@("background-color: var(--mud-palette-primary); border-radius: .2em; padding: .2em")">
-                        <MudAvatar>@GetNameOfUser(comment.UserId.ToString()).Result[0]</MudAvatar>
-                        <MudText>@GetNameOfUser(comment.UserId.ToString()).Result</MudText>
-                    </MudStack>
-                    <MudText Typo="Typo.body1">@comment.Text</MudText>
-                </MudStack>
+                <div><p>Comment</p></div>
+                @* <MudStack Row Style="margin: 1em;"> *@
+                @*     <MudStack Style="@("background-color: var(--mud-palette-primary); border-radius: .2em; padding: .2em")"> *@
+                @*         <MudAvatar>@GetNameOfUser(comment.UserId.ToString()).Result[0]</MudAvatar> *@
+                @*         <MudText>@GetNameOfUser(comment.UserId.ToString()).Result</MudText> *@
+                @*     </MudStack> *@
+                @*     <MudText Typo="Typo.body1">@comment.Text</MudText> *@
+                @* </MudStack> *@
             }
         </div>
     </MudCardContent>
@@ -42,11 +43,15 @@
 
     string _newCommentText;
 
-    List<Comment> _comments;
+    List<Comment> _comments = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _comments = UserInteractionService.GetCommentsOf(SubjectId);
+        Console.WriteLine($"Movie Id: {SubjectId}");
+        _comments = await UserInteractionService.GetCommentsOfAsync(SubjectId);
+
+        Console.WriteLine($"Comments: {_comments.Count}");
+        // _comments.Reverse();
     }
 
     protected override async Task OnParametersSetAsync()
