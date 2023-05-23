@@ -31,6 +31,8 @@
                         <MudText>@GetNameOfUser(comment.UserId.ToString()).Result</MudText>
                     </MudStack>
                     <MudText Typo="Typo.body1">@comment.Text</MudText>
+                    <MudSpacer/>
+                    <MudText Typo="Typo.overline">@GetDate(comment.Timestamp)</MudText>
                 </MudStack>
             }
         </div>
@@ -49,15 +51,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine($"Movie Id: {SubjectId}");
-        _comments = await UserInteractionService.GetCommentsOfAsync(SubjectId);
-
-        Console.WriteLine($"Comments: {_comments.Count}");
-    // _comments.Reverse();
     }
 
     protected override async Task OnParametersSetAsync()
     {
+        _comments = await UserInteractionService.GetCommentsOfAsync(SubjectId);
+
+        _comments.Reverse();
     }
 
 
@@ -65,7 +65,10 @@
     {
         Console.WriteLine("Create new comment " + _newCommentText);
         var currentUser = await UserLoginService.GetCurrentUserAsync();
-        UserInteractionService.AddCommentAsync(new Comment { Id = Guid.Empty, SubjectId = SubjectId, UserId = currentUser.Id, Text = _newCommentText });
+        Comment newComment = new Comment { Id = Guid.Empty, SubjectId = SubjectId, UserId = currentUser.Id, Text = _newCommentText, Timestamp = DateTime.UtcNow };
+        UserInteractionService.AddCommentAsync(newComment);
+        _comments.Insert(0,newComment);
+        _newCommentText = "";
     }
 
     async Task<string> GetNameOfUser(string userid)
@@ -78,5 +81,10 @@
         {
             return "Not Yet Implemented";
         }
+    }
+
+    DateOnly GetDate(DateTime dateTime)
+    {
+        return DateOnly.FromDateTime(dateTime);
     }
 }

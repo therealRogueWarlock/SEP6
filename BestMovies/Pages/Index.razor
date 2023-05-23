@@ -1,53 +1,40 @@
 ﻿@page "/"
 @using System.ComponentModel
+@using BestMovies.Models.ApiModels
+@using BestMovies.Services
+@using Microsoft.IdentityModel.Tokens
+@inject IMovieService MovieService
 
-<PageTitle>Home</PageTitle>
-
-<h1>Top Rated Movies</h1>
-
-<MudProgressCircular Indeterminate="true" hidden="@_topRatedMovies.Any()"/>
-
-<p>Fancy list of movies</p>
-
-
-<h1>Actors</h1>
-
-<MudProgressCircular Indeterminate="true"/>
-
-<h1>Directors</h1>
-
-<MudProgressCircular Indeterminate="true"/>
-
-<MudButton OnClick="AddMovie">Add Movie</MudButton>
+<MudPaper Elevation="0"  Width="100%">
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <MudCarousel Class="mud-width-full"
+                     Style="height: 720px"
+                     ShowArrows
+                     ShowBullets
+                     AutoCycle
+                     TData="object">
+            @if (!Trending.TrendingMovies.IsNullOrEmpty())
+            {
+                @foreach (var movie in Trending.TrendingMovies)
+                {
+                    <MudCarouselItem Transition="Transition.Slide">
+                        <div class="container">
+                            <img src="@($"https://image.tmdb.org/t/p/w1280{movie.BackdropPath}")" alt="backdrop"/>
+                        </div>
+                    </MudCarouselItem>
+                }
+            }
+        </MudCarousel>
+    </MudContainer>
+</MudPaper>
 
 @code{
-    private BindingList<string> _topRatedMovies = new ();
-    private BindingList<string> _actors = new ();
-    private BindingList<string> _directors = new ();
 
-    
-    
-    protected override void OnInitialized()
+    private TrendingMovieWrapper Trending { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
     {
-        // Attempts at making a Dynamical list of Movies
-        _topRatedMovies.ListChanged += RefreshView;
-        
-        _topRatedMovies.Add("Top Gear 1");
-        _topRatedMovies.Add("Top Gear 2");
-        _topRatedMovies.Add("Top Gear 3");
-        _topRatedMovies.Add("Top Gear 4");
-        _topRatedMovies.Add("Top Gear 5");
-        base.OnInitialized();
+        Trending = await MovieService.GetTrendingMoviesAsync();
     }
 
-    private void RefreshView(object? sender, ListChangedEventArgs listChangedEventArgs)
-    {
-    
-    }
-
-    private void AddMovie()
-    {
-        Console.WriteLine("Adding a Movie");
-        _topRatedMovies.Add("New Movie!");
-    }
 }
