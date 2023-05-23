@@ -1,8 +1,6 @@
-﻿using BestMovies.DataAccess.DataBaseAccess;
-using BestMovies.Models;
-using BestMovies.Models.DbModels;
+﻿using BestMovies.Models.DbModels;
 
-namespace BestMovies.DataAccess;
+namespace BestMovies.DataAccess.DataBaseAccess;
 
 public class UserDao : IUserDao
 {
@@ -17,6 +15,12 @@ public class UserDao : IUserDao
     {
         return await _dataBaseAccess.GetUserAsync(username, password);
     }
+
+    public Task<string> GetUsernameFromId(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<User> AddAsync(User obj)
     {
         throw new NotImplementedException();

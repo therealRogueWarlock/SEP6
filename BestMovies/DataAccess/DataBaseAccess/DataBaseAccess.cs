@@ -20,4 +20,14 @@ public class DataBaseAccess : IDataBaseAccess
             .ThenInclude(fm => fm.LinkedEntities)
             .SingleOrDefaultAsync();
     }
+
+    public async Task<string> GetUsernameFromIdAsync(Guid id)
+    {
+        await using var context = new Context();
+        var user = await context.Set<User>()
+            .Where(u => u.Id == id)
+            .SingleAsync();
+
+        return user.Username;
+    }
 }
