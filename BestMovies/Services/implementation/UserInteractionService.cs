@@ -6,31 +6,32 @@ namespace BestMovies.Services.implementation;
 public class UserInteractionService : IUserInteractionService
 {
 
-    private readonly IUserInteractionDao _userInteractionDao;
-    
-    public UserInteractionService(IUserInteractionDao userInteractionDao)
+    private readonly ICommentDao _commentDao;
+    private readonly IReviewDao _reviewDao;
+    public UserInteractionService(ICommentDao commentDao, IReviewDao reviewDao)
     {
-        _userInteractionDao = userInteractionDao;
+        _commentDao = commentDao;
+        _reviewDao = reviewDao;
     }
 
     public async Task<List<Review>> GetReviewsOfAsync(string subjectId)
     {
-        return await _userInteractionDao.GetReviewsOfAsync(subjectId);
+        return await _reviewDao.GetReviewsOfAsync(subjectId);
     }
 
     public async Task<List<Comment>> GetCommentsOfAsync(string subjectId)
     {
-        return await _userInteractionDao.GetCommentsOfAsync(subjectId);
+        return await _commentDao.GetCommentsOfAsync(subjectId);
     }
 
     public async Task AddReviewAsync(Review obj)
     {
-        // await _userInteractionDao.AddAsync(obj);
+        await _reviewDao.AddAsync(obj);
     }
 
     public async Task AddCommentAsync(Comment obj)
     {
-        // await _userInteractionDao.AddAsync(obj);
+        await _commentDao.AddAsync(obj);
     }
 
     public Task<Comment> DeleteCommentAsync(string guid)
