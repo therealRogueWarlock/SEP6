@@ -2,10 +2,10 @@ using BestMovies.Models.DbModels;
 
 namespace BestMovies.DataAccess;
 
-public interface IUserInteractionDao : IDataCrud<Review> , IDataCrud<Comment>
+public interface IUserInteractionDao
 {
-    public List<Review> GetReviewsOf(string subjectId);
+    Task<List<Review>> GetReviewsOfAsync(string subjectId);
     
-    public List<Comment> GetCommentsOf(string subjectId);
+    Task<List<Comment>> GetCommentsOf(string subjectId);
     
 }
