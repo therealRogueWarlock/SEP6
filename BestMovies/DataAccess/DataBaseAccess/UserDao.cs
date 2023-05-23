@@ -15,6 +15,12 @@ public class UserDao : IUserDao
     {
         return await _dataBaseAccess.GetUserAsync(username, password);
     }
+
+    public Task<string> GetUsernameFromId(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<User> AddAsync(User obj)
     {
         throw new NotImplementedException();
