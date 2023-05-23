@@ -1,7 +1,7 @@
 @page "/CreateUser"
 @using System.Text.RegularExpressions
-@using BestMovies.Data.CustomServices
-@using BestMovies.Models
+@using BestMovies.Models.DbModels
+@using BestMovies.Services
 
 @inject NavigationManager NavigationManager
 @inject IUserLoginService LoginService
@@ -26,14 +26,8 @@
                     </div>
             </MudForm>   
         </MudPaper>
-        @* <MudPaper Class="pa-4 mt-4"> *@
-        @*     <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(()=>form.Validate())">Validate</MudButton> *@
-        @*     <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.ResetAsync())" Class="mx-2">Reset</MudButton> *@
-        @*     <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton> *@
-        @* </MudPaper> *@
     </MudItem>
 </MudGrid>
-
 
 
 
@@ -53,7 +47,6 @@
         LoginService.RegisterUser(new User{Username = userName.Text, PasswordHash = pwField1.Text,SecurityLevel = 1});
         
     }
-    
     
     private IEnumerable<string> PasswordStrength(string pw)
     {
