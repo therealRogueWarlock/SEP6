@@ -4,6 +4,8 @@
 @using BestMovies.Models.ApiModels
 @using Microsoft.IdentityModel.Tokens
 @using System.Globalization
+@using BestMovies.Models
+
 @inject IMovieService MovieService
 
 <MudContainer>
@@ -17,9 +19,9 @@
     </MudStack>
 
     <MudTabs Centered Rounded>
-        @* Details Page *@
+        @* Details Page + Comments *@
         <MudTabPanel Text="Details">
-            <MudPaper Elevation="3" Style="padding: 1em;">
+            <MudPaper Elevation="3" Style="padding: 1em; margin-bottom: 3em;">
                 <MudStack Row>
                     <MudStack>
                         @* Summary *@
@@ -37,7 +39,7 @@
                         <MudStack>
                             <MudText Typo="Typo.button">Director</MudText>
                             <MudStack Row AlignItems="AlignItems.Center">
-                                <MudImage Width="80" Src="images/No_Image_Available.jpg"/>
+                                <MudImage Width="80" Src="@(ConfigVariables.NoImage)"/>
                                 <MudText>NAME OF DIRECTOR</MudText>
                             </MudStack>
                         </MudStack>
@@ -78,17 +80,21 @@
                     </MudStack>
                 </MudStack>
             </MudPaper>
+
+            <CommentSection SubjectId="@MovieId"/>
         </MudTabPanel>
 
         @* Cast Page *@
         <MudTabPanel Text="Cast">
-            <MudPaper>
+            <MudPaper Style="padding-top: .1em; padding-bottom: .1em;">
                 @foreach (var actor in _actors)
                 {
-                    <div class="actor-item">
-                        <img src="@actor.Id" alt="@actor.SubjectId"/>
-                        <h4>@actor.ReferenceId</h4>
-                    </div>
+                    <MudStack Row Style="margin: 1em;">
+                        <MudImage Src="@ConfigVariables.NoImage" Height="80" Alt="@($"Image of {actor.Id}")"/>
+                        <MudText Typo="Typo.overline">@actor.Id</MudText>
+                        <MudSpacer/>
+                        <MudText Typo="Typo.body1">Role</MudText>
+                    </MudStack>
                 }
             </MudPaper>
         </MudTabPanel>
@@ -98,10 +104,16 @@
             <MudPaper>
                 @foreach (var review in _reviews)
                 {
-                    <div class="mb-2">
-                        <h5>@review.UserId</h5>
-                        <p>@review.Rating</p>
-                    </div>
+                    <MudStack Row Style="margin: 1em;">
+                        <MudStack>
+                            <MudAvatar Src="@ConfigVariables.NoImage" Height="48" Alt="@($"Image of {review.UserId}")"/>
+                            <MudRating MaxValue="5" ReadOnly>2</MudRating>
+                        </MudStack>
+                        <MudStack>
+                            <MudText Typo="Typo.overline">@review.UserId</MudText>
+                            <MudText Typo="Typo.body1">this is a long and complicated review</MudText>
+                        </MudStack>
+                    </MudStack>
                 }
             </MudPaper>
         </MudTabPanel>
@@ -122,7 +134,7 @@
 
     private string _originalTitle = "?";
     private string _originalLanguage = "?";
-    private string _imagePath = "images/No_Image_Available.jpg";
+    private string _imagePath = ConfigVariables.NoImage;
     private List<Genre> _genres = new();
     private bool _adultRating;
     private int _budget;
@@ -164,6 +176,18 @@
     private async Task SetupCast()
     {
         _actors = new();
+
+    // Add some bogus data
+        for (int i = 0; i < 10; i++)
+        {
+            _actors.Add(new()
+            {
+                Id = new(),
+                ReferenceId = new(),
+                SubjectId = Random.Shared.NextInt64(long.MaxValue),
+                Type = EntityType.Actor,
+            });
+        }
     }
 
     #endregion Cast
@@ -176,6 +200,25 @@
     private async Task SetupReviews()
     {
         _reviews = new();
+
+    // Add some bogus data
+        for (int i = 0; i < 10; i++)
+        {
+            _reviews.Add(new()
+            {
+                Comment = new()
+                {
+                    Id = new(),
+                    SubjectId = "??",
+                    Text = "Random Review",
+                    UserId = new()
+                },
+                Id = new(),
+                MovieId = new(),
+                Rating = (float)Random.Shared.NextDouble() * 5f,
+                UserId = new()
+            });
+        }
     }
 
     #endregion Reviews

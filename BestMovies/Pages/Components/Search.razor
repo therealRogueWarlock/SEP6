@@ -6,6 +6,7 @@
 @inject ISearchService SearchService
 @inject NavigationManager NavigationManager
 @inject NavigationManager Navigation
+@inject ISnackbar Snackbar
 
 <MudPaper Outlined MaxHeight="50px">
     <MudStack Row Spacing="0" Style="margin-left: 8px; margin-right: 8px">
@@ -56,7 +57,14 @@
     {
         if (eventArgs.Key == "Enter")
         {
-            PerformSearch();
+            try
+            {
+                PerformSearch();
+            }
+            catch (ArgumentException e)
+            {
+                Snackbar.Add("Field cannot be empty", Severity.Error, key: "SearchError");
+            }
         }
     }
 
@@ -103,6 +111,9 @@
     private void PerformSearch()
     {
     // Navigate and clear the Search String
+        if (SearchString.IsNullOrEmpty())
+            throw new ArgumentException("Argument cannot be empty", nameof(SearchString));
+        
         Navigation.NavigateTo($"/Search/{SearchTerm}/{SearchString}", true);
         StateHasChanged();
     }
