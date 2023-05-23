@@ -10,7 +10,7 @@ public class FanMovieDao : IFanMovieDao
         throw new NotImplementedException();
     }
 
-    public Task<FanMovie> DeleteAsync(string guid)
+    public Task DeleteAsync(string guid)
     {
         throw new NotImplementedException();
     }
