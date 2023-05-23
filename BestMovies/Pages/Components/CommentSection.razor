@@ -9,30 +9,34 @@
 
 <MudCard>
     <MudCardHeader>
-        <h3>Comments</h3>
+        <MudText Typo="Typo.h3">Comments</MudText>
     </MudCardHeader>
     <MudCardContent>
-        <div>
-            @foreach (var comment in _comments)
-            {
-                @GetNameOfUser(comment.UserId.ToString()).Result;
-                <MudStack Row Style="margin: 1em;">
-                    <MudImage Src="@ConfigVariables.NoImage" Height="80" Alt="@($"Image of ")"/>
-                    <MudSpacer/>
-                    <MudText Typo="Typo.body1"><p>@comment.Text</p></MudText>
-                </MudStack>
-            }
-        </div>
+        @* Writing a new comment *@
         <Authorized>
             <MudTextField @bind-Value="@_newCommentText" Label="Add a comment" Multiline="true" Rows="3" Variant="Variant.Filled"/>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@string.IsNullOrEmpty(_newCommentText)" @onclick="AddComment">Post Comment</MudButton>
         </Authorized>
+
+        @* List of all comments *@
+        <div>
+            @foreach (var comment in _comments)
+            {
+                <MudStack Row Style="margin: 1em;">
+                    <MudStack Style="@("background-color: var(--mud-palette-primary); border-radius: .2em; padding: .2em")">
+                        <MudAvatar>@GetNameOfUser(comment.UserId.ToString()).Result[0]</MudAvatar>
+                        <MudText>@GetNameOfUser(comment.UserId.ToString()).Result</MudText>
+                    </MudStack>
+                    <MudText Typo="Typo.body1">@comment.Text</MudText>
+                </MudStack>
+            }
+        </div>
     </MudCardContent>
 </MudCard>
 
 
 @code {
-    
+
     [Parameter]
     public string SubjectId { get; set; }
 
@@ -42,29 +46,31 @@
 
     protected override async Task OnInitializedAsync()
     {
-
         _comments = UserInteractionService.GetCommentsOf(SubjectId);
-        
     }
-        
+
     protected override async Task OnParametersSetAsync()
     {
-        
-        
     }
 
-    
+
     async Task AddComment()
     {
-
         Console.WriteLine("Create new comment " + _newCommentText);
         var currentUser = await UserLoginService.GetCurrentUserAsync();
-        UserInteractionService.AddCommentAsync(new Comment { Id = Guid.Empty, SubjectId = SubjectId, UserId = currentUser.Id, Text = _newCommentText});
+        UserInteractionService.AddCommentAsync(new Comment { Id = Guid.Empty, SubjectId = SubjectId, UserId = currentUser.Id, Text = _newCommentText });
     }
 
     async Task<string> GetNameOfUser(string userid)
     {
-        return await UserService.GetUserName(userid);
+        try
+        {
+            return await UserService.GetUserName(userid);
+        }
+        catch (NotImplementedException e)
+        {
+            return "Not Yet Implemented";
+        }
     }
-    
+
 }
