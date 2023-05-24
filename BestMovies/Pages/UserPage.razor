@@ -6,6 +6,7 @@
 
 @inject IUserLoginService UserLoginService
 @inject IUserService UserService
+@inject IUserInteractionService UserInteractionService
 @inject IMovieService MovieService
 
 @if (_loading)
@@ -21,7 +22,6 @@ else if (_userOfPage == null)
 }
 else
 {
-
     <MudPaper Elevation="0" Outlined="false" Style="margin-top: 1em;">
 
         <MudGrid href="@_userOfPage">
@@ -57,50 +57,35 @@ else
                                 }
                             </MudList>
                         }
-                        <div style="border: 1px solid #ccc; padding: 10px; visibility: hidden;">
-                            <h3>Favorite Movies</h3>
-                            <!-- Movie list -->
-                            @if (!_favouriteMovies.IsNullOrEmpty())
-                            {
-                                <ul>
-                                    @foreach (var movie in _favouriteMovies)
-                                    {
-                                        <li>@movie.Title</li>
-                                    }
-                                </ul>
-                            }
-                            else
-                            {
-                                <p>No movies available.</p>
-                            }
-                        </div>
                     </MudCardContent>
                 </MudCard>
                 <MudCard style="margin-top: 20px;">
                     <MudCardContent>
-                        <div style="border: 1px solid #ccc; padding: 10px;">
-                            <h3>Fan Movie List</h3>
-                            <!-- Fan movie list -->
-                            @if (_fanMovies != null)
+                        <MudStack>
+                            @if (_fanMovies.IsNullOrEmpty())
                             {
-                                <ul>
-                                    @foreach (var fanMovie in _fanMovies)
-                                    {
-                                        <li>@fanMovie.Description</li>
-                                    }
-                                </ul>
+                                <MudText Typo="Typo.overline">No Favourites</MudText>
                             }
                             else
                             {
-                                <p>No fan movies available.</p>
+                                <MudList>
+                                    @foreach (var m in _fanMovies)
+                                    {
+                                        <MudListItem>
+                                            @* Title of the Fan Movie *@
+                                            @* If this is clicked, it should show the description and cast set for the movie *@
+                                            <p>@m.Description</p>
+                                        </MudListItem>
+                                    }
+                                </MudList>
                             }
-                        </div>
 
-                        @if (_isUsersOwnPage)
-                        {
-                            <MudButton Color="Color.Primary" Variant="Variant.Filled">Create Fan Movie</MudButton>
-                        }
+                            @if (_isUsersOwnPage)
+                            {
+                                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CreateFanMovie">Create Fan Movie</MudButton>
+                            }
 
+                        </MudStack>
                     </MudCardContent>
                 </MudCard>
 
@@ -115,61 +100,64 @@ else
     public string userOfPageID { get; set; }
 
     bool _loading = true;
-    bool _isUsersOwnPage = false;
+    bool _isUsersOwnPage;
 
     User? _userOfPage;
     User? _currentUser;
-
-    List<FanMovie>? _fanMovies;
 
     protected override async Task OnInitializedAsync()
     {
         _currentUser = await UserLoginService.GetCurrentUserAsync();
         _userOfPage = await UserService.GetAsync(userOfPageID);
 
-        // Check if the user is on their own page
+    // Check if the user is on their own page
         _isUsersOwnPage = _userOfPage.Id == _currentUser?.Id;
-
-    //     try
-    //     {
-    // Use the UserService to get Fan movies and Favourites
-    // _fanMovies = _userOfPage.FanMovies;
-    
-    // Add ID of all Movies in the List
-    //     foreach (Favourite f in _userOfPage.Favourites)
-    //     {
-    //         if (f.Type == EntityType.Movie)
-    //         {
-    //             _favouriteMovieIds.Add(f.SubjectId);
-    //         }
-    //     }
-    //     _userOfPage.Favourites.Where(f => f.Type == EntityType.Movie).ToList().ForEach(m => _favouriteMovieIds.Add(m.SubjectId));
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         Console.WriteLine(e);
-    //     }
 
         _loading = false;
     }
 
     protected override Task OnParametersSetAsync()
     {
-        _maxFavouriteMovieTabs = (_favouriteMovies?.Count / _favouritesShownInList) + 1 ?? 0;
+        _maxFavouriteMovieTabs = (_favouriteMovies?.Count / _favouriteMoviesShownInList) + 1 ?? 0;
+        _maxFanMovieTabs = (_fanMovies?.Count / _fanMoviesShownInList) + 1 ?? 0;
 
         GetFavouriteMovies();
         UpdateShownFavouriteMovies();
 
+        GetFanMovies();
+
         return base.OnParametersSetAsync();
     }
 
-    private int _favouritesShownInList = 5;
+    #region Fan Movies
 
+    private List<long> _fanMovieIds = new();
+
+    private int _fanMoviesShownInList = 5;
     private int _fanMovieTab = 0;
+    private List<FanMovie> _fanMovies = new();
+    private List<FanMovie> _shownFanMovies = new();
+    private int _maxFanMovieTabs;
 
-#region Favourite Movies
+    private async void GetFanMovies()
+    {
+        _fanMovies = await UserInteractionService.GetAllFanMoviesByUserAsync(userOfPageID);
+
+        StateHasChanged();
+    }
+
+    private void UpdateShownFanMovies()
+    {
+        _shownFanMovies = _fanMovies.Skip(_maxFanMovieTabs * _fanMovieTab).Take(_maxFanMovieTabs).ToList();
+    }
+
+    #endregion
+
+    #region Favourite Movies
+
     private List<long> _favouriteMovieIds = new();
 
+    private int _favouriteMoviesShownInList = 5;
     private int _favouriteMovieTab = 0;
     private List<Movie> _favouriteMovies = new();
     private List<Movie> _shownFavMovies = new();
@@ -188,5 +176,20 @@ else
     {
         _shownFavMovies = _favouriteMovies.Skip(_maxFavouriteMovieTabs * _favouriteMovieTab).Take(_maxFavouriteMovieTabs).ToList();
     }
-#endregion
+
+    #endregion
+
+    private void CreateFanMovie()
+    {
+        FanMovie newMovie = new FanMovie()
+        {
+            Id = Guid.Empty,
+            UserId = _currentUser.Id,
+            LinkedEntities = new(),
+            Description = "Avatar: The Last Airbender. But everything is from the perspective of General Iroh"
+        };
+
+        UserInteractionService.AddFanMovieAsync(newMovie);
+    }
+
 }
