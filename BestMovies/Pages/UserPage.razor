@@ -1,13 +1,11 @@
 @page "/UserPage/{userOfPageID}"
-@using BestMovies.DataAccess
-@using BestMovies.Models
 @using BestMovies.Models.ApiModels
 @using BestMovies.Models.DbModels
 @using BestMovies.Services
 @using Microsoft.IdentityModel.Tokens
 
 @inject IUserLoginService UserLoginService
-@inject IUserDao UserData
+@inject IUserService UserService
 @inject IMovieService MovieService
 
 @if (_loading)
@@ -97,7 +95,7 @@ else
                             }
                         </div>
 
-                        @if (_currentUser.Id.Equals(_userOfPage.Id))
+                        @if (_isUsersOwnPage)
                         {
                             <MudButton Color="Color.Primary" Variant="Variant.Filled">Create Fan Movie</MudButton>
                         }
@@ -116,6 +114,7 @@ else
     public string userOfPageID { get; set; }
 
     bool _loading = true;
+    bool _isUsersOwnPage = false;
 
     User? _userOfPage;
     User? _currentUser;
@@ -125,16 +124,16 @@ else
     protected override async Task OnInitializedAsync()
     {
         _currentUser = await UserLoginService.GetCurrentUserAsync();
+        _userOfPage = await UserService.GetAsync(userOfPageID);
 
-        _userOfPage = _currentUser;
-        Console.WriteLine($"Logged In: {_userOfPage.Username}");
-        try
-        {
-            _userOfPage = await UserData.GetAsync(userOfPageID);
+        // Check if the user is on their own page
+        _isUsersOwnPage = _userOfPage.Id == _currentUser?.Id;
 
+    //     try
+    //     {
     // Use the UserService to get Fan movies and Favourites
     // _fanMovies = _userOfPage.FanMovies;
-
+    
     // Add ID of all Movies in the List
     //     foreach (Favourite f in _userOfPage.Favourites)
     //     {
@@ -144,11 +143,11 @@ else
     //         }
     //     }
     //     _userOfPage.Favourites.Where(f => f.Type == EntityType.Movie).ToList().ForEach(m => _favouriteMovieIds.Add(m.SubjectId));
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         Console.WriteLine(e);
+    //     }
 
         _loading = false;
     }
@@ -167,7 +166,7 @@ else
 
     private int _fanMovieTab = 0;
 
-
+#region Favourite Movies
     private List<long> _favouriteMovieIds = new();
 
     private int _favouriteMovieTab = 0;
@@ -188,5 +187,5 @@ else
     {
         _shownFavMovies = _favouriteMovies.Skip(_maxFavouriteMovieTabs * _favouriteMovieTab).Take(_maxFavouriteMovieTabs).ToList();
     }
-
+#endregion
 }
