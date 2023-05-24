@@ -1,25 +1,30 @@
 ﻿@page "/"
-@using System.ComponentModel
+@using Microsoft.IdentityModel.Tokens
 @using BestMovies.Models.ApiModels
 @using BestMovies.Services
-@using Microsoft.IdentityModel.Tokens
 @inject IMovieService MovieService
+@inject NavigationManager NavigationManager
 
-<MudPaper Elevation="0"  Width="100%">
+<MudPaper Elevation="0" Width="100%" Square Style="background-color: black">
     <MudContainer MaxWidth="MaxWidth.Large">
         <MudCarousel Class="mud-width-full"
                      Style="height: 720px"
                      ShowArrows
                      ShowBullets
                      AutoCycle
+                     BulletsColor="Color.Info"
                      TData="object">
             @if (!Trending.TrendingMovies.IsNullOrEmpty())
             {
                 @foreach (var movie in Trending.TrendingMovies)
                 {
                     <MudCarouselItem Transition="Transition.Slide">
-                        <div class="container">
+                        <div class="container" onclick="@(() => CarouselClickHandler(movie.Id))">
                             <img src="@($"https://image.tmdb.org/t/p/w1280{movie.BackdropPath}")" alt="backdrop"/>
+                            <div class="text-block">
+                                <h1>@movie.Title</h1>
+                                <h3>@movie.ReleaseDate</h3>
+                            </div>
                         </div>
                     </MudCarouselItem>
                 }
@@ -37,4 +42,8 @@
         Trending = await MovieService.GetTrendingMoviesAsync();
     }
 
+    private void CarouselClickHandler(int? id)
+    {
+        NavigationManager.NavigateTo($"/Movie/{id}");
+    }
 }
