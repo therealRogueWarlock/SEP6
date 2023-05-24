@@ -23,14 +23,17 @@
 
         @* List of all comments *@
         <div>
+            <div hidden="@(_comments.Count != 0)">
+                <MudSkeleton SkeletonType="SkeletonType.Text"/>
+            </div>
             @foreach (var comment in _comments)
             {
                 <MudStack Row Style="margin: 1em;">
                     <MudStack AlignItems="AlignItems.Center" Style="@("background-color: var(--mud-palette-primary-lighten); border-radius: .2em; padding: .2em")">
                         <MudButton @onclick="() => NavigateToUser(comment)">
-                            <MudAvatar>@GetNameOfUser(comment.UserId.ToString()).Result[0]</MudAvatar>
+                            <MudAvatar>@GetNameOfUser(comment.UserId).Result[0]</MudAvatar>
                         </MudButton>
-                        <MudText>@GetNameOfUser(comment.UserId.ToString()).Result</MudText>
+                        <MudText>@GetNameOfUser(comment.UserId).Result</MudText>
                     </MudStack>
                     <MudText Typo="Typo.body1">@comment.Text</MudText>
                     <MudSpacer/>
@@ -60,6 +63,7 @@
         _comments = await UserInteractionService.GetCommentsOfAsync(SubjectId);
 
         _comments.Reverse();
+        StateHasChanged();
     }
 
 
@@ -73,11 +77,12 @@
         _newCommentText = "";
     }
 
-    async Task<string> GetNameOfUser(string userid)
+    async Task<string> GetNameOfUser(Guid userId)
     {
         try
         {
-            return await UserService.GetUserName(userid);
+            var user = await UserService.GetUserName(userId.ToString());
+            return user;
         }
         catch (NotImplementedException e)
         {

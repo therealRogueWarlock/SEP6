@@ -8,6 +8,7 @@
 
 @inject IMovieService MovieService
 @inject IUserService UserService
+@inject IUserLoginService UserLoginService
 
 <MudContainer>
     <MudStack Row AlignItems="AlignItems.Center">
@@ -15,7 +16,7 @@
             <MudText Align="Align.Center" Typo="Typo.h2">@_title</MudText>
         </MudTooltip>
         <div hidden="@(!_adultRating)">
-            <MudChip Text="ADULT MOVIE" Color="Color.Error" hidden="@(!_adultRating)" Variant="Variant.Filled"/>
+            <MudChip Text="ADULT MOVIE" Color="Color.Error" Variant="Variant.Filled"/>
         </div>
         <MudSpacer/>
         <Authorized>
@@ -139,6 +140,7 @@
     private string _title = "?";
 
     private bool _favourite;
+
     bool Favourite
     {
         get => _favourite;
@@ -220,7 +222,7 @@
 
     private List<Review> _reviews;
     public string UserComment { get; set; }
-    
+
     private async Task SetupReviews()
     {
         _reviews = new();
@@ -255,19 +257,32 @@
         SetupCast();
         SetupReviews();
 
-        _favourite = false; // TODO: Change this to use the Service instead
+    // TODO: Change this to use the Service instead
+        _favourite = false;
     }
 
     private async Task SetFavouriteAsync()
     {
+            var user = await UserLoginService.GetCurrentUserAsync();
         if (!_favourite)
         {
-            // TODO: Add this Movie to the User Favourites
+            Favourite newFav = new()
+            {
+                Id = Guid.Empty,
+                UserId = user.Id,
+                SubjectId = long.Parse(_movieData.Id.ToString()),
+                Type = EntityType.Movie,
+            };
+            
+            user.Favourites.Add(newFav);
+    // TODO: Add this Movie to the User Favourites
             Console.WriteLine($"Adding {_title} as Favourite");
         }
         else
         {
-            // TODO: Remove the Movie from the User Favourites
+    // TODO: Remove the Movie from the User Favourites
+            var m = user.Favourites.First(f => f.SubjectId.ToString() == _movieData.Id.ToString());
+            user.Favourites.Remove(m);   
             Console.WriteLine($"Removing {_title} from Favourites");
         }
 
