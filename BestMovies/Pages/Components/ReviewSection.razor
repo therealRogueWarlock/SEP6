@@ -9,7 +9,7 @@
 @inject IUserInteractionService UserInteractionService
 @inject NavigationManager NavigationManager
 
-<MudPaper>
+<MudPaper >
     
     <AuthorizeView>
         <Authorized>
@@ -22,7 +22,8 @@
             <MudSpacer/>
         </Authorized>
         <NotAuthorized>
-            <p>You're not authorized.</p>
+            <MudButton href="/Login">login to leave a review</MudButton>
+            
             <MudSpacer/>
         </NotAuthorized>
     </AuthorizeView> 
