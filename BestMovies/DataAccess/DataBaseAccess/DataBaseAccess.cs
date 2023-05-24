@@ -1,5 +1,4 @@
 using BestMovies.DataAccess.DataBaseAccess.util;
-using Microsoft.EntityFrameworkCore;
 
 namespace BestMovies.DataAccess.DataBaseAccess;
 
@@ -45,10 +44,10 @@ public class DataBaseAccess : IDataBaseAccess
     {
         if (!Guid.TryParse(id, out var guid)) throw new Exception("Invalid Id");
         var info = typeof(TEntity).GetProperty("Id");
+        if (info is null) throw new Exception("Bad entity");
+        var entity = Activator.CreateInstance<TEntity>();
+        info.SetValue(entity, guid);
         await using var context = new Context();
-        var entity = await context.Set<TEntity>()
-            .Where(x => (Guid) info!.GetValue(x)! == guid)
-            .SingleAsync();
         context.Remove(entity);
         await context.SaveChangesAsync();
     }

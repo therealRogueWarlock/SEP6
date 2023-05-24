@@ -87,7 +87,7 @@ else
                                         <MudListItem>
                                             @* Title of the Fan Movie *@
                                             @* If this is clicked, it should show the description and cast set for the movie *@
-                                            <p>@m.Description</p>
+                                            <p>@m.Title</p>
                                         </MudListItem>
                                     }
                                 </MudList>
@@ -221,6 +221,7 @@ else
             Id = Guid.Empty,
             UserId = _currentUser.Id,
             LinkedEntities = new(),
+            Title = "Iroh: The Humble General",
             Description = "Avatar: The Last Airbender. But everything is from the perspective of General Iroh"
         };
 
