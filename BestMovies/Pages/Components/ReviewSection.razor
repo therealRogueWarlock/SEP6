@@ -10,14 +10,23 @@
 @inject NavigationManager NavigationManager
 
 <MudPaper>
-    <Authorized>
-        <MudRating @bind-SelectedValue="_reviewRating"></MudRating>
-        <MudStack Row AlignItems="AlignItems.Center">
-            <MudTextField @bind-Value="@_newCommentText" Immediate Label="Review comment" Multiline="true" Rows="3" Variant="Variant.Filled"/>
-            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="@string.IsNullOrEmpty(_newCommentText)" @onclick="AddReview">Post Review</MudButton>
-        </MudStack>
-        <MudDivider/>
-    </Authorized>
+    
+    <AuthorizeView>
+        <Authorized>
+            <MudRating @bind-SelectedValue="_reviewRating"></MudRating>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudTextField @bind-Value="@_newCommentText" Immediate Label="Review comment" Multiline="true" Rows="3" Variant="Variant.Filled"/>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="@string.IsNullOrEmpty(_newCommentText)" @onclick="AddReview">Post Review</MudButton>
+            </MudStack>
+            <MudDivider/>
+            <MudSpacer/>
+        </Authorized>
+        <NotAuthorized>
+            <p>You're not authorized.</p>
+            <MudSpacer/>
+        </NotAuthorized>
+    </AuthorizeView> 
+    
                 
     @foreach (var review in _reviews)
     {
