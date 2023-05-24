@@ -1,5 +1,6 @@
 ﻿@using BestMovies.Services
 @using BestMovies.Services.implementation
+@using LoginComponent
 @inherits LayoutComponentBase
 @* @inject NavigationManager Navigation *@
 @inject IUserLoginService LoginService
@@ -60,7 +61,16 @@
     {
         try
         {
-            _userId = LoginService.GetCurrentUserAsync().Result.Id;
+            if (LoginService.IsLoggedIn)
+            {
+                Console.WriteLine("+ User is Logged In");
+                _userId = LoginService.GetCurrentUserAsync().Result.Id;
+                
+            }
+            else
+            {
+                Console.WriteLine("- User is Logged Out");
+            }
         }
         catch (Exception e)
         {
