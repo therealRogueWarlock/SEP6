@@ -124,48 +124,39 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        
+    }
+
+    
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _maxFavouriteMovieTabs = (_favouriteMovies?.Count / _favouritesShownInList) + 1 ?? 0;
+
+
+        await SetUpUserPage();
+        
+        GetFavouriteMovies();
+        UpdateShownFavouriteMovies();
+    }
+    
+    private async Task SetUpUserPage()
+    {
         _currentUser = await UserLoginService.GetCurrentUserAsync();
         _userOfPage = await UserService.GetAsync(userOfPageID);
 
         // Check if the user is on their own page
         _isUsersOwnPage = _userOfPage.Id == _currentUser?.Id;
 
-    //     try
-    //     {
-    // Use the UserService to get Fan movies and Favourites
-    // _fanMovies = _userOfPage.FanMovies;
-    
-    // Add ID of all Movies in the List
-    //     foreach (Favourite f in _userOfPage.Favourites)
-    //     {
-    //         if (f.Type == EntityType.Movie)
-    //         {
-    //             _favouriteMovieIds.Add(f.SubjectId);
-    //         }
-    //     }
-    //     _userOfPage.Favourites.Where(f => f.Type == EntityType.Movie).ToList().ForEach(m => _favouriteMovieIds.Add(m.SubjectId));
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         Console.WriteLine(e);
-    //     }
-
         _loading = false;
-    }
-
-    protected override Task OnParametersSetAsync()
-    {
-        _maxFavouriteMovieTabs = (_favouriteMovies?.Count / _favouritesShownInList) + 1 ?? 0;
-
-        GetFavouriteMovies();
-        UpdateShownFavouriteMovies();
-
-        return base.OnParametersSetAsync();
+        
     }
 
     private int _favouritesShownInList = 5;
 
     private int _fanMovieTab = 0;
+    
+    
 
 #region Favourite Movies
     private List<long> _favouriteMovieIds = new();
