@@ -131,17 +131,19 @@ else
         try
         {
             _userOfPage = await UserData.GetAsync(userOfPageID);
-            _fanMovies = _userOfPage.FanMovies;
+
+    // Use the UserService to get Fan movies and Favourites
+    // _fanMovies = _userOfPage.FanMovies;
 
     // Add ID of all Movies in the List
-            foreach (Favourite f in _userOfPage.Favourites)
-            {
-                if (f.Type == EntityType.Movie)
-                {
-                    _favouriteMovieIds.Add(f.SubjectId);
-                }
-            }
-            _userOfPage.Favourites.Where(f => f.Type == EntityType.Movie).ToList().ForEach(m => _favouriteMovieIds.Add(m.SubjectId));
+    //     foreach (Favourite f in _userOfPage.Favourites)
+    //     {
+    //         if (f.Type == EntityType.Movie)
+    //         {
+    //             _favouriteMovieIds.Add(f.SubjectId);
+    //         }
+    //     }
+    //     _userOfPage.Favourites.Where(f => f.Type == EntityType.Movie).ToList().ForEach(m => _favouriteMovieIds.Add(m.SubjectId));
         }
         catch (Exception e)
         {
