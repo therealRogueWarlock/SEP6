@@ -31,9 +31,9 @@
                 <MudStack Row Style="margin: 1em;">
                     <MudStack AlignItems="AlignItems.Center" Style="@("background-color: var(--mud-palette-primary-lighten); border-radius: .2em; padding: .2em")">
                         <MudButton @onclick="() => NavigateToUser(comment)">
-                            <MudAvatar>@GetNameOfUser(comment.UserId).Result[0]</MudAvatar>
+                            <MudAvatar>@comment.AuthorName.FirstOrDefault()</MudAvatar>
                         </MudButton>
-                        <MudText>@GetNameOfUser(comment.UserId).Result</MudText>
+                        <MudText>@comment.AuthorName</MudText>
                     </MudStack>
                     <MudText Typo="Typo.body1">@comment.Text</MudText>
                     <MudSpacer/>
