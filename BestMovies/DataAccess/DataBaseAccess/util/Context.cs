@@ -39,7 +39,10 @@ public class Context : DbContext
                 .IsRequired();
         });
         modelBuilder.Entity<Favourite>().HasKey(x => x.Id);
-        modelBuilder.Entity<Review>().HasKey(x => x.Id);
+        modelBuilder.Entity<Review>(x =>
+        {
+            x.HasKey(x => x.Id);
+        });
         modelBuilder.Entity<LinkedSubject>().HasKey(x => x.Id);
         modelBuilder.Entity<Comment>(x =>
         {
