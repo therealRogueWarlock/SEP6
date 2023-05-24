@@ -9,7 +9,7 @@ namespace BestMovies.Services.implementation
         private readonly IUserLoginService _userLoginService;
         private AuthenticationState? _cachedAuthenticationState;
 
-        public CustomAuthenticationStateProvider( IUserLoginService userLoginService)
+        public CustomAuthenticationStateProvider(IUserLoginService userLoginService)
         {
             _userLoginService = userLoginService;
             _cachedAuthenticationState = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
@@ -17,16 +17,14 @@ namespace BestMovies.Services.implementation
 
         public override async Task<AuthenticationState?> GetAuthenticationStateAsync()
         {
-
             var user = await _userLoginService.GetCurrentUserAsync();
-            
+
             if (user != null)
             {
                 await ValidateLogin(user.Username, user.PasswordHash);
             }
-            
+
             return await Task.FromResult(_cachedAuthenticationState);
-            
         }
 
         public async Task ValidateLogin(string username, string password)
@@ -45,7 +43,7 @@ namespace BestMovies.Services.implementation
                 Console.WriteLine(e);
                 throw;
             }
-            
+
             _cachedAuthenticationState = new AuthenticationState(new ClaimsPrincipal(identity));
             NotifyAuthenticationStateChanged(Task.FromResult(_cachedAuthenticationState));
         }
