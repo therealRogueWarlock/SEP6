@@ -25,13 +25,19 @@ public class UserDao : IUserDao
             .SingleOrDefaultAsync();
     }
 
-    public async Task<string> GetUsernameFromIdAsync(Guid id)
+    public async Task<string> GetUsernameFromIdAsync(string id)
     {
+        // Parse GUID
+        if (!Guid.TryParse(id, out Guid userId))
+            throw new ArgumentException("value must be a GUID", id);
+        
+        // Magic
         await using var context = new Context();
         var user = await context.Set<User>()
-            .Where(u => u.Id == id)
+            .Where(u => u.Id == userId)
             .SingleAsync();
 
+        // Results
         return user.Username;
     }
 
