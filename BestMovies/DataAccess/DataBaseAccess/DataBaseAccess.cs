@@ -20,9 +20,10 @@ public class DataBaseAccess : IDataBaseAccess
         if (!Guid.TryParse(id, out var guid)) throw new Exception("Invalid Id");
         var info = typeof(TEntity).GetProperty("Id");
         await using var context = new Context();
-        return await context.Set<TEntity>()
-            .Where(x => (Guid) info!.GetValue(x)! == guid)
-            .SingleOrDefaultAsync();
+        return context
+            .Set<TEntity>()
+            .AsEnumerable()
+            .SingleOrDefault(x => (Guid) info!.GetValue(x)! == guid)!;
     }
 
     public async Task<TEntity> UpdateAsync<TEntity>(TEntity entity) where TEntity : class
@@ -30,9 +31,10 @@ public class DataBaseAccess : IDataBaseAccess
         if (entity is null) throw new Exception("Bad entity");
         var info = typeof(TEntity).GetProperty("Id");
         await using var context = new Context();
-        var dbEntity = await context.Set<TEntity>()
-            .Where(x => info!.GetValue(x) == info.GetValue(entity))
-            .SingleOrDefaultAsync();
+        var dbEntity = context
+            .Set<TEntity>()
+            .AsEnumerable()
+            .SingleOrDefault(x => info!.GetValue(x) == info.GetValue(entity));
 
         dbEntity = entity;
         await context.SaveChangesAsync();
