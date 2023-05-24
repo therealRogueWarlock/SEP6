@@ -24,14 +24,14 @@ public class UserInteractionService : IUserInteractionService
         return await _commentDao.GetCommentsOfAsync(subjectId);
     }
 
-    public async Task AddReviewAsync(Review obj)
+    public async Task<Review>  AddReviewAsync(Review obj)
     {
-        await _reviewDao.AddAsync(obj);
+        return await _reviewDao.AddAsync(obj);
     }
 
-    public async Task AddCommentAsync(Comment obj)
+    public async Task<Comment> AddCommentAsync(Comment obj)
     {
-        await _commentDao.AddAsync(obj);
+        return await _commentDao.AddAsync(obj);
     }
 
     public Task<Comment> DeleteCommentAsync(string guid)
