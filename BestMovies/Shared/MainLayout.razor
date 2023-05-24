@@ -21,7 +21,7 @@
     @* Account *@
     <AuthorizeView>
         <Authorized>
-            <MudIconButton Icon="@Icons.Material.Filled.Person" href="/UserPage"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Person" href="@($"/UserPage/{_userId}")"/>
             <MudIconButton Icon="@Icons.Material.Filled.Logout" href="/" OnClick="PerformLogout"/>
         </Authorized>
         <NotAuthorized>
@@ -39,7 +39,6 @@
 </div>
 
 @code {
-
     private readonly MudTheme _theme = new()
     {
         Palette = new PaletteLight
@@ -50,10 +49,24 @@
         }
     };
 
+    private Guid _userId;
 
-    public async Task PerformLogout()
+    private async Task PerformLogout()
     {
-        
         ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Logout();
     }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            _userId = LoginService.GetCurrentUserAsync().Result.Id;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
 }
