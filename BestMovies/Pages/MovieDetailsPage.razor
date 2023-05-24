@@ -9,6 +9,7 @@
 @inject IMovieService MovieService
 @inject IUserService UserService
 @inject IUserLoginService UserLoginService
+@inject IUserInteractionService UserInteractionService
 
 <MudContainer>
     <MudStack Row AlignItems="AlignItems.Center">
@@ -110,21 +111,7 @@
 
         @* Review Page *@
         <MudTabPanel Text="Reviews">
-            <MudPaper>
-                @foreach (var review in _reviews)
-                {
-                    <MudStack Row Style="margin: 1em;">
-                        <MudStack>
-                            <MudAvatar Src="@ConfigVariables.NoImage" Height="48" Alt="@($"Image of {review.UserId}")"/>
-                            <MudRating MaxValue="5" ReadOnly>2</MudRating>
-                        </MudStack>
-                        <MudStack>
-                            <MudText Typo="Typo.overline">@review.UserId</MudText>
-                            <MudText Typo="Typo.body1">this is a long and complicated review</MudText>
-                        </MudStack>
-                    </MudStack>
-                }
-            </MudPaper>
+            <ReviewSection SubjectId="@MovieId"/>
         </MudTabPanel>
 
     </MudTabs>
@@ -140,6 +127,7 @@
     private string _title = "?";
 
     private bool _favourite;
+    
 
     bool Favourite
     {
@@ -217,45 +205,13 @@
     }
 
     #endregion Cast
-
-    #region Reviews
-
-    private List<Review> _reviews;
-    public string UserComment { get; set; }
-
-    private async Task SetupReviews()
-    {
-        _reviews = new();
-
-    // Add some bogus data
-        for (int i = 0; i < 10; i++)
-        {
-            _reviews.Add(new()
-            {
-                Comment = new()
-                {
-                    Id = new(),
-                    SubjectId = "??",
-                    Text = "Random Review",
-                    UserId = new()
-                },
-                Id = new(),
-                MovieId = new(),
-                Rating = (float)Random.Shared.NextDouble() * 5f,
-                UserId = new()
-            });
-        }
-    }
-
-    #endregion Reviews
-
+    
     protected override async Task OnParametersSetAsync()
     {
         _movieData = await MovieService.GetMovieAsync(MovieId);
 
-        SetupDetails();
-        SetupCast();
-        SetupReviews();
+        await SetupDetails();
+        await SetupCast();
 
     // TODO: Change this to use the Service instead
         _favourite = false;

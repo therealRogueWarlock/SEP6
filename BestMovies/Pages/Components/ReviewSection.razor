@@ -1,0 +1,101 @@
+﻿@page "/ReviewSection/{subjectId?}"
+@using BestMovies.Models.DbModels
+@using BestMovies.Services
+
+
+@inject IMovieService MovieService
+@inject IUserService UserService
+@inject IUserLoginService UserLoginService
+@inject IUserInteractionService UserInteractionService
+@inject NavigationManager NavigationManager
+
+<MudPaper >
+    
+    <AuthorizeView>
+        <Authorized>
+            <MudRating @bind-SelectedValue="_reviewRating"></MudRating>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudTextField @bind-Value="@_newCommentText" Immediate Label="Review comment" Multiline="true" Rows="3" Variant="Variant.Filled"/>
+                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="@string.IsNullOrEmpty(_newCommentText)" @onclick="AddReview">Post Review</MudButton>
+            </MudStack>
+            <MudDivider/>
+            <MudSpacer/>
+        </Authorized>
+        <NotAuthorized>
+            <MudButton href="/Login">login to leave a review</MudButton>
+            
+            <MudSpacer/>
+        </NotAuthorized>
+    </AuthorizeView> 
+    
+                
+    @foreach (var review in _reviews)
+    {
+        <MudStack Row Style="margin: 1em;">
+            <MudStack AlignItems="AlignItems.Center" Style="@("background-color: var(--mud-palette-primary-lighten); border-radius: .2em; padding: .2em")">
+                            
+                <MudButton  @onclick="() => NavigateToUser(review)">
+                    <MudAvatar>@review.AuthorName.FirstOrDefault()</MudAvatar>
+                </MudButton>
+                <MudText>@review.AuthorName</MudText>
+                
+            </MudStack>
+            <MudRating SelectedValue="@Convert.ToInt32(review.Rating)" ReadOnly>2</MudRating>
+            <MudStack Row>
+                
+                @if (review.Comment != null)
+                {
+                    <MudText Typo="Typo.body1">@review.Comment.Text</MudText>
+                    <MudSpacer/>
+                    <MudText Typo="Typo.body1">@review.Comment.Timestamp.Date</MudText>
+                }
+
+            </MudStack>
+        </MudStack>
+    }
+</MudPaper>
+@code {
+    
+    [Parameter]
+    public string SubjectId { get; set; }
+
+    private List<Review> _reviews = new ();
+    
+    string? _newCommentText;
+    int _reviewRating;
+    
+    
+    private async Task SetupReviews()
+    {
+        _reviews = await UserInteractionService.GetReviewsOfAsync(SubjectId);
+        _reviews.Reverse();
+    }
+
+    private async Task AddReview()
+    {
+        var currentUser = await UserLoginService.GetCurrentUserAsync();
+       
+        var newReview = new Review{Id = Guid.Empty, MovieId = Convert.ToInt64(SubjectId), Rating = _reviewRating, UserId = currentUser.Id, AuthorName = currentUser.Username};
+        if (!string.IsNullOrEmpty(_newCommentText))
+        {
+            newReview.Comment = new Comment { Id = Guid.Empty, SubjectId = "0", UserId = currentUser!.Id, Text = _newCommentText, Timestamp = DateTime.UtcNow , AuthorName = currentUser.Username};
+        }
+        
+        await UserInteractionService.AddReviewAsync(newReview);
+        
+        _reviews.Insert(0, newReview);
+        
+    }
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        await SetupReviews();
+    }
+    
+    
+    void NavigateToUser(Review review)
+    {
+        NavigationManager.NavigateTo("/UserPage/"+review.UserId);
+    }
+    
+}
