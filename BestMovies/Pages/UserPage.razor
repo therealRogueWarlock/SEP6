@@ -38,8 +38,12 @@ else
                     </MudCardContent>
                 </MudCard>
             </MudItem>
+
             <MudSpacer/>
+
+            @* Right Side *@
             <MudItem>
+                @* Favourite Movie Section *@
                 <MudCard>
                     <MudCardContent>
                         @if (_favouriteMovies.IsNullOrEmpty())
@@ -59,17 +63,26 @@ else
                         }
                     </MudCardContent>
                 </MudCard>
+
+                @* Fan Movie Section *@
                 <MudCard style="margin-top: 20px;">
                     <MudCardContent>
-                        <MudStack>
-                            @if (_fanMovies.IsNullOrEmpty())
+                        <MudStack AlignItems="AlignItems.Center">
+                            <MudText Typo="Typo.h3">Fan Movies</MudText>
+                            @if (_shownFanMovies.IsNullOrEmpty())
                             {
-                                <MudText Typo="Typo.overline">No Favourites</MudText>
+                                <MudText Typo="Typo.body2">No Fan Movies</MudText>
                             }
                             else
                             {
+                                @if (_maxFanMovieTabs > 1)
+                                {
+                                    <MudPagination Count="@_maxFanMovieTabs" @bind-Selected="FanMovieTab"/>
+                                }
+
+                                @* List of Fan Movies *@
                                 <MudList>
-                                    @foreach (var m in _fanMovies)
+                                    @foreach (var m in _shownFanMovies)
                                     {
                                         <MudListItem>
                                             @* Title of the Fan Movie *@
@@ -80,6 +93,7 @@ else
                                 </MudList>
                             }
 
+                            @* Create a Fan Movie button *@
                             @if (_isUsersOwnPage)
                             {
                                 <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CreateFanMovie">Create Fan Movie</MudButton>
@@ -119,7 +133,6 @@ else
     protected override Task OnParametersSetAsync()
     {
         _maxFavouriteMovieTabs = (_favouriteMovies?.Count / _favouriteMoviesShownInList) + 1 ?? 0;
-        _maxFanMovieTabs = (_fanMovies?.Count / _fanMoviesShownInList) + 1 ?? 0;
 
         GetFavouriteMovies();
         UpdateShownFavouriteMovies();
@@ -131,10 +144,20 @@ else
 
     #region Fan Movies
 
-    private List<long> _fanMovieIds = new();
-
     private int _fanMoviesShownInList = 5;
-    private int _fanMovieTab = 0;
+
+    private int _fanMovieTab = 1;
+
+    private int FanMovieTab
+    {
+        get => _fanMovieTab;
+        set
+        {
+            _fanMovieTab = value;
+            UpdateShownFanMovies();
+        }
+    }
+
     private List<FanMovie> _fanMovies = new();
     private List<FanMovie> _shownFanMovies = new();
     private int _maxFanMovieTabs;
@@ -142,13 +165,25 @@ else
     private async void GetFanMovies()
     {
         _fanMovies = await UserInteractionService.GetAllFanMoviesByUserAsync(userOfPageID);
+        Console.WriteLine($"Total Fan Movies: {_fanMovies.Count}");
 
-        StateHasChanged();
+        _maxFanMovieTabs = (int) Math.Ceiling((double)(_fanMovies?.Count) / _fanMoviesShownInList);
+        Console.WriteLine($"Tabs: {_maxFanMovieTabs}");
+
+        UpdateShownFanMovies();
     }
 
     private void UpdateShownFanMovies()
     {
-        _shownFanMovies = _fanMovies.Skip(_maxFanMovieTabs * _fanMovieTab).Take(_maxFanMovieTabs).ToList();
+        int toSkip = (_fanMovieTab - 1) * _fanMoviesShownInList;
+        int remainder = _fanMoviesShownInList;
+
+        if (_fanMovies.Count - toSkip < _fanMoviesShownInList)
+            remainder = _fanMovies.Count % _fanMoviesShownInList;
+
+        _shownFanMovies = _fanMovies.Skip(toSkip).Take(remainder).ToList();
+
+        StateHasChanged();
     }
 
     #endregion
