@@ -41,7 +41,8 @@ public class Context : DbContext
         modelBuilder.Entity<Favourite>().HasKey(x => x.Id);
         modelBuilder.Entity<Review>(x =>
         {
-            x.HasKey(x => x.Id);
+            x.HasKey(r => r.Id);
+            x.Navigation(r => r.Comment).AutoInclude();
         });
         modelBuilder.Entity<LinkedSubject>().HasKey(x => x.Id);
         modelBuilder.Entity<Comment>(x =>
