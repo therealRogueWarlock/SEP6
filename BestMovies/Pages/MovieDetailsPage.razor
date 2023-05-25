@@ -127,7 +127,7 @@
     private string _title = "?";
 
     private bool _favourite;
-    
+
 
     bool Favourite
     {
@@ -205,32 +205,6 @@
     }
 
     #endregion Cast
-    
-    private async Task SetupReviews()
-    {
-        _reviews = new();
-
-    // Add some bogus data
-        for (int i = 0; i < 10; i++)
-        {
-            _reviews.Add(new()
-            {
-                Comment = new()
-                {
-                    Id = new(),
-                    SubjectId = "??",
-                    Text = "Random Review",
-                    UserId = new()
-                },
-                Id = new(),
-                MovieId = new(),
-                Rating = (int)Random.Shared.NextDouble() * 5,
-                UserId = new()
-            });
-        }
-    }
-
-    #endregion Reviews
 
     protected override async Task OnParametersSetAsync()
     {
@@ -245,7 +219,7 @@
 
     private async Task SetFavouriteAsync()
     {
-            var user = await UserLoginService.GetCurrentUserAsync();
+        var user = await UserLoginService.GetCurrentUserAsync();
         if (!_favourite)
         {
             Favourite newFav = new()
@@ -255,7 +229,7 @@
                 SubjectId = long.Parse(_movieData.Id.ToString()),
                 Type = EntityType.Movie,
             };
-            
+
             user.Favourites.Add(newFav);
     // TODO: Add this Movie to the User Favourites
             Console.WriteLine($"Adding {_title} as Favourite");
@@ -264,7 +238,7 @@
         {
     // TODO: Remove the Movie from the User Favourites
             var m = user.Favourites.First(f => f.SubjectId.ToString() == _movieData.Id.ToString());
-            user.Favourites.Remove(m);   
+            user.Favourites.Remove(m);
             Console.WriteLine($"Removing {_title} from Favourites");
         }
 
