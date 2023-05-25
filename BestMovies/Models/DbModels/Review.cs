@@ -11,5 +11,5 @@ public class Review
     [Range(0, 5)]
     public int Rating { get; set; }
     public Comment? Comment { get; set; }
-    public long MovieId { get; set; }
+    public string MovieId { get; set; }
 }
