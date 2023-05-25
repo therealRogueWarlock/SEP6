@@ -61,7 +61,7 @@ else
                                 }
                             </MudList>
                         }
-                    </MudCardContent>
+                        </MudCardContent>
                 </MudCard>
 
                 @* Fan Movie Section *@
@@ -121,26 +121,37 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        
+    }
+
+    
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _maxFavouriteMovieTabs = (_favouriteMovies?.Count / _favouritesShownInList) + 1 ?? 0;
+
+
+        await SetUpUserPage();
+        
+        GetFavouriteMovies();
+        UpdateShownFavouriteMovies();
+        
+        GetFanMovies();
+    }
+    
+    private async Task SetUpUserPage()
+    {
         _currentUser = await UserLoginService.GetCurrentUserAsync();
         _userOfPage = await UserService.GetAsync(userOfPageID);
 
     // Check if the user is on their own page
         _isUsersOwnPage = _userOfPage.Id == _currentUser?.Id;
 
+        
+        
         _loading = false;
     }
 
-    protected override Task OnParametersSetAsync()
-    {
-        _maxFavouriteMovieTabs = (_favouriteMovies?.Count / _favouriteMoviesShownInList) + 1 ?? 0;
-
-        GetFavouriteMovies();
-        UpdateShownFavouriteMovies();
-
-        GetFanMovies();
-
-        return base.OnParametersSetAsync();
-    }
 
     #region Fan Movies
 
@@ -162,6 +173,7 @@ else
     private List<FanMovie> _shownFanMovies = new();
     private int _maxFanMovieTabs;
 
+    #region Favourite Movies
     private async void GetFanMovies()
     {
         _fanMovies = await UserInteractionService.GetAllFanMoviesByUserAsync(userOfPageID);
@@ -187,8 +199,6 @@ else
     }
 
     #endregion
-
-    #region Favourite Movies
 
     private List<long> _favouriteMovieIds = new();
 

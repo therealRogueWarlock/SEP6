@@ -11,9 +11,9 @@ public interface IUserInteractionService
     public Task<List<Comment>> GetCommentsOfAsync(string subjectId);
     
     
-    public Task AddReviewAsync(Review obj);
+    public Task<Review> AddReviewAsync(Review obj);
   
-    public Task AddCommentAsync(Comment obj);
+    public Task<Comment> AddCommentAsync(Comment obj);
     
     public Task<Comment> DeleteCommentAsync(string guid);
     

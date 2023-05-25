@@ -65,6 +65,7 @@ namespace BestMovies.Services.implementation
 
         public void ClearCashedUser()
         {
+            _currentUser = null;
             IsLoggedIn = false;
             _jsRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", "");
         }
