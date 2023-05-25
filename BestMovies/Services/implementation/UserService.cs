@@ -12,10 +12,12 @@ public class UserService : IUserService
     {
         _userDao = userDao;
     }
-
-    public Task<User> GetAsync(string guid)
+    
+    public async Task<User> GetAsync(string guid)
     {
-        return _userDao.GetAsync(guid);
+        
+        return await _userDao.GetAsync(guid);
+
     }
 
     public Task<string> GetUserName(string guid)

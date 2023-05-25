@@ -1,4 +1,8 @@
-﻿namespace BestMovies;
+﻿
+
+using MudBlazor;
+
+namespace BestMovies;
 
 public static class ConfigVariables
 {
@@ -8,5 +12,7 @@ public static class ConfigVariables
     public const string NoImage = "images/No_Image_Available.jpg";
 
     public const string HashSalt = "sep6";
+    
+    
 
 }

@@ -206,6 +206,32 @@
 
     #endregion Cast
     
+    private async Task SetupReviews()
+    {
+        _reviews = new();
+
+    // Add some bogus data
+        for (int i = 0; i < 10; i++)
+        {
+            _reviews.Add(new()
+            {
+                Comment = new()
+                {
+                    Id = new(),
+                    SubjectId = "??",
+                    Text = "Random Review",
+                    UserId = new()
+                },
+                Id = new(),
+                MovieId = new(),
+                Rating = (int)Random.Shared.NextDouble() * 5,
+                UserId = new()
+            });
+        }
+    }
+
+    #endregion Reviews
+
     protected override async Task OnParametersSetAsync()
     {
         _movieData = await MovieService.GetMovieAsync(MovieId);

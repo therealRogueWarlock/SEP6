@@ -1,31 +1,38 @@
 ﻿@page "/"
-@using System.ComponentModel
+@using Microsoft.IdentityModel.Tokens
 @using BestMovies.Models.ApiModels
 @using BestMovies.Services
-@using Microsoft.IdentityModel.Tokens
 @inject IMovieService MovieService
+@inject NavigationManager NavigationManager
 
-<MudPaper Elevation="0"  Width="100%">
-    <MudContainer MaxWidth="MaxWidth.Large">
-        <MudCarousel Class="mud-width-full"
-                     Style="height: 720px"
+<MudPaper Elevation="0" Width="100%" Square Style="background-color: black">
+    <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Start">
+        <MudCarousel Style="height: 439px; width: 780px"
                      ShowArrows
-                     ShowBullets
                      AutoCycle
+                     BulletsColor="Color.Info"
+                     ShowBullets="false"
                      TData="object">
             @if (!Trending.TrendingMovies.IsNullOrEmpty())
             {
                 @foreach (var movie in Trending.TrendingMovies)
                 {
                     <MudCarouselItem Transition="Transition.Slide">
-                        <div class="container">
-                            <img src="@($"https://image.tmdb.org/t/p/w1280{movie.BackdropPath}")" alt="backdrop"/>
+                        <div class="container" onclick="@(() => CarouselClickHandler(movie.Id))">
+                            <img src="@($"https://image.tmdb.org/t/p/w780{movie.BackdropPath}")" alt="backdrop"/>
+                            <div class="text-block">
+                                <h1>@movie.Title</h1>
+                                <h3>@movie.ReleaseDate</h3>
+                            </div>
                         </div>
                     </MudCarouselItem>
                 }
             }
         </MudCarousel>
-    </MudContainer>
+    <MudList>
+        <MudListItem>Trending</MudListItem>
+    </MudList>
+    </MudStack>
 </MudPaper>
 
 @code{
@@ -37,4 +44,8 @@
         Trending = await MovieService.GetTrendingMoviesAsync();
     }
 
+    private void CarouselClickHandler(int? id)
+    {
+        NavigationManager.NavigateTo($"/Movie/{id}");
+    }
 }
