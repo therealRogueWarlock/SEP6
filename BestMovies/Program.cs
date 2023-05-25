@@ -16,6 +16,7 @@ builder.Services.AddMudServices();
 // data
 builder.Services.AddScoped<IRestApiDataAccess, RestApiDataAccess>();
 builder.Services.AddScoped<IDataBaseAccess, DataBaseAccess>();
+builder.Services.AddScoped<IPeopleDao, PeopleRestApiDao>();
 builder.Services.AddScoped<IMovieDao, MovieRestApiDao>();
 builder.Services.AddScoped<IFanMovieDao, FanMovieDao>();
 builder.Services.AddScoped<ICommentDao, CommentDao>();
@@ -28,6 +29,7 @@ builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IUserInteractionService, UserInteractionService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPeopleService, PeopleService>();
 
 // login service
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();

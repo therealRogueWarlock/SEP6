@@ -19,7 +19,7 @@ public class PeopleService : IPeopleService
         return await _peopleDao.GetPersonAsync(id);
     }
 
-    public async Task<List<Person>> GetCastOfLinkedSubject(List<LinkedSubject> peopleInMovie)
+    public async Task<List<Person>> GetCastOfLinkedSubjectAsync(List<LinkedSubject> peopleInMovie)
     {
         List<Person> persons = new List<Person>();
 

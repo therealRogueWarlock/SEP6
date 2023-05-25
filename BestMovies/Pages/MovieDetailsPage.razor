@@ -10,6 +10,7 @@
 @inject IUserService UserService
 @inject IUserLoginService UserLoginService
 @inject IUserInteractionService UserInteractionService
+@inject IPeopleService PeopleService
 
 <MudContainer>
     <MudStack Row AlignItems="AlignItems.Center">
@@ -185,11 +186,11 @@
 
     #region Cast
 
-    private List<LinkedSubject> _actors;
+    private List<Person> _actors;
 
     private async Task SetupCast()
     {
-        
+        _actors = await PeopleService.GetCastOfLinkedSubjectAsync(new List<LinkedSubject>());
     }
 
     #endregion Cast

@@ -7,6 +7,6 @@ public interface IPeopleService
 {
     public Task<Person?> GetPersonAsync(string id);
 
-    public Task<List<Person>> GetCastOfLinkedSubject(List<LinkedSubject> peopleInMovie);
+    public Task<List<Person>> GetCastOfLinkedSubjectAsync(List<LinkedSubject> peopleInMovie);
     
 }
