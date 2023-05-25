@@ -189,19 +189,7 @@
 
     private async Task SetupCast()
     {
-        _actors = new();
-
-    // Add some bogus data
-        for (int i = 0; i < 10; i++)
-        {
-            _actors.Add(new()
-            {
-                Id = new(),
-                ReferenceId = new(),
-                SubjectId = Random.Shared.NextInt64(long.MaxValue),
-                Type = EntityType.Actor,
-            });
-        }
+        
     }
 
     #endregion Cast
@@ -226,7 +214,7 @@
             {
                 Id = Guid.Empty,
                 UserId = user.Id,
-                SubjectId = long.Parse(_movieData.Id.ToString()),
+                SubjectId = _movieData.Id.ToString(),
                 Type = EntityType.Movie,
             };
 

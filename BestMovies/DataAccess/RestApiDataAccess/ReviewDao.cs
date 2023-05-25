@@ -37,12 +37,12 @@ public class ReviewDao : IReviewDao
 
     public async Task<List<Review>> GetReviewsOfAsync(string subjectId)
     {
-        if (!int.TryParse(subjectId, out var id)) throw new Exception("Invalid Id");
+        //if (!int.TryParse(subjectId, out var id)) throw new Exception("Invalid Id");
 
         await using var context = new Context();
         
         return await context.Set<Review>()
-            .Where(r => r.MovieId == id)
+            .Where(r => r.MovieId == subjectId)
             .ToListAsync();
     }
 }
