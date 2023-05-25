@@ -1,0 +1,72 @@
+﻿@using BestMovies.Models.ApiModels
+@using Microsoft.IdentityModel.Tokens
+<h3>CreateFanmovie</h3>
+
+<Search ResultClickCallBack="@SelectFromSearch" />
+<MudTextField @bind-Value="@_desctription"></MudTextField>
+<MudSelect T="string" AnchorOrigin="Origin.BottomCenter" @bind-Value="AsRole"
+                   DisableUnderLine Margin="Margin.Dense" Style="min-width: 100px; width: 100px">
+            
+            <MudSelectItem Value="@("Cast")">Cast</MudSelectItem>
+            <MudSelectItem Value="@("Director")">Director</MudSelectItem>
+            
+        </MudSelect>
+
+<MudStack Row>
+    <MudList>
+        <h3>Cast</h3>
+        @foreach (var cast in _cast)
+        {
+            <MudListItem>
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <img src="@GetImage(cast.Image)" width="45" alt="poster"/>
+                    @cast.Name
+                </MudStack>
+            </MudListItem>
+        }
+    </MudList>
+    <MudList>
+            <h3>Directors</h3>
+            @foreach (var director in _directores)
+            {
+                <MudListItem>
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <img src="@GetImage(director.Image)" width="45" alt="poster"/>
+                        @director.Name
+                    </MudStack>
+                </MudListItem>
+            }
+        </MudList>
+</MudStack>
+@code {
+
+    private List<SearchResult> _cast = new ();
+    private List<SearchResult> _directores = new ();
+    
+    private string _desctription { get; set; }
+
+    private string AsRole { get; set; } = "Cast";
+    
+
+    private void SelectFromSearch(SearchResult searchResult )
+    {
+        if (AsRole.Equals("Cast"))
+        {
+            Console.WriteLine("Add" + searchResult.Name + " to cast ");
+            if(!_cast.Contains(searchResult)) _cast.Add(searchResult);
+            
+        }else if (AsRole.Equals("Director"))
+        {
+            _directores.Add(searchResult);
+        }
+        StateHasChanged();
+        
+    }
+    
+    private string GetImage(string? imagePath)
+    {
+        if (imagePath.IsNullOrEmpty()) return ConfigVariables.NoImage;
+        else return $"https://image.tmdb.org/t/p/w45{imagePath}";
+    }
+    
+}

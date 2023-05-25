@@ -97,12 +97,18 @@ else
                             @if (_isUsersOwnPage)
                             {
                                 <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CreateFanMovie">Create Fan Movie</MudButton>
+                                
+                                
+                                                                
                             }
 
                         </MudStack>
                     </MudCardContent>
                 </MudCard>
-
+                <div hidden="@(!_isUsersOwnPage)">
+                    <CreateFanmovie/>
+                </div>
+                
             </MudItem>
         </MudGrid>
     </MudPaper>
@@ -131,7 +137,6 @@ else
 
     private async Task SetUpUserPage()
     {
-        // Get the 
         _currentUser = await UserLoginService.GetCurrentUserAsync();
         _userOfPage = await UserService.GetAsync(userOfPageID);
 
@@ -173,7 +178,6 @@ else
         UpdateShownFanMovies();
     }
 
-    
     private async Task UpdateShownFanMovies()
     {
     // Helper Variables for Skipping and Taking
@@ -240,4 +244,5 @@ else
         UserInteractionService.AddFanMovieAsync(newMovie);
     }
 
+    }
 }
