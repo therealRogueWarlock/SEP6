@@ -17,6 +17,7 @@ builder.Services.AddMudServices();
 builder.Services.AddScoped<IRestApiDataAccess, RestApiDataAccess>();
 builder.Services.AddScoped<IDataBaseAccess, DataBaseAccess>();
 builder.Services.AddScoped<IMovieDao, MovieRestApiDao>();
+builder.Services.AddScoped<IFanMovieDao, FanMovieDao>();
 builder.Services.AddScoped<ICommentDao, CommentDao>();
 builder.Services.AddScoped<IReviewDao, ReviewDao>();
 builder.Services.AddScoped<IUserDao, UserDao>();

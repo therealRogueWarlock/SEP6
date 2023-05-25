@@ -1,47 +1,59 @@
+using BestMovies.DataAccess.DataBaseAccess.util;
 using BestMovies.Models.DbModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace BestMovies.DataAccess.DataBaseAccess;
 
 public class FanMovieDao : IFanMovieDao
 {
-    
-    public Task<FanMovie> AddAsync(FanMovie obj)
+    private IDataBaseAccess _dataBaseAccess;
+
+    public FanMovieDao(IDataBaseAccess dataBaseAccess)
     {
-        throw new NotImplementedException();
+        _dataBaseAccess = dataBaseAccess;
     }
 
-    public Task DeleteAsync(string guid)
+    public async Task<FanMovie> AddAsync(FanMovie obj)
     {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.AddAsync(obj);
     }
 
-    public Task<FanMovie> UpdateAsync(FanMovie obj)
+    public async Task DeleteAsync(string guid)
     {
-        throw new NotImplementedException();
+        await _dataBaseAccess.DeleteAsync<FanMovie>(guid);
     }
 
-    public Task<FanMovie?> GetAsync(string guid)
+    public async Task<FanMovie> UpdateAsync(FanMovie obj)
     {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.UpdateAsync(obj);
+    }
+
+    public async Task<FanMovie?> GetAsync(string guid)
+    {
+        return await _dataBaseAccess.GetAsync<FanMovie>(guid);
     }
 
     public Task<FanMovie> GetCollectionAsync(Func<FanMovie> searchFunc)
     {
         throw new NotImplementedException();
     }
-
-    public FanMovie GetFanMovie(string id)
+    
+    public async Task<List<FanMovie>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        await using var context = new Context();
+        List<FanMovie> fanMovies = await context.Set<FanMovie>()
+            .ToListAsync();
+
+        return fanMovies;
     }
 
-    public List<FanMovie> GetAll()
+    public async Task<List<FanMovie>> GetFromUserAsync(string userId)
     {
-        throw new NotImplementedException();
-    }
+        await using var context = new Context();
+        List<FanMovie> fanMovies = await context.Set<FanMovie>()
+            .Where(fm => fm.UserId.ToString() == userId)
+            .ToListAsync();
 
-    public List<FanMovie> GetFromUser(string userId)
-    {
-        throw new NotImplementedException();
+        return fanMovies;
     }
 }

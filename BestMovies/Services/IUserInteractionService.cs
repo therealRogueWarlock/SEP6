@@ -1,3 +1,4 @@
+using BestMovies.Models.ApiModels;
 using BestMovies.Models.DbModels;
 
 namespace BestMovies.Services;
@@ -29,5 +30,11 @@ public interface IUserInteractionService
 
 
     public Task<Review> GetReviewAsync(string guid);
+
+    // public Task<bool> SetFavouriteMovieAsync(string movieId);
+    // public Task<IList<Movie>> GetFavouriteMoviesAsync();
+
+    public void AddFanMovieAsync(FanMovie fanMovie);
+    public Task<List<FanMovie>> GetAllFanMoviesByUserAsync(string userGuid);
 
 }
