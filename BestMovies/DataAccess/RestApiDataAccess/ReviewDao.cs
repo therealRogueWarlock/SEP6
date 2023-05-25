@@ -40,9 +40,9 @@ public class ReviewDao : IReviewDao
         if (!int.TryParse(subjectId, out var id)) throw new Exception("Invalid Id");
 
         await using var context = new Context();
+        
         return await context.Set<Review>()
             .Where(r => r.MovieId == id)
-            .Include("Comment")
             .ToListAsync();
     }
 }
