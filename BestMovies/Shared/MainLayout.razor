@@ -1,10 +1,14 @@
 ﻿@using BestMovies.Services
 @using BestMovies.Services.implementation
 @using LoginComponent
+@using BestMovies.Models.ApiModels
+@using BestMovies.Models
 @inherits LayoutComponentBase
 @* @inject NavigationManager Navigation *@
 @inject IUserLoginService LoginService
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
 <PageTitle>BestMovies</PageTitle>
 
 <MudThemeProvider Theme="_theme"/>
@@ -16,7 +20,7 @@
     <MudSpacer/>
     
     @* Search Field *@
-    <Search/>
+    <Search ResultClickCallBack="@OnClickNavigateSearchResult"/>
     <MudSpacer/>
     
     @* Account *@
@@ -57,6 +61,29 @@
     {
         ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Logout();
     }
+    
+    private void OnClickNavigateSearchResult(SearchResult result)
+    {
+        
+        switch (result.GetEntityType())
+        {
+            case EntityType.Movie:
+                NavigationManager.NavigateTo($"/Movie/{result.Id}", true);
+                break;
+            case EntityType.Tv:
+                break;
+            case EntityType.Actor:
+                break;
+            case EntityType.Director:
+                break;
+            case EntityType.Producer:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    
+    
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
