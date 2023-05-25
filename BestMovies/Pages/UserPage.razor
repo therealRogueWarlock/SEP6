@@ -61,7 +61,7 @@ else
                                 }
                             </MudList>
                         }
-                        </MudCardContent>
+                    </MudCardContent>
                 </MudCard>
 
                 @* Fan Movie Section *@
@@ -119,43 +119,31 @@ else
     User? _userOfPage;
     User? _currentUser;
 
-    protected override async Task OnInitializedAsync()
-    {
-        
-    }
-
-    
-
     protected override async Task OnParametersSetAsync()
     {
-        _maxFavouriteMovieTabs = (_favouriteMovies?.Count / _favouritesShownInList) + 1 ?? 0;
-
-
         await SetUpUserPage();
-        
-        GetFavouriteMovies();
-        UpdateShownFavouriteMovies();
-        
+
         GetFanMovies();
+    // GetFavouriteMovies();
+
+        await base.OnParametersSetAsync();
     }
-    
+
     private async Task SetUpUserPage()
     {
+        // Get the 
         _currentUser = await UserLoginService.GetCurrentUserAsync();
         _userOfPage = await UserService.GetAsync(userOfPageID);
 
     // Check if the user is on their own page
         _isUsersOwnPage = _userOfPage.Id == _currentUser?.Id;
 
-        
-        
         _loading = false;
     }
 
-
     #region Fan Movies
 
-    private int _fanMoviesShownInList = 5;
+        private const int FanMoviesShownInList = 5;
 
     private int _fanMovieTab = 1;
 
@@ -173,32 +161,39 @@ else
     private List<FanMovie> _shownFanMovies = new();
     private int _maxFanMovieTabs;
 
-    #region Favourite Movies
-    private async void GetFanMovies()
+    private async Task GetFanMovies()
     {
+    // Get all Fan Movies
         _fanMovies = await UserInteractionService.GetAllFanMoviesByUserAsync(userOfPageID);
-        Console.WriteLine($"Total Fan Movies: {_fanMovies.Count}");
 
-        _maxFanMovieTabs = (int) Math.Ceiling((double)(_fanMovies?.Count) / _fanMoviesShownInList);
-        Console.WriteLine($"Tabs: {_maxFanMovieTabs}");
+    // Check for how many Tabs to create
+        _maxFanMovieTabs = (int)Math.Ceiling((double)_fanMovies.Count / FanMoviesShownInList);
 
+    // Update the visible list
         UpdateShownFanMovies();
     }
 
-    private void UpdateShownFanMovies()
+    
+    private async Task UpdateShownFanMovies()
     {
-        int toSkip = (_fanMovieTab - 1) * _fanMoviesShownInList;
-        int remainder = _fanMoviesShownInList;
+    // Helper Variables for Skipping and Taking
+        int toSkip = (_fanMovieTab - 1) * FanMoviesShownInList;
+        int remainder = FanMoviesShownInList;
 
-        if (_fanMovies.Count - toSkip < _fanMoviesShownInList)
-            remainder = _fanMovies.Count % _fanMoviesShownInList;
+    // Check to see if there's enough for default "Take" value
+        if (_fanMovies.Count - toSkip < FanMoviesShownInList)
+            remainder = _fanMovies.Count % FanMoviesShownInList;
 
+    // Change the movies in the shown list
         _shownFanMovies = _fanMovies.Skip(toSkip).Take(remainder).ToList();
 
+    // UI update
         StateHasChanged();
     }
 
     #endregion
+
+    #region Favourite Movies
 
     private List<long> _favouriteMovieIds = new();
 
@@ -208,18 +203,25 @@ else
     private List<Movie> _shownFavMovies = new();
     private int _maxFavouriteMovieTabs;
 
-    private void GetFavouriteMovies()
+    private async Task GetFavouriteMovies()
     {
         _favouriteMovieIds.ForEach(async id =>
         {
             Movie m = await MovieService.GetMovieAsync(id.ToString());
             _favouriteMovies.Add(m);
         });
+
+        _maxFavouriteMovieTabs = (_favouriteMovies?.Count / _favouriteMoviesShownInList) + 1 ?? 0;
+
+    // Update what is shown
+        UpdateShownFavouriteMovies();
     }
 
     private void UpdateShownFavouriteMovies()
     {
         _shownFavMovies = _favouriteMovies.Skip(_maxFavouriteMovieTabs * _favouriteMovieTab).Take(_maxFavouriteMovieTabs).ToList();
+
+        StateHasChanged();
     }
 
     #endregion
