@@ -4,5 +4,5 @@ namespace BestMovies.DataAccess;
 
 public interface IPeopleDao
 {
-    public Person GetPerson(string id);
+    public Task<Person?> GetPersonAsync(string id);
 }
