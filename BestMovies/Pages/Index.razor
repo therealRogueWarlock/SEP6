@@ -5,7 +5,7 @@
 @inject IMovieService MovieService
 @inject NavigationManager NavigationManager
 
-<MudPaper Elevation="0" Width="100%" Square Style="background-color: black">
+<MudPaper Elevation="0" Width="100%" Square Style="background-color: #12263A">
     <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Start">
         <MudCarousel Style="height: 439px; width: 780px"
                      ShowArrows
@@ -30,7 +30,9 @@
             }
         </MudCarousel>
     <MudList>
-        <MudListItem>Trending</MudListItem>
+        <MudListItem>
+            <p class="subheader">Today's Trending Actors:</p>
+        </MudListItem>
     </MudList>
     </MudStack>
 </MudPaper>

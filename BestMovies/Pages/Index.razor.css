@@ -16,6 +16,12 @@
     padding-top: 50px;
 }
 
+.subheader {
+    color: #34D5B2;
+    font-size: x-large;
+    font-weight: bold;
+}
+
 h1 {
     font-size: xx-large;
 }
