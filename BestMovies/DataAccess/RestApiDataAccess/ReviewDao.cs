@@ -42,6 +42,7 @@ public class ReviewDao : IReviewDao
         await using var context = new Context();
         return await context.Set<Review>()
             .Where(r => r.MovieId == id)
+            .Include("Comment")
             .ToListAsync();
     }
 }
