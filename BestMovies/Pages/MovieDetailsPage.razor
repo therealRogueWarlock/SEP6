@@ -8,6 +8,8 @@
 
 @inject IMovieService MovieService
 @inject IUserService UserService
+@inject IUserLoginService UserLoginService
+@inject IUserInteractionService UserInteractionService
 
 <MudContainer>
     <MudStack Row AlignItems="AlignItems.Center">
@@ -15,7 +17,7 @@
             <MudText Align="Align.Center" Typo="Typo.h2">@_title</MudText>
         </MudTooltip>
         <div hidden="@(!_adultRating)">
-            <MudChip Text="ADULT MOVIE" Color="Color.Error" hidden="@(!_adultRating)" Variant="Variant.Filled"/>
+            <MudChip Text="ADULT MOVIE" Color="Color.Error" Variant="Variant.Filled"/>
         </div>
         <MudSpacer/>
         <Authorized>
@@ -109,21 +111,7 @@
 
         @* Review Page *@
         <MudTabPanel Text="Reviews">
-            <MudPaper>
-                @foreach (var review in _reviews)
-                {
-                    <MudStack Row Style="margin: 1em;">
-                        <MudStack>
-                            <MudAvatar Src="@ConfigVariables.NoImage" Height="48" Alt="@($"Image of {review.UserId}")"/>
-                            <MudRating MaxValue="5" ReadOnly>2</MudRating>
-                        </MudStack>
-                        <MudStack>
-                            <MudText Typo="Typo.overline">@review.UserId</MudText>
-                            <MudText Typo="Typo.body1">this is a long and complicated review</MudText>
-                        </MudStack>
-                    </MudStack>
-                }
-            </MudPaper>
+            <ReviewSection SubjectId="@MovieId"/>
         </MudTabPanel>
 
     </MudTabs>
@@ -139,6 +127,8 @@
     private string _title = "?";
 
     private bool _favourite;
+    
+
     bool Favourite
     {
         get => _favourite;
@@ -215,11 +205,6 @@
     }
 
     #endregion Cast
-
-    #region Reviews
-
-    private List<Review> _reviews;
-    public string UserComment { get; set; }
     
     private async Task SetupReviews()
     {
@@ -251,23 +236,35 @@
     {
         _movieData = await MovieService.GetMovieAsync(MovieId);
 
-        SetupDetails();
-        SetupCast();
-        SetupReviews();
+        await SetupDetails();
+        await SetupCast();
 
-        _favourite = false; // TODO: Change this to use the Service instead
+    // TODO: Change this to use the Service instead
+        _favourite = false;
     }
 
     private async Task SetFavouriteAsync()
     {
+            var user = await UserLoginService.GetCurrentUserAsync();
         if (!_favourite)
         {
-            // TODO: Add this Movie to the User Favourites
+            Favourite newFav = new()
+            {
+                Id = Guid.Empty,
+                UserId = user.Id,
+                SubjectId = long.Parse(_movieData.Id.ToString()),
+                Type = EntityType.Movie,
+            };
+            
+            user.Favourites.Add(newFav);
+    // TODO: Add this Movie to the User Favourites
             Console.WriteLine($"Adding {_title} as Favourite");
         }
         else
         {
-            // TODO: Remove the Movie from the User Favourites
+    // TODO: Remove the Movie from the User Favourites
+            var m = user.Favourites.First(f => f.SubjectId.ToString() == _movieData.Id.ToString());
+            user.Favourites.Remove(m);   
             Console.WriteLine($"Removing {_title} from Favourites");
         }
 

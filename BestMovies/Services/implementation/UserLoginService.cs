@@ -1,6 +1,7 @@
 using System.Text.Json;
 using BestMovies.DataAccess;
 using BestMovies.Models.DbModels;
+using Microsoft.Extensions.ObjectPool;
 using Microsoft.JSInterop;
 
 namespace BestMovies.Services.implementation
@@ -11,6 +12,11 @@ namespace BestMovies.Services.implementation
         private readonly IJSRuntime _jsRuntime;
         private readonly IUserDao _userDao;
         private User? _currentUser;
+        public bool IsLoggedIn
+        {
+            get;
+            private set;
+        }
 
         public UserLoginService(IJSRuntime jsRuntime, IUserDao userDao)
         {
@@ -18,6 +24,7 @@ namespace BestMovies.Services.implementation
             _jsRuntime = jsRuntime;
         }
         
+        // "Validate"
         public async Task<User?> Validate(string username, string password)
         {
             _currentUser = await _userDao.GetUserAsync(username, password);
@@ -43,6 +50,7 @@ namespace BestMovies.Services.implementation
             if (!string.IsNullOrEmpty(userAsJson))
             {
                 _currentUser = JsonSerializer.Deserialize<User>(userAsJson);
+                IsLoggedIn = true;
             }
             
             return _currentUser;
@@ -50,12 +58,15 @@ namespace BestMovies.Services.implementation
 
         private async Task CashUser(User? user)
         {
+            if (user != null) IsLoggedIn = true;
             string serialisedData = JsonSerializer.Serialize(user);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", serialisedData);
         }
 
         public void ClearCashedUser()
         {
+            _currentUser = null;
+            IsLoggedIn = false;
             _jsRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", "");
         }
     }

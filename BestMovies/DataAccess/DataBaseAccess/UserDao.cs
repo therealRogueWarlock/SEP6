@@ -12,7 +12,7 @@ public class UserDao : IUserDao
     {
         _dataBaseAccess = dataBaseAccess;
     }
-    
+
     public async Task<User?> GetUserAsync(string username, string password)
     {
         await using var context = new Context();
@@ -25,13 +25,21 @@ public class UserDao : IUserDao
             .SingleOrDefaultAsync();
     }
 
-    public async Task<string> GetUsernameFromIdAsync(Guid id)
+    public async Task<string> GetUsernameFromIdAsync(string id)
     {
-        await using var context = new Context();
-        var user = await context.Set<User>()
-            .Where(u => u.Id == id)
-            .SingleAsync();
+        // Parse GUID
+        if (!Guid.TryParse(id, out Guid userId))
+            throw new ArgumentException("value must be a GUID", id);
 
+
+        // Magic - This does not seem to function correctly
+        await using var context = new Context();
+        var user = await _dataBaseAccess.GetAsync<User>(id);
+        // var user = await context.Set<User>()
+        //     .Where(u => u.Id.ToString() == id)
+        //     .SingleAsync();
+
+        // Results
         return user.Username;
     }
 
@@ -44,7 +52,7 @@ public class UserDao : IUserDao
     {
         await _dataBaseAccess.DeleteAsync<User>(guid);
     }
-    
+
     public async Task<User> UpdateAsync(User obj)
     {
         return await _dataBaseAccess.UpdateAsync(obj);
@@ -54,5 +62,4 @@ public class UserDao : IUserDao
     {
         return await _dataBaseAccess.GetAsync<User>(guid);
     }
-    
 }

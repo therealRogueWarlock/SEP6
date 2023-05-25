@@ -1,17 +1,16 @@
-@page "/UserPage/{userOfPageID?}"
-@using BestMovies.DataAccess
+@page "/UserPage/{userOfPageID}"
 @using BestMovies.Models.ApiModels
 @using BestMovies.Models.DbModels
 @using BestMovies.Services
+@using Microsoft.IdentityModel.Tokens
 
 @inject IUserLoginService UserLoginService
-@inject IUserDao UserData
+@inject IUserService UserService
+@inject IMovieService MovieService
 
 @if (_loading)
 {
-    <p>
-        <em>Loading...</em>
-    </p>
+    <MudProgressCircular Indeterminate/>
 }
 
 else if (_userOfPage == null)
@@ -22,102 +21,163 @@ else if (_userOfPage == null)
 }
 else
 {
-    <MudGrid href="@_userOfPage">
-        <MudItem xs="12" md="6">
-            <MudCard>
-                <MudCardContent>
-                    <h3>User Details</h3>
-                    <!-- User information -->
-                    <p>Name: @_userOfPage.Username</p>
-                </MudCardContent>
-            </MudCard>
-        </MudItem>
-        <MudItem xs="12" md="6">
-            <MudCard>
-                <MudCardContent>
-                    <div style="border: 1px solid #ccc; padding: 10px;">
-                        <h3>Favorite Movies</h3>
-                        <!-- Movie list -->
-                        @if (_movies != null)
+
+    <MudPaper Elevation="0" Outlined="false" Style="margin-top: 1em;">
+
+        <MudGrid href="@_userOfPage">
+            <MudItem xs="12" sm="6" md="4">
+                <MudCard>
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h3">Info</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <!-- User information -->
+                        <MudText Typo="Typo.overline">
+                            @_userOfPage.Username
+                        </MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudSpacer/>
+            <MudItem>
+                <MudCard>
+                    <MudCardContent>
+                        @if (_favouriteMovies.IsNullOrEmpty())
                         {
-                            <ul>
-                                @foreach (var movie in _movies)
-                                {
-                                    <li>@movie.Title</li>
-                                }
-                            </ul>
+                            <MudText Typo="Typo.overline">No Favourites</MudText>
                         }
                         else
                         {
-                            <p>No movies available.</p>
-                        }
-                    </div>
-                </MudCardContent>
-            </MudCard>
-            <MudCard style="margin-top: 20px;">
-                <MudCardContent>
-                    <div style="border: 1px solid #ccc; padding: 10px;">
-                        <h3>Fan Movie List</h3>
-                        <!-- Fan movie list -->
-                        @if (_fanMovies != null)
-                        {
-                            <ul>
-                                @foreach (var fanMovie in _fanMovies)
+                            <MudList>
+                                @foreach (var m in _favouriteMovies)
                                 {
-                                    <li>@fanMovie.Description</li>
+                                    <MudListItem>
+                                        <p>@m.Title</p>
+                                    </MudListItem>
                                 }
-                            </ul>
+                            </MudList>
                         }
-                        else
+                        <div style="border: 1px solid #ccc; padding: 10px; visibility: hidden;">
+                            <h3>Favorite Movies</h3>
+                            <!-- Movie list -->
+                            @if (!_favouriteMovies.IsNullOrEmpty())
+                            {
+                                <ul>
+                                    @foreach (var movie in _favouriteMovies)
+                                    {
+                                        <li>@movie.Title</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p>No movies available.</p>
+                            }
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+                <MudCard style="margin-top: 20px;">
+                    <MudCardContent>
+                        <div style="border: 1px solid #ccc; padding: 10px;">
+                            <h3>Fan Movie List</h3>
+                            <!-- Fan movie list -->
+                            @if (_fanMovies != null)
+                            {
+                                <ul>
+                                    @foreach (var fanMovie in _fanMovies)
+                                    {
+                                        <li>@fanMovie.Description</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p>No fan movies available.</p>
+                            }
+                        </div>
+
+                        @if (_isUsersOwnPage)
                         {
-                            <p>No fan movies available.</p>
+                            <MudButton Color="Color.Primary" Variant="Variant.Filled">Create Fan Movie</MudButton>
                         }
-                    </div>
 
-                    @if (_currentUser.Id.Equals(_userOfPage.Id))
-                    {
-                        <MudButton Color="Color.Primary" Variant="Variant.Filled">Create Fan Movie</MudButton>
-                    }
+                    </MudCardContent>
+                </MudCard>
 
-                </MudCardContent>
-            </MudCard>
-
-        </MudItem>
-    </MudGrid>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
 }
 
 @code {
 
     [Parameter]
     public string userOfPageID { get; set; }
-    
+
     bool _loading = true;
+    bool _isUsersOwnPage = false;
 
     User? _userOfPage;
     User? _currentUser;
 
     List<FanMovie>? _fanMovies;
-    List<Movie>? _movies;
 
     protected override async Task OnInitializedAsync()
     {
-        _currentUser = await UserLoginService.GetCurrentUserAsync();
-
-        _userOfPage = _currentUser;
-        Console.WriteLine(userOfPageID);
-        if (userOfPageID != null)
-        {
-            try
-            {
-                _userOfPage = await UserData.GetAsync(userOfPageID);
-                Console.WriteLine(_userOfPage.Username);
-                _fanMovies = _userOfPage.FanMovies;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-        _loading = false;
+        
     }
+
+    
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _maxFavouriteMovieTabs = (_favouriteMovies?.Count / _favouritesShownInList) + 1 ?? 0;
+
+
+        await SetUpUserPage();
+        
+        GetFavouriteMovies();
+        UpdateShownFavouriteMovies();
+    }
+    
+    private async Task SetUpUserPage()
+    {
+        _currentUser = await UserLoginService.GetCurrentUserAsync();
+        _userOfPage = await UserService.GetAsync(userOfPageID);
+
+        // Check if the user is on their own page
+        _isUsersOwnPage = _userOfPage.Id == _currentUser?.Id;
+
+        _loading = false;
+        
+    }
+
+    private int _favouritesShownInList = 5;
+
+    private int _fanMovieTab = 0;
+    
+    
+
+#region Favourite Movies
+    private List<long> _favouriteMovieIds = new();
+
+    private int _favouriteMovieTab = 0;
+    private List<Movie> _favouriteMovies = new();
+    private List<Movie> _shownFavMovies = new();
+    private int _maxFavouriteMovieTabs;
+
+    private void GetFavouriteMovies()
+    {
+        _favouriteMovieIds.ForEach(async id =>
+        {
+            Movie m = await MovieService.GetMovieAsync(id.ToString());
+            _favouriteMovies.Add(m);
+        });
+    }
+
+    private void UpdateShownFavouriteMovies()
+    {
+        _shownFavMovies = _favouriteMovies.Skip(_maxFavouriteMovieTabs * _favouriteMovieTab).Take(_maxFavouriteMovieTabs).ToList();
+    }
+#endregion
 }

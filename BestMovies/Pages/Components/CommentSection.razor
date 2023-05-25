@@ -23,14 +23,17 @@
 
         @* List of all comments *@
         <div>
+            <div hidden="@(_comments.Count != 0)">
+                <MudSkeleton SkeletonType="SkeletonType.Text"/>
+            </div>
             @foreach (var comment in _comments)
             {
                 <MudStack Row Style="margin: 1em;">
                     <MudStack AlignItems="AlignItems.Center" Style="@("background-color: var(--mud-palette-primary-lighten); border-radius: .2em; padding: .2em")">
                         <MudButton @onclick="() => NavigateToUser(comment)">
-                            <MudAvatar>@GetNameOfUser(comment.UserId.ToString()).Result[0]</MudAvatar>
+                            <MudAvatar>@comment.AuthorName.FirstOrDefault()</MudAvatar>
                         </MudButton>
-                        <MudText>@GetNameOfUser(comment.UserId.ToString()).Result</MudText>
+                        <MudText>@comment.AuthorName</MudText>
                     </MudStack>
                     <MudText Typo="Typo.body1">@comment.Text</MudText>
                     <MudSpacer/>
@@ -60,6 +63,7 @@
         _comments = await UserInteractionService.GetCommentsOfAsync(SubjectId);
 
         _comments.Reverse();
+        StateHasChanged();
     }
 
 
@@ -67,17 +71,18 @@
     {
         Console.WriteLine("Create new comment " + _newCommentText);
         var currentUser = await UserLoginService.GetCurrentUserAsync();
-        Comment newComment = new Comment { Id = Guid.Empty, SubjectId = SubjectId, UserId = currentUser.Id, Text = _newCommentText, Timestamp = DateTime.UtcNow };
+        Comment newComment = new Comment { Id = Guid.Empty, SubjectId = SubjectId,AuthorName = currentUser.Username, UserId = currentUser.Id, Text = _newCommentText, Timestamp = DateTime.UtcNow };
         UserInteractionService.AddCommentAsync(newComment);
         _comments.Insert(0,newComment);
         _newCommentText = "";
     }
 
-    async Task<string> GetNameOfUser(string userid)
+    async Task<string> GetNameOfUser(Guid userId)
     {
         try
         {
-            return await UserService.GetUserName(userid);
+            var user = await UserService.GetUserName(userId.ToString());
+            return user;
         }
         catch (NotImplementedException e)
         {
