@@ -3,9 +3,10 @@
 @using BestMovies.Models.ApiModels
 @using BestMovies.Services
 @inject IMovieService MovieService
+@inject IPeopleService PeopleService
 @inject NavigationManager NavigationManager
 
-<MudPaper Elevation="0" Width="100%" Square Style="background-color: black">
+<MudPaper Elevation="0" Width="100%" Square Style="background-color: #12263A">
     <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Start">
         <MudCarousel Style="height: 439px; width: 780px"
                      ShowArrows
@@ -13,9 +14,9 @@
                      BulletsColor="Color.Info"
                      ShowBullets="false"
                      TData="object">
-            @if (!Trending.TrendingMovies.IsNullOrEmpty())
+            @if (!TrendingMovies.TrendingMovies.IsNullOrEmpty())
             {
-                @foreach (var movie in Trending.TrendingMovies)
+                @foreach (var movie in TrendingMovies.TrendingMovies)
                 {
                     <MudCarouselItem Transition="Transition.Slide">
                         <div class="container" onclick="@(() => CarouselClickHandler(movie.Id))">
@@ -29,23 +30,43 @@
                 }
             }
         </MudCarousel>
-    <MudList>
-        <MudListItem>Trending</MudListItem>
-    </MudList>
+        <MudList>
+            <MudListSubheader>
+                <p class="subheader">Today's Trending Actors:</p>
+            </MudListSubheader>
+            @foreach (var person in TrendingPeople)
+            {
+                <MudListItem Dense="true">
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <img src="@GetImage(person.ProfilePath)" width="92" alt="Profile image"/>
+                        <p class="listItem">@person.Name</p>
+                    </MudStack>
+                </MudListItem>
+            }
+        </MudList>
     </MudStack>
 </MudPaper>
 
 @code{
 
-    private TrendingMovieWrapper Trending { get; set; } = new();
+    private TrendingMovieWrapper TrendingMovies { get; set; } = new();
+    private List<TrendingPerson> TrendingPeople { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        Trending = await MovieService.GetTrendingMoviesAsync();
+        TrendingMovies = await MovieService.GetTrendingMoviesAsync();
+        var wrapper = await PeopleService.GetTodayTrendingPeopleAsync();
+        TrendingPeople = wrapper.TrendingActors.Take(3).ToList();
+    }
+
+    private string GetImage(string uri)
+    {
+        return uri.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{uri}";
     }
 
     private void CarouselClickHandler(int? id)
     {
         NavigationManager.NavigateTo($"/Movie/{id}");
     }
+
 }
