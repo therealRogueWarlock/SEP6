@@ -1,31 +1,46 @@
 ﻿@using BestMovies.Models.ApiModels
+@using BestMovies.Models.DbModels
+@using BestMovies.Services
 @using Microsoft.IdentityModel.Tokens
-<h3>CreateFanmovie</h3>
+@using BestMovies.Models
 
-<Search ResultClickCallBack="@SelectFromSearch" />
-<MudTextField @bind-Value="@_desctription"></MudTextField>
-<MudSelect T="string" AnchorOrigin="Origin.BottomCenter" @bind-Value="AsRole"
-                   DisableUnderLine Margin="Margin.Dense" Style="min-width: 100px; width: 100px">
-            
-            <MudSelectItem Value="@("Cast")">Cast</MudSelectItem>
-            <MudSelectItem Value="@("Director")">Director</MudSelectItem>
-            
-        </MudSelect>
+@inject IUserLoginService UserLoginService
+@inject IUserInteractionService UserInteractionService
 
-<MudStack Row>
-    <MudList>
-        <h3>Cast</h3>
-        @foreach (var cast in _cast)
-        {
-            <MudListItem>
-                <MudStack Row AlignItems="AlignItems.Center">
-                    <img src="@GetImage(cast.Image)" width="45" alt="poster"/>
-                    @cast.Name
-                </MudStack>
-            </MudListItem>
-        }
-    </MudList>
-    <MudList>
+<MudPaper Elevation="0" Outlined="false" Style="margin-outside: 10em;">
+    <h3>CreateFanmovie</h3>
+   
+    <MudTextField @bind-Value="@_title" Label="Fan Movie Title"></MudTextField>
+    
+    <MudTextField @bind-Value="@_desctription" Label="Fan Movie description"></MudTextField>
+    Select
+    <div class="z-10">
+        <Search  ResultClickCallBack="@SelectFromSearch" />
+    </div>
+    as
+    <MudSelect T="string" AnchorOrigin="Origin.BottomCenter" @bind-Value="AsRole"
+               DisableUnderLine Margin="Margin.Dense" Style="min-width: 100px; width: 100px">
+            
+        <MudSelectItem Value="@("Cast")">Cast</MudSelectItem>
+        <MudSelectItem Value="@("Director")">Director</MudSelectItem>
+            
+    </MudSelect>
+    
+
+    <MudStack Row>
+        <MudList>
+            <h3>Cast</h3>
+            @foreach (var cast in _cast)
+            {
+                <MudListItem>
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <img src="@GetImage(cast.Image)" width="45" alt="poster"/>
+                        @cast.Name
+                    </MudStack>
+                </MudListItem>
+            }
+        </MudList>
+        <MudList>
             <h3>Directors</h3>
             @foreach (var director in _directores)
             {
@@ -37,11 +52,17 @@
                 </MudListItem>
             }
         </MudList>
-</MudStack>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="PostFanMovie">Create Fan Movie</MudButton>
+
+    </MudStack>
+</MudPaper>
+
 @code {
 
     private List<SearchResult> _cast = new ();
     private List<SearchResult> _directores = new ();
+    
+    private string _title { get; set; }
     
     private string _desctription { get; set; }
 
@@ -60,6 +81,27 @@
             _directores.Add(searchResult);
         }
         StateHasChanged();
+        
+    }
+
+    private async void PostFanMovie()
+    {
+        
+        var currentUser = await UserLoginService.GetCurrentUserAsync();
+        List<LinkedSubject> linkedSubjects = new List<LinkedSubject>();
+
+        foreach (var castSearchResult in _cast)
+        {
+            linkedSubjects.Add(new LinkedSubject{Id = Guid.Empty, ReferenceId = Guid.Empty, SubjectId = castSearchResult.Id.ToString(), Type = EntityType.Actor});
+        }
+        foreach (var castSearchResult in _directores)
+        {
+            linkedSubjects.Add(new LinkedSubject{Id = Guid.Empty, ReferenceId = Guid.Empty, SubjectId = castSearchResult.Id.ToString(), Type = EntityType.Director});
+        }
+        
+        
+        FanMovie newFanMovie = new FanMovie{Id=Guid.Empty,Title = _title, UserId = currentUser.Id,Description = _desctription, LinkedEntities = linkedSubjects};
+        UserInteractionService.AddFanMovieAsync(newFanMovie);
         
     }
     

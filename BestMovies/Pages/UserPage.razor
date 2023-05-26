@@ -97,25 +97,29 @@ else
                             @if (_isUsersOwnPage)
                             {
                                 <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CreateFanMovie">Create Fan Movie</MudButton>
-                                
-                                
-                                                                
+
                             }
 
                         </MudStack>
                     </MudCardContent>
                 </MudCard>
-                <div hidden="@(!_isUsersOwnPage)">
-                    <CreateFanmovie/>
-                </div>
-                
+               
+               
             </MudItem>
+            <MudPopover Open="@_isOpen" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.CenterCenter">
+                <MudIconButton OnClick="@ClosePopover" Class="ml-auto mr-n3 mb-1" Icon="@Icons.Material.Filled.Close" Color="Color.Error"/>
+                
+                <CreateFanmovie/>
+               
+            </MudPopover>
         </MudGrid>
     </MudPaper>
 }
 
 @code {
-
+    
+    private bool _isOpen;
+    
     [Parameter]
     public string userOfPageID { get; set; }
 
@@ -165,6 +169,11 @@ else
     private List<FanMovie> _fanMovies = new();
     private List<FanMovie> _shownFanMovies = new();
     private int _maxFanMovieTabs;
+
+    private void ClosePopover()
+    {
+        _isOpen = false;
+    }
 
     private async Task GetFanMovies()
     {
@@ -232,17 +241,7 @@ else
 
     private void CreateFanMovie()
     {
-        FanMovie newMovie = new FanMovie()
-        {
-            Id = Guid.Empty,
-            UserId = _currentUser.Id,
-            LinkedEntities = new(),
-            Title = "Iroh: The Humble General",
-            Description = "Avatar: The Last Airbender. But everything is from the perspective of General Iroh"
-        };
-
-        UserInteractionService.AddFanMovieAsync(newMovie);
+        _isOpen = !_isOpen;
     }
 
-    }
 }
