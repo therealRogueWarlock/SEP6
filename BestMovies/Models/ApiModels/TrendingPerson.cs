@@ -43,7 +43,7 @@ public class KnownFor
     [JsonProperty("origin_country")] public List<string> OriginCountry { get; set; }
 }
 
-public class TrendingActor
+public class TrendingPerson
 {
     [JsonProperty("adult")] public bool? Adult { get; set; }
 
@@ -66,11 +66,11 @@ public class TrendingActor
     [JsonProperty("known_for")] public List<KnownFor> KnownFor { get; set; }
 }
 
-public class TrendingActorWrapper
+public class TrendingPersonWrapper
 {
     [JsonProperty("page")] public int? Page { get; set; }
 
-    [JsonProperty("results")] public List<TrendingActor> TrendingActors { get; set; }
+    [JsonProperty("results")] public List<TrendingPerson> TrendingActors { get; set; }
 
     [JsonProperty("total_pages")] public int? TotalPages { get; set; }
 
