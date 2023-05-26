@@ -1,9 +1,8 @@
-using BestMovies.DataAccess.DataBaseAccess;
 using BestMovies.DataAccess.DataBaseAccess.util;
 using BestMovies.Models.DbModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace BestMovies.DataAccess.RestApiDataAccess;
+namespace BestMovies.DataAccess.DataBaseAccess;
 
 public class CommentDao : ICommentDao
 {
@@ -21,19 +20,19 @@ public class CommentDao : ICommentDao
         return await _dataBaseAccess.AddAsync(obj);
     }
 
-    public Task DeleteAsync(string guid)
+    public async Task DeleteAsync(string guid)
     {
-        throw new NotImplementedException();
+        await _dataBaseAccess.DeleteAsync<Review>(guid);
     }
 
-    public Task<Comment> UpdateAsync(Comment obj)
+    public async Task<Comment> UpdateAsync(Comment obj)
     {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.UpdateAsync(obj);
     }
 
-    public Task<Comment?> GetAsync(string guid)
+    public async Task<Comment?> GetAsync(string guid)
     {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.GetAsync<Comment>(guid);
     }
 
     public async Task<List<Comment>> GetCommentsOfAsync(string subjectId)

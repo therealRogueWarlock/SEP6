@@ -6,7 +6,7 @@ namespace BestMovies.DataAccess.DataBaseAccess;
 
 public class FanMovieDao : IFanMovieDao
 {
-    private IDataBaseAccess _dataBaseAccess;
+    private readonly IDataBaseAccess _dataBaseAccess;
 
     public FanMovieDao(IDataBaseAccess dataBaseAccess)
     {
@@ -31,11 +31,6 @@ public class FanMovieDao : IFanMovieDao
     public async Task<FanMovie?> GetAsync(string guid)
     {
         return await _dataBaseAccess.GetAsync<FanMovie>(guid);
-    }
-
-    public Task<FanMovie> GetCollectionAsync(Func<FanMovie> searchFunc)
-    {
-        throw new NotImplementedException();
     }
     
     public async Task<List<FanMovie>> GetAllAsync()
