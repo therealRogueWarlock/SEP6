@@ -12,10 +12,15 @@
 @inject IUserInteractionService UserInteractionService
 @inject IPeopleService PeopleService
 
+@if (_movieData is null)
+{
+    return;
+}
+
 <MudContainer>
     <MudStack Row AlignItems="AlignItems.Center">
         <MudTooltip Text="@_originalTitle" Arrow="true">
-            <MudText Align="Align.Center" Typo="Typo.h2">@_title</MudText>
+            <MudText Align="Align.Center" Typo="Typo.h2" Color="Color.Primary">@_title</MudText>
         </MudTooltip>
         <div hidden="@(!_adultRating)">
             <MudChip Text="ADULT MOVIE" Color="Color.Error" Variant="Variant.Filled"/>
@@ -33,7 +38,7 @@
         <MudTabPanel Text="Details">
             <MudPaper Elevation="3" Style="padding: 1em; margin-bottom: 3em;">
                 <MudStack Row>
-                    <MudStack>
+                    <MudStack Justify="Justify.SpaceBetween">
                         @* Summary *@
                         <MudPaper Elevation="0">
                             <MudText Typo="Typo.button">
@@ -52,6 +57,17 @@
                                 <MudImage Width="80" Src="@(ConfigVariables.NoImage)"/>
                                 <MudText>NAME OF DIRECTOR</MudText>
                             </MudStack>
+                        </MudStack>
+                        
+                        @* Statistics *@
+                        <MudStack Spacing="1">
+                            <MudText Typo="Typo.button">Statistics</MudText>
+                            <MudText Typo="Typo.subtitle2">BestMovies Score</MudText>
+                            <MudRating MaxValue="5" SelectedValue="@GetBestMoviesRating()" ReadOnly/>
+                            <MudText Typo="Typo.caption">@($"{Reviews.Count} Votes")</MudText>
+                            <MudText Class="mt-6" Typo="Typo.subtitle2">IMDb Score</MudText>
+                            <MudRating MaxValue="10" SelectedValue="@GetIMDbRating()" ReadOnly/>
+                            <MudText Typo="Typo.caption">@($"{_movieData.VoteCount.Value} Votes")</MudText>
                         </MudStack>
                     </MudStack>
 
@@ -124,11 +140,12 @@
     [Parameter]
     public string MovieId { get; set; }
 
-    private Movie _movieData;
+    private Movie? _movieData;
     private string _title = "?";
 
     private bool _favourite;
 
+    private List<Review> Reviews { get; set; } = new(); 
 
     bool Favourite
     {
@@ -198,12 +215,26 @@
     protected override async Task OnParametersSetAsync()
     {
         _movieData = await MovieService.GetMovieAsync(MovieId);
+        Reviews = await UserInteractionService.GetReviewsOfAsync(MovieId);
 
         await SetupDetails();
         await SetupCast();
 
     // TODO: Change this to use the Service instead
         _favourite = false;
+    }
+
+    private int GetIMDbRating()
+    {
+        if (_movieData?.VoteAverage is null) return 0;
+        Console.WriteLine(_movieData.VoteAverage.Value);
+        return (int) Math.Round(_movieData.VoteAverage.Value, MidpointRounding.AwayFromZero);
+    }
+
+    private int GetBestMoviesRating()
+    {
+        if (Reviews.IsNullOrEmpty()) return 0;
+        return Reviews.Sum(r => r.Rating) / Reviews.Count;
     }
 
     private async Task SetFavouriteAsync()
