@@ -14,13 +14,18 @@ public class MovieService : IMovieService
         _movieDao = movieDao;
     }
 
-    public Task<Movie> GetMovieAsync(string idString)
+    public async Task<Movie> GetMovieAsync(string idString)
     {
-        return _movieDao.GetMovieAsync(idString);
+        return await _movieDao.GetMovieAsync(idString);
     }
 
-    public Task<TrendingMovieWrapper> GetTrendingMoviesAsync()
+    public async Task<TrendingMovieWrapper> GetTrendingMoviesAsync()
     {
-        return _movieDao.GetTrendingMoviesAsync();
+        return await _movieDao.GetTrendingMoviesAsync();
+    }
+
+    public async Task<Credits> GetCreditsFromMovieAsync(string idString)
+    {
+        return await _movieDao.GetCreditsFromMovieAsync(idString);
     }
 }

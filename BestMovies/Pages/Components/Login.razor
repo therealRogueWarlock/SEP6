@@ -6,6 +6,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
+@inject IJSRuntime JSRuntime
 
 <AuthorizeView>
     <NotAuthorized>
@@ -46,7 +47,7 @@
             await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).ValidateLogin(_username, PasswordHashing.HashString(_password));
             _username = "";
             _password = "";
-            NavigationManager.NavigateTo("/");
+            await JSRuntime.InvokeVoidAsync("history.back");
             Snackbar.Add("login successful!", Severity.Info);
         }
         catch (Exception e)

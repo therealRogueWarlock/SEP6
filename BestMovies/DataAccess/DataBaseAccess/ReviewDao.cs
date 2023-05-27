@@ -1,9 +1,8 @@
-using BestMovies.DataAccess.DataBaseAccess;
 using BestMovies.DataAccess.DataBaseAccess.util;
 using BestMovies.Models.DbModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace BestMovies.DataAccess.RestApiDataAccess;
+namespace BestMovies.DataAccess.DataBaseAccess;
 
 public class ReviewDao : IReviewDao
 {
@@ -20,25 +19,23 @@ public class ReviewDao : IReviewDao
         return await _dataBaseAccess.AddAsync(obj);
     }
 
-    public Task DeleteAsync(string guid)
+    public async Task DeleteAsync(string guid)
     {
-        throw new NotImplementedException();
+        await _dataBaseAccess.DeleteAsync<Review>(guid);
     }
 
-    public Task<Review> UpdateAsync(Review obj)
+    public async Task<Review> UpdateAsync(Review obj)
     {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.UpdateAsync(obj);
     }
 
-    public Task<Review?> GetAsync(string guid)
+    public async Task<Review?> GetAsync(string guid)
     {
-        throw new NotImplementedException();
+        return await _dataBaseAccess.GetAsync<Review>(guid);
     }
 
     public async Task<List<Review>> GetReviewsOfAsync(string subjectId)
     {
-        //if (!int.TryParse(subjectId, out var id)) throw new Exception("Invalid Id");
-
         await using var context = new Context();
         
         return await context.Set<Review>()

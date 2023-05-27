@@ -8,5 +8,6 @@ public interface IPeopleService
     public Task<Person?> GetPersonAsync(string id);
 
     public Task<List<Person>> GetCastOfLinkedSubjectAsync(List<LinkedSubject> peopleInMovie);
-    
+    Task<TrendingPersonWrapper> GetTodayTrendingPeopleAsync();
+
 }

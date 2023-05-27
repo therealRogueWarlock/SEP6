@@ -7,7 +7,7 @@ namespace BestMovies.Services.implementation;
 
 public class PeopleService : IPeopleService
 {
-    private IPeopleDao _peopleDao;
+    private readonly IPeopleDao _peopleDao;
 
     public PeopleService(IPeopleDao peopleDao)
     {
@@ -21,6 +21,9 @@ public class PeopleService : IPeopleService
 
     public async Task<List<Person>> GetCastOfLinkedSubjectAsync(List<LinkedSubject> peopleInMovie)
     {
+        /*TODO: People is NOT saved in our database, but are from the API.
+            I have changed the method in PeopleDao.
+        */
         List<Person> persons = new List<Person>();
 
         foreach (var linkedSubject in peopleInMovie)
@@ -33,5 +36,10 @@ public class PeopleService : IPeopleService
         }
 
         return persons;
+    }
+
+    public async Task<TrendingPersonWrapper> GetTodayTrendingPeopleAsync()
+    {
+        return await _peopleDao.GetTodayTrendingPeopleAsync();
     }
 }
