@@ -1,0 +1,66 @@
+﻿@using BestMovies.Services
+@using BestMovies.Models.ApiModels
+@using Microsoft.IdentityModel.Tokens
+@inject IMovieService MovieService
+
+<MudTable Hover
+          Breakpoint="Breakpoint.Sm"
+          Height="650px"
+          FixedHeader
+          Items="@Credits.Cast"
+          GroupBy="@_groupDefinition"
+          Dense>
+    <ColGroup>
+        <col/>
+        <col/>
+        <col/>
+        <col/>
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>Portrait</MudTh>
+        <MudTh>Character</MudTh>
+        <MudTh>Portrayed by</MudTh>
+        <MudTh>Popularity</MudTh>
+    </HeaderContent>
+    <GroupHeaderTemplate>
+        <MudTh Class="mud-table-cell-custom-group" colspan="4">@($"{context.GroupName}: {context.Key}")</MudTh>
+    </GroupHeaderTemplate>
+    <RowTemplate>
+        <MudTd DataLabel="Portrait">
+            <img src="@GetImage(context.ProfilePath)" width="92" alt="portrait"/>
+        </MudTd>
+        <MudTd DataLabel="Character">@context.Character</MudTd>
+        <MudTd DataLabel="Portrayed by">@context.Name</MudTd>
+        <MudTd DataLabel="Popularity">@context.Popularity</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>
+
+@code {
+    
+    [Parameter]
+    public string? MovieId { get; set; }
+
+    private Credits Credits { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (MovieId is null or "") throw new Exception($"Invalid Id: {MovieId}");
+        Credits = await MovieService.GetCreditsFromMovieAsync(MovieId);
+    }
+
+    private readonly TableGroupDefinition<Cast> _groupDefinition = new()
+    {
+        GroupName = "Job",
+        Indentation = false,
+        Expandable = false,
+        Selector = c => c.KnownForDepartment
+    };
+
+    private string GetImage(string uri)
+    {
+        return uri.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{uri}";
+    }
+}

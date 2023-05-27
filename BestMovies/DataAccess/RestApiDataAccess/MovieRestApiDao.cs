@@ -34,7 +34,7 @@ public class MovieRestApiDao : IMovieDao
 
     public async Task<Credits> GetCreditsFromMovieAsync(string idString)
     {
-        if (!int.TryParse(idString, out var id)) throw new Exception("Invalid Id");
+        if (!int.TryParse(idString, out var id)) throw new Exception($"Invalid Id: {idString}");
 
         var url = $"movie/{id}/credits";
         var response = await _api.SendRequestAsync(url);

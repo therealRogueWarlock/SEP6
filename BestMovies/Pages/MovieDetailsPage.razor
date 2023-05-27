@@ -114,7 +114,8 @@
         @* Cast Page *@
         <MudTabPanel Text="Cast">
             <MudPaper Style="padding-top: .1em; padding-bottom: .1em;">
-                @foreach (var actor in _actors)
+                <CastSection MovieId="@MovieId"/>
+                @*@foreach (var actor in _actors)
                 {
                     <MudStack Row Style="margin: 1em;">
                         <MudImage Src="@ConfigVariables.NoImage" Height="80" Alt="@($"Image of {actor.Id}")"/>
@@ -122,7 +123,7 @@
                         <MudSpacer/>
                         <MudText Typo="Typo.body1">Role</MudText>
                     </MudStack>
-                }
+                }*@
             </MudPaper>
         </MudTabPanel>
 
