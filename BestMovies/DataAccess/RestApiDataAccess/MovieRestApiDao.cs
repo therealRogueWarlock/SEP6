@@ -32,7 +32,7 @@ public class MovieRestApiDao : IMovieDao
         return movies ?? new TrendingMovieWrapper();
     }
 
-    public async Task<Credits> GetCreditsFromMovie(string idString)
+    public async Task<Credits> GetCreditsFromMovieAsync(string idString)
     {
         if (!int.TryParse(idString, out var id)) throw new Exception("Invalid Id");
 
