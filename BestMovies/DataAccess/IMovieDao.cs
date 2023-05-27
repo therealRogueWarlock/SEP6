@@ -6,6 +6,6 @@ public interface IMovieDao
 {
     Task<Movie> GetMovieAsync(string idString);
     Task<TrendingMovieWrapper> GetTrendingMoviesAsync();
-    Task<Credits> GetCreditsFromMovie(string idString);
+    Task<Credits> GetCreditsFromMovieAsync(string idString);
 
 }
