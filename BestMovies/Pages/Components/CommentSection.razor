@@ -13,13 +13,20 @@
     </MudCardHeader>
     <MudCardContent>
         @* Writing a new comment *@
-        <Authorized>
-            <MudStack Row AlignItems="AlignItems.Center">
-                <MudTextField @bind-Value="@_newCommentText" Immediate Label="Add a comment" Multiline="true" Rows="3" Variant="Variant.Filled"/>
-                <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="@string.IsNullOrEmpty(_newCommentText)" @onclick="AddComment">Post Comment</MudButton>
-            </MudStack>
-            <MudDivider/>
-        </Authorized>
+        <AuthorizeView>
+            <Authorized>
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <MudTextField @bind-Value="@_newCommentText" Immediate Label="Add a comment" Multiline="true" Rows="3" Variant="Variant.Filled"/>
+                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="@string.IsNullOrEmpty(_newCommentText)" @onclick="AddComment">Post Comment</MudButton>
+                </MudStack>
+                <MudDivider/>
+            </Authorized>
+            <NotAuthorized>
+                <MudButton href="/Login">login to leave a comment</MudButton>
+                <MudSpacer/>
+            
+                </NotAuthorized>
+        </AuthorizeView>
 
         @* List of all comments *@
         <div>
