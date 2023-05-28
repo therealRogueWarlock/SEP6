@@ -21,6 +21,7 @@ builder.Services.AddScoped<IMovieDao, MovieRestApiDao>();
 builder.Services.AddScoped<IFanMovieDao, FanMovieDao>();
 builder.Services.AddScoped<ICommentDao, CommentDao>();
 builder.Services.AddScoped<IReviewDao, ReviewDao>();
+builder.Services.AddScoped<IFavoriteDao, FavoriteDao>();
 builder.Services.AddScoped<IUserDao, UserDao>();
 builder.Services.AddScoped<IApiDao, ApiDao>();
 
