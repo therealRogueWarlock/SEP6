@@ -8,4 +8,13 @@ public interface IUserService
     public Task<User> GetAsync(string guid);
 
     public Task<string> GetUserName(string guid);
+
+    public Task AddFavorite(Favourite favourite);
+
+    public Task RemoveFavorite(Favourite favourite);
+
+    public Task<List<Favourite>> GetFavoritesOf(string guid);
+
+    public Task<bool> IfFavorite(string userId, string subjectId);
+
 }
