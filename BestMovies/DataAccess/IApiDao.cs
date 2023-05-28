@@ -5,5 +5,7 @@ namespace BestMovies.DataAccess;
 
 public interface IApiDao
 {
-    Task<ResultWrapper> SearchAsync(string searchWord, string searchType, int page, bool adult);
+    Task<SearchResultWrapper> SearchAsync(string searchWord, string searchType, int page, bool adult);
+    Task<SearchResultWrapper> SearchGenreAsync(IEnumerable<int> genreIds, int page, bool adult);
+    Task<GenreWrapper> GetGenreListAsync();
 }
