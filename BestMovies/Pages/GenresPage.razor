@@ -1,0 +1,106 @@
+﻿@page "/Search/Genres"
+@using BestMovies.Services
+@using BestMovies.Models.ApiModels
+@using Microsoft.IdentityModel.Tokens
+@inject ISearchService SearchService
+@inject NavigationManager NavigationManager
+
+<MudContainer>
+    <MudText Typo="Typo.h2" Color="Color.Primary">Genre Search</MudText>
+    <MudExpansionPanels>
+        <MudExpansionPanel Text="Genres" @bind-IsExpanded="_panelExpanded">
+            <MudChipSet SelectedChipsChanged="@(SearchByGenre)" MultiSelection Filter>
+                @foreach (var genre in GenreWrapper.Genres)
+                {
+                    <MudChip Value="genre.Id" Text="@genre.Name" Color="Color.Dark" Variant="Variant.Outlined"/>
+                }
+            </MudChipSet>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+    <MudTable T="SearchResult"
+              Hover
+              Breakpoint="Breakpoint.Sm"
+              Height="550px"
+              FixedHeader
+              Dense
+              Items="SearchResults.Results"
+              OnRowClick="@(m => OpenMoviePage(m.Item.Id))"
+              hidden="@HideTable()">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">@GetTableHeader()</MudText>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh></MudTh>
+            <MudTh>Title</MudTh>
+            <MudTh>Genres</MudTh>
+            <MudTh>Release Date</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>
+                <img src="@GetImage(context.Image)" alt="Poster"/>
+            </MudTd>
+            <MudTd DataLabel="Title">@context.Name</MudTd>
+            <MudTd DataLabel="Genres">
+                @foreach (var genre in GenresForDisplay(context.GenreIds))
+                {
+                    <MudChip Text="@genre" DisableRipple Variant="Variant.Outlined" Color="Color.Dark"/>
+                }
+            </MudTd>
+            <MudTd DataLabel="ReleaseDate">@context.ReleaseDate.ToShortDateString()</MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudContainer>
+
+@code {
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? GenreId { get; set; }
+
+    private GenreWrapper GenreWrapper { get; set; } = new() {Genres = new List<Genre>()};
+    private bool _panelExpanded = true;
+    private List<int> SelectedGenres { get; set; } = new();
+
+    private SearchResultWrapper SearchResults { get; set; } = new() {Results = new List<SearchResult>()};
+
+    protected override async Task OnInitializedAsync()
+    {
+        GenreWrapper = await SearchService.GetGenreListAsync();
+    }
+
+    private bool HideTable()
+    {
+        return SearchResults.Results.IsNullOrEmpty();
+    }
+
+    private async Task SearchByGenre(MudChip[] selected)
+    {
+        if (selected.IsNullOrEmpty()) SearchResults = new SearchResultWrapper {Results = new List<SearchResult>()};
+        var ids = selected.Select(chip => (int) chip.Value).ToList();
+        SelectedGenres = ids;
+        SearchResults = await SearchService.SearchGenreAsync(ids);
+    }
+
+    private List<string> GenresForDisplay(IEnumerable<int> ids)
+    {
+        return ids.Select(id => GenreWrapper.Genres.Single(g => g.Id == id).Name).ToList();
+    }
+
+    private string GetTableHeader()
+    {
+        var genres = SelectedGenres.Select(id => GenreWrapper.Genres.Single(g => g.Id == id)).ToList();
+        var genreStr = string.Join(", ", genres.Select(g => g.Name));
+        return $"Genres: {genreStr}";
+    }
+
+    private string GetImage(string uri)
+    {
+        return uri.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{uri}";
+    }
+
+    private void OpenMoviePage(int id)
+    {
+        NavigationManager.NavigateTo($"/Movie/{id}");
+    }
+
+}

@@ -8,6 +8,10 @@ public class SearchResult
     [JsonProperty("id")] public int Id { get; set; }
     [JsonProperty("name")] public string Name { get; set; }
 
+    [JsonProperty("release_date")] public DateTime ReleaseDate { get; set; }
+    
+    [JsonProperty("genre_ids")] public List<int> GenreIds { get; set; }
+
     [JsonProperty("title")]
     private string Name2
     {
@@ -42,7 +46,7 @@ public class SearchResult
     }
 }
 
-public class ResultWrapper
+public class SearchResultWrapper
 {
     [JsonProperty("results")] public List<SearchResult> Results { get; set; }
 

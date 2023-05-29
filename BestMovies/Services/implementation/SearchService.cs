@@ -13,8 +13,18 @@ public class SearchService : ISearchService
         _api = api;
     }
 
-    public async Task<ResultWrapper> SearchAsync(string searchWord, string searchType = "multi", int page = 1, bool adult = false)
+    public async Task<SearchResultWrapper> SearchAsync(string searchWord, string searchType = "multi", int page = 1, bool adult = false)
     {
         return await _api.SearchAsync(searchWord, searchType, page, adult);
+    }
+
+    public async Task<SearchResultWrapper> SearchGenreAsync(IEnumerable<int> genreIds, int page = 1, bool adult = false)
+    {
+        return await _api.SearchGenreAsync(genreIds, page, adult);
+    }
+
+    public async Task<GenreWrapper> GetGenreListAsync()
+    {
+        return await _api.GetGenreListAsync();
     }
 }
