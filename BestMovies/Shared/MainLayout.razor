@@ -18,12 +18,14 @@
 <MudAppBar Color="Color.Primary" Fixed="false">
     <MudIconButton Icon="@Icons.Material.Filled.House" Edge="Edge.Start" Href="/"/>
     <MudSpacer/>
-    
+
     @* Search Field *@
     <Search ResultClickCallBack="@OnClickNavigateSearchResult"/>
-    <MudIconButton Icon="@Icons.Material.Filled.Search" Href="Search/Genres"/>
+    <MudTooltip Text="Discover by genre">
+        <MudIconButton Icon="@Icons.Material.Filled.List" Href="/Genres"/>
+    </MudTooltip>
     <MudSpacer/>
-    
+
     @* Account *@
     <AuthorizeView>
         <Authorized>
@@ -45,6 +47,7 @@
 </div>
 
 @code {
+
     private readonly MudTheme _theme = new()
     {
         Palette = new PaletteLight
@@ -61,12 +64,11 @@
 
     private async Task PerformLogout()
     {
-        ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Logout();
+        ((CustomAuthenticationStateProvider) AuthenticationStateProvider).Logout();
     }
-    
+
     private void OnClickNavigateSearchResult(SearchResult result)
     {
-        
         switch (result.GetEntityType())
         {
             case EntityType.Movie:
@@ -84,8 +86,7 @@
                 throw new ArgumentOutOfRangeException();
         }
     }
-    
-    
+
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -95,7 +96,6 @@
             {
                 Console.WriteLine("+ User is Logged In");
                 _userId = LoginService.GetCurrentUserAsync().Result.Id;
-                
             }
             else
             {
