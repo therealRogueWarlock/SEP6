@@ -28,4 +28,9 @@ public class MovieService : IMovieService
     {
         return await _movieDao.GetCreditsFromMovieAsync(idString);
     }
+
+    public async Task<SearchResultWrapper> GetSimilarMoviesAsync(string idString)
+    {
+        return await _movieDao.GetSimilarMoviesAsync(idString);
+    }
 }

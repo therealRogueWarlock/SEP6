@@ -22,6 +22,17 @@ public class MovieRestApiDao : IMovieDao
         var movie = JsonConvert.DeserializeObject<Movie>(response.Content!);
         return movie ?? new Movie();
     }
+    
+    public async Task<SearchResultWrapper> GetSimilarMoviesAsync(string idString)
+    {
+        if (!int.TryParse(idString, out var id)) throw new Exception("Invalid Id");
+        
+        var url = $"movie/{id}/similar";
+        var response = await _api.SendRequestAsync(url);
+        
+        var movie = JsonConvert.DeserializeObject<SearchResultWrapper>(response.Content!);
+        return movie ?? new SearchResultWrapper();
+    }
 
     public async Task<TrendingMovieWrapper> GetTrendingMoviesAsync()
     {
