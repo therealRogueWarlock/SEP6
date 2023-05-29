@@ -42,4 +42,9 @@ public class PeopleService : IPeopleService
     {
         return await _peopleDao.GetTodayTrendingPeopleAsync();
     }
+
+    public async Task<CelebMovieCredits> GetCelebsMovieCreditsAsync(string id)
+    {
+        return await _peopleDao.GetCelebsMovieCreditsAsync(id);
+    }
 }

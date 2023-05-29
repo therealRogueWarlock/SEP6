@@ -1,0 +1,159 @@
+﻿@using BestMovies.Models.ApiModels
+@using BestMovies.Models.DbModels
+@using BestMovies.Services
+@inject IPeopleService PeopleService
+@inject ISearchService SearchService
+@inject IUserInteractionService UserInteractionService
+
+<MudText Typo="Typo.button">Statistics</MudText>
+<MudStack>
+    <MudStack Row>
+        <MudStack>
+            <MudText Typo="Typo.subtitle2">BestMovies score</MudText>
+            <MudRating MaxValue="5" SelectedValue="@GetBestMovieRating()" ReadOnly/>
+            <MudText Typo="Typo.caption">@($"{Reviews.Count} Votes")</MudText>
+            <MudText Class="mt-6" Typo="Typo.subtitle2">Average rating of all movies</MudText>
+            <MudRating MaxValue="10" SelectedValue="@GetAverageMovieRating()" ReadOnly/>
+            <MudText Typo="Typo.caption">@($"{Credits.Crew.Count + Credits.Cast.Count} Movies")</MudText>
+        </MudStack>
+        <MudStack>
+            <MudText Typo="Typo.subtitle2">Genre worked most in</MudText>
+            <MudChip DisableRipple>@(GenreWrapper?.Genres.Single(g => g.Id == GetMostOccuredGenre()).Name ?? "N/A")</MudChip>
+        </MudStack>
+    </MudStack>
+    <MudStack Row>
+        <MudStack Spacing="1">
+            @if (MostPopularMovie is not null)
+            {
+                <MudText Typo="Typo.subtitle2">Most Popular Movie</MudText>
+                <img src="@MostPopularMovie.Image" alt="Poster" href="@($"/Movie/{MostPopularMovie.Id}")"/>
+                <p>@MostPopularMovie.Title</p>
+                <p>@MostPopularMovie.Role</p>
+            }
+        </MudStack>
+        <MudStack>
+            @if (LeastPopularMovie is not null)
+            {
+                <MudText Typo="Typo.subtitle2">Least Popular Movie</MudText>
+                <img src="@LeastPopularMovie.Image" alt="Poster" href="@($"/Movie/{LeastPopularMovie.Id}")"/>
+                <p>@LeastPopularMovie.Title</p>
+                <p>@LeastPopularMovie.Role</p>
+            }
+        </MudStack>
+    </MudStack>
+</MudStack>
+
+@code {
+
+    [Parameter]
+    public Person? Celeb { get; set; }
+
+    private CelebMovieCredits? Credits { get; set; }
+    private MovieModel? MostPopularMovie { get; set; }
+    private MovieModel? LeastPopularMovie { get; set; }
+    private GenreWrapper? GenreWrapper { get; set; }
+
+    private List<Review>? Reviews { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Celeb is {Id: not null })
+        {
+            Credits = await PeopleService.GetCelebsMovieCreditsAsync(Celeb.Id.Value.ToString());
+            MostPopularMovie = GetMostPopularMovie();
+            LeastPopularMovie = GetLeastPopularMovie();
+
+            Reviews = await UserInteractionService.GetReviewsOfAsync(Celeb.Id.Value.ToString());
+        }
+
+        GenreWrapper = await SearchService.GetGenreListAsync();
+    }
+
+    private int GetBestMovieRating()
+    {
+        return Reviews?.Sum(r => r.Rating) / Reviews?.Count ?? 0;
+    }
+
+    private int GetAverageMovieRating()
+    {
+        var score = Credits?.Cast.Sum(c => c.VoteAverage) + Credits?.Crew.Sum(c => c.VoteAverage) ?? 0;
+        var movies = Credits?.Cast.Count + Credits?.Crew.Count ?? 0;
+        if (movies == 0) return 0;
+        return (int) Math.Round(score / movies, MidpointRounding.AwayFromZero);
+    }
+
+    private int GetMostOccuredGenre()
+    {
+        if (GenreWrapper is null) return 0;
+        var result = 0;
+        var current = 0;
+
+        foreach (var genre in GenreWrapper.Genres)
+        {
+            if (genre.Id is null) continue;
+            var count = Credits?.Cast.Count(c => c.GenreIds.Contains(genre.Id)) ?? 0;
+            count += Credits?.Crew.Count(c => c.GenreIds.Contains(genre.Id)) ?? 0;
+
+            if (count <= current) continue;
+            result = genre.Id.Value;
+            current = count;
+        }
+
+        return result;
+    }
+
+    private MovieModel GetMostPopularMovie()
+    {
+        var cast = Credits!.Cast.OrderByDescending(c => c.Popularity).First();
+        var crew = Credits.Crew.OrderByDescending(c => c.Popularity).First();
+        if (cast.Popularity > crew.Popularity)
+        {
+            return new MovieModel
+            {
+                Id = cast.Id!.Value,
+                Image = $"https://image.tmdb.org/t/p/w92{cast.PosterPath}",
+                Title = cast.Title,
+                Role = cast.Character
+            };
+        }
+        return new MovieModel
+        {
+            Id = crew.Id!.Value,
+            Image = crew.PosterPath,
+            Title = crew.Title,
+            Role = crew.Job
+        };
+    }
+
+    private MovieModel GetLeastPopularMovie()
+    {
+        var cast = Credits!.Cast.OrderByDescending(c => c.Popularity).Last();
+        var crew = Credits.Crew.OrderByDescending(c => c.Popularity).Last();
+        if (cast.Popularity < crew.Popularity)
+        {
+            return new MovieModel
+            {
+                Id = cast.Id!.Value,
+                Image = $"https://image.tmdb.org/t/p/w92{cast.PosterPath}",
+                Title = cast.Title,
+                Role = cast.Character
+            };
+        }
+        return new MovieModel
+        {
+            Id = crew.Id!.Value,
+            Image = crew.PosterPath,
+            Title = crew.Title,
+            Role = crew.Job
+        };
+    }
+
+    private class MovieModel
+    {
+        public int Id { get; set; }
+        public string Image { get; set; }
+        public string Title { get; set; }
+        public string Role { get; set; }
+    }
+
+}
