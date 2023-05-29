@@ -1,13 +1,18 @@
 ﻿@using BestMovies.Models.ApiModels
 @using BestMovies.Models.DbModels
 @using BestMovies.Services
+@using Microsoft.IdentityModel.Tokens
 @inject IPeopleService PeopleService
 @inject ISearchService SearchService
 @inject IUserInteractionService UserInteractionService
 
+@if (Reviews is null)
+{
+    return;
+}
 <MudText Typo="Typo.button">Statistics</MudText>
 <MudStack>
-    <MudStack Row>
+    <MudStack Spacing="6" Row>
         <MudStack>
             <MudText Typo="Typo.subtitle2">BestMovies score</MudText>
             <MudRating MaxValue="5" SelectedValue="@GetBestMovieRating()" ReadOnly/>
@@ -21,23 +26,25 @@
             <MudChip DisableRipple>@(GenreWrapper?.Genres.Single(g => g.Id == GetMostOccuredGenre()).Name ?? "N/A")</MudChip>
         </MudStack>
     </MudStack>
-    <MudStack Row>
+    <MudStack Spacing="16" Row>
         <MudStack Spacing="1">
             @if (MostPopularMovie is not null)
             {
                 <MudText Typo="Typo.subtitle2">Most Popular Movie</MudText>
-                <img src="@MostPopularMovie.Image" alt="Poster" href="@($"/Movie/{MostPopularMovie.Id}")"/>
+                <img src="@GetImage(MostPopularMovie.Image)" alt="Poster" width="92px"/>
                 <p>@MostPopularMovie.Title</p>
-                <p>@MostPopularMovie.Role</p>
+                <p>As: @MostPopularMovie.Role</p>
+                <p>Popularity: @MostPopularMovie.Popularity</p>
             }
         </MudStack>
         <MudStack>
             @if (LeastPopularMovie is not null)
             {
                 <MudText Typo="Typo.subtitle2">Least Popular Movie</MudText>
-                <img src="@LeastPopularMovie.Image" alt="Poster" href="@($"/Movie/{LeastPopularMovie.Id}")"/>
+                <img src="@GetImage(LeastPopularMovie.Image)" alt="Poster" width="92px"/>
                 <p>@LeastPopularMovie.Title</p>
-                <p>@LeastPopularMovie.Role</p>
+                <p>As: @LeastPopularMovie.Role</p>
+                <p>Popularity: @LeastPopularMovie.Popularity</p>
             }
         </MudStack>
     </MudStack>
@@ -71,7 +78,9 @@
 
     private int GetBestMovieRating()
     {
-        return Reviews?.Sum(r => r.Rating) / Reviews?.Count ?? 0;
+        if (Reviews is null) return 0;
+        if (Reviews.Count == 0) return 0;
+        return Reviews.Sum(r => r.Rating) / Reviews.Count;
     }
 
     private int GetAverageMovieRating()
@@ -104,16 +113,17 @@
 
     private MovieModel GetMostPopularMovie()
     {
-        var cast = Credits!.Cast.OrderByDescending(c => c.Popularity).First();
-        var crew = Credits.Crew.OrderByDescending(c => c.Popularity).First();
+        var cast = Credits?.Cast.MaxBy(c => c.Popularity) ?? new Cast {Popularity = 0};
+        var crew = Credits?.Crew.MaxBy(c => c.Popularity) ?? new Crew {Popularity = 0};
         if (cast.Popularity > crew.Popularity)
         {
             return new MovieModel
             {
                 Id = cast.Id!.Value,
-                Image = $"https://image.tmdb.org/t/p/w92{cast.PosterPath}",
+                Image = cast.PosterPath,
                 Title = cast.Title,
-                Role = cast.Character
+                Role = cast.Character,
+                Popularity = cast.Popularity!.Value
             };
         }
         return new MovieModel
@@ -121,22 +131,24 @@
             Id = crew.Id!.Value,
             Image = crew.PosterPath,
             Title = crew.Title,
-            Role = crew.Job
+            Role = crew.Job,
+            Popularity = crew.Popularity!.Value
         };
     }
 
     private MovieModel GetLeastPopularMovie()
     {
-        var cast = Credits!.Cast.OrderByDescending(c => c.Popularity).Last();
-        var crew = Credits.Crew.OrderByDescending(c => c.Popularity).Last();
+        var cast = Credits?.Cast.MinBy(c => c.Popularity) ?? new Cast {Popularity = 9999};
+        var crew = Credits?.Crew.MinBy(c => c.Popularity) ?? new Crew {Popularity = 9999};
         if (cast.Popularity < crew.Popularity)
         {
             return new MovieModel
             {
                 Id = cast.Id!.Value,
-                Image = $"https://image.tmdb.org/t/p/w92{cast.PosterPath}",
+                Image = cast.PosterPath,
                 Title = cast.Title,
-                Role = cast.Character
+                Role = cast.Character,
+                Popularity = cast.Popularity!.Value
             };
         }
         return new MovieModel
@@ -144,8 +156,14 @@
             Id = crew.Id!.Value,
             Image = crew.PosterPath,
             Title = crew.Title,
-            Role = crew.Job
+            Role = crew.Job,
+            Popularity = crew.Popularity!.Value
         };
+    }
+    
+    private string GetImage(string uri)
+    {
+        return uri.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{uri}";
     }
 
     private class MovieModel
@@ -154,6 +172,7 @@
         public string Image { get; set; }
         public string Title { get; set; }
         public string Role { get; set; }
+        public double Popularity { get; set; }
     }
 
 }
