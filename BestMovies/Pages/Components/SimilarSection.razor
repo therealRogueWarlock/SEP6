@@ -1,0 +1,72 @@
+﻿@using BestMovies.Services
+@using BestMovies.Models.ApiModels
+@using Microsoft.IdentityModel.Tokens
+@inject IMovieService MovieService
+@inject NavigationManager NavigationManager
+
+@if (SimilarMovies.IsNullOrEmpty())
+{
+    return;
+}
+<MudContainer>
+    <MudText Typo="Typo.h4" Color="Color.Primary">Similar Movies</MudText>
+    <MudPaper Elevation="0">
+        <MudStack Row>
+            <MudList Dense Clickable Style="width: 50%">
+                @foreach (var result in SimilarMovies.Take(10))
+                {
+                    <MudListItem>
+                        <div onClick="@(() => ResultClickHandler(result))">
+                            <MudStack Row AlignItems="AlignItems.Center">
+                                <img src="@GetImage(result.Image)" width="92" alt="poster"/>
+                                @result.Name
+                            </MudStack>
+                        </div>
+                    </MudListItem>
+                }
+            </MudList>
+            <MudList Dense Clickable Style="width: 50%">
+                @foreach (var result in SimilarMovies.Skip(10).Take(10))
+                {
+                    <MudListItem>
+                        <div onClick="@(() => ResultClickHandler(result))">
+                            <MudStack Row AlignItems="AlignItems.Center">
+                                <img src="@GetImage(result.Image)" width="92" alt="poster"/>
+                                @result.Name
+                            </MudStack>
+                        </div>
+                    </MudListItem>
+                }
+            </MudList>
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+
+@code {
+
+    [Parameter]
+    public string? MovieId { get; set; }
+
+    private List<SearchResult>? SimilarMovies { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (MovieId is not null)
+        {
+            var wrapper = await MovieService.GetSimilarMoviesAsync(MovieId);
+            SimilarMovies = wrapper.Results;
+        }
+    }
+
+    private string GetImage(string? imagePath)
+    {
+        return imagePath.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{imagePath}";
+    }
+
+    private void ResultClickHandler(SearchResult result)
+    {
+        NavigationManager.NavigateTo($"/Movie/{result.Id}");
+    }
+
+}
