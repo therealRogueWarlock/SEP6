@@ -32,6 +32,8 @@ public class Cast
 
     [JsonProperty("vote_count")] public int? VoteCount { get; set; }
 
+    [JsonProperty("cast_id")] public int? CastId { get; set; }
+    
     [JsonProperty("character")] public string Character { get; set; }
 
     [JsonProperty("credit_id")] public string CreditId { get; set; }

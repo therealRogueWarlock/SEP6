@@ -10,7 +10,7 @@ public class Person
 
     [JsonProperty("biography")] public string Biography { get; set; }
 
-    [JsonProperty("birthday")] public DateTime Birthday { get; set; }
+    [JsonProperty("birthday")] public DateTime? Birthday { get; set; }
 
     [JsonProperty("deathday")] public DateTime? Deathday { get; set; }
 

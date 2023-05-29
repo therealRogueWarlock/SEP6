@@ -21,9 +21,7 @@ public class PeopleService : IPeopleService
 
     public async Task<List<Person>> GetCastOfLinkedSubjectAsync(List<LinkedSubject> peopleInMovie)
     {
-        /*TODO: People is NOT saved in our database, but are from the API.
-            I have changed the method in PeopleDao.
-        */
+        
         List<Person> persons = new List<Person>();
 
         foreach (var linkedSubject in peopleInMovie)

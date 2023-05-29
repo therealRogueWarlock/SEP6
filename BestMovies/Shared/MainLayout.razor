@@ -74,13 +74,14 @@
             case EntityType.Movie:
                 NavigationManager.NavigateTo($"/Movie/{result.Id}", true);
                 break;
-            case EntityType.Tv:
-                break;
             case EntityType.Actor:
+                NavigationManager.NavigateTo($"/CelebrityPage/{result.Id}", true);
                 break;
             case EntityType.Director:
+                NavigationManager.NavigateTo($"/CelebrityPage/{result.Id}", true);
                 break;
             case EntityType.Producer:
+                NavigationManager.NavigateTo($"/CelebrityPage/{result.Id}", true);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

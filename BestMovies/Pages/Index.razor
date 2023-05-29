@@ -37,12 +37,14 @@
             </MudListSubheader>
             @foreach (var person in TrendingPeople)
             {
-                <MudListItem Dense="true">
-                    <MudStack Row AlignItems="AlignItems.Center">
-                        <img src="@GetImage(person.ProfilePath)" width="92" alt="Profile image"/>
-                        <p class="listItem">@person.Name</p>
-                    </MudStack>
-                </MudListItem>
+                
+                    <MudListItem OnClick="@(() => TrendingActorClickHandler(person.Id))" Dense="true">
+                        <MudStack Row AlignItems="AlignItems.Center">
+                            <img src="@GetImage(person.ProfilePath)" width="92" alt="Profile image"/>
+                            <p class="listItem">@person.Name</p>
+                        </MudStack>
+                    </MudListItem>
+                
             }
         </MudList>
     </MudStack>
@@ -68,6 +70,11 @@
     private void CarouselClickHandler(int? id)
     {
         NavigationManager.NavigateTo($"/Movie/{id}");
+    }
+
+    private void TrendingActorClickHandler(int? id)
+    {
+        NavigationManager.NavigateTo($"/CelebrityPage/{id}");
     }
 
 }
