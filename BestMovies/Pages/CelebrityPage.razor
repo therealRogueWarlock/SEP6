@@ -13,7 +13,7 @@
 
 <MudContainer>
     <MudStack Row AlignItems="AlignItems.Center">
-        <MudTooltip Text="@_personData.AlsoKnownAs.ToString()" Arrow="true">
+        <MudTooltip Text="@_personData.AlsoKnownAs.First()" Arrow="true">
             <MudText Align="Align.Center" Typo="Typo.h2" Color="Color.Primary">@_personData.Name</MudText>
         </MudTooltip>
         <div hidden="@(!_personData.Adult)">
@@ -40,7 +40,7 @@
         <MudTabPanel Text="Details">
             <MudPaper Elevation="3" Style="padding: 1em; margin-bottom: 3em;">
                 <MudStack Row>
-                    <MudStack Justify="Justify.SpaceBetween">
+                    <MudStack Spacing="10" Justify="Justify.SpaceBetween">
                         @* Summary *@
                         <MudPaper Elevation="0">
                             <MudText Typo="Typo.button">
@@ -54,9 +54,7 @@
 
                         
                         @* Statistics *@
-                        <MudStack Spacing="1">
-                           Statistics
-                        </MudStack>
+                        <CelebStatsSection Celeb="_personData"/>
                     </MudStack>
 
                     <MudSpacer/>
@@ -139,7 +137,7 @@
 
     private string GetImage(string uri)
     {
-        return uri.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{uri}";
+        return uri.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w200{uri}";
     }
 
 }

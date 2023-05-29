@@ -9,5 +9,5 @@ public interface IPeopleService
 
     public Task<List<Person>> GetCastOfLinkedSubjectAsync(List<LinkedSubject> peopleInMovie);
     Task<TrendingPersonWrapper> GetTodayTrendingPeopleAsync();
-
+    Task<CelebMovieCredits> GetCelebsMovieCreditsAsync(string id);
 }
