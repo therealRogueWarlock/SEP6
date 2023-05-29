@@ -43,14 +43,14 @@ public class MovieRestApiDao : IMovieDao
         return movies ?? new TrendingMovieWrapper();
     }
 
-    public async Task<Credits> GetCreditsFromMovieAsync(string idString)
+    public async Task<CreditWrapper> GetCreditsFromMovieAsync(string idString)
     {
         if (!int.TryParse(idString, out var id)) throw new Exception($"Invalid Id: {idString}");
 
         var url = $"movie/{id}/credits";
         var response = await _api.SendRequestAsync(url);
 
-        var credits = JsonConvert.DeserializeObject<Credits>(response.Content!);
-        return credits ?? new Credits();
+        var credits = JsonConvert.DeserializeObject<CreditWrapper>(response.Content!);
+        return credits ?? new CreditWrapper();
     }
 }

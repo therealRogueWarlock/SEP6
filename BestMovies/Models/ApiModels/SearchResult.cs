@@ -45,10 +45,3 @@ public class SearchResult
         return FirstAirDate is not null ? EntityType.Tv : EntityType.Movie;
     }
 }
-
-public class SearchResultWrapper
-{
-    [JsonProperty("results")] public List<SearchResult> Results { get; set; }
-
-    [JsonProperty("page")] public int Page { get; set; }
-}
