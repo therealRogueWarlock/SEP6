@@ -2,42 +2,6 @@ using Newtonsoft.Json;
 
 namespace BestMovies.Models.ApiModels;
 
-public class BelongsToCollection
-{
-    [JsonProperty("id")] public int? Id { get; set; }
-
-    [JsonProperty("name")] public string Name { get; set; }
-
-    [JsonProperty("poster_path")] public string PosterPath { get; set; }
-
-    [JsonProperty("backdrop_path")] public string BackdropPath { get; set; }
-}
-
-public class Genre
-{
-    [JsonProperty("id")] public int? Id { get; set; }
-
-    [JsonProperty("name")] public string Name { get; set; }
-}
-
-public class ProductionCompany
-{
-    [JsonProperty("id")] public int? Id { get; set; }
-
-    [JsonProperty("logo_path")] public string LogoPath { get; set; }
-
-    [JsonProperty("name")] public string Name { get; set; }
-
-    [JsonProperty("origin_country")] public string OriginCountry { get; set; }
-}
-
-public class ProductionCountry
-{
-    [JsonProperty("iso_3166_1")] public string Iso31661 { get; set; }
-
-    [JsonProperty("name")] public string Name { get; set; }
-}
-
 public class Movie
 {
     [JsonProperty("adult")] public bool? Adult { get; set; }
@@ -90,13 +54,4 @@ public class Movie
     [JsonProperty("vote_average")] public double? VoteAverage { get; set; }
 
     [JsonProperty("vote_count")] public int? VoteCount { get; set; }
-}
-
-public class SpokenLanguage
-{
-    [JsonProperty("english_name")] public string EnglishName { get; set; }
-
-    [JsonProperty("iso_639_1")] public string Iso6391 { get; set; }
-
-    [JsonProperty("name")] public string Name { get; set; }
 }

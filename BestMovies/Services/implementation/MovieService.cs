@@ -24,7 +24,7 @@ public class MovieService : IMovieService
         return await _movieDao.GetTrendingMoviesAsync();
     }
 
-    public async Task<Credits> GetCreditsFromMovieAsync(string idString)
+    public async Task<CreditWrapper> GetCreditsFromMovieAsync(string idString)
     {
         return await _movieDao.GetCreditsFromMovieAsync(idString);
     }

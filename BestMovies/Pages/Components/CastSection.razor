@@ -7,7 +7,7 @@
           Breakpoint="Breakpoint.Sm"
           Height="650px"
           FixedHeader
-          Items="@Credits.Cast"
+          Items="@CreditWrapper.Credit"
           GroupBy="@_groupDefinition"
           Dense>
     <ColGroup>
@@ -43,15 +43,15 @@
     [Parameter]
     public string? MovieId { get; set; }
 
-    private Credits Credits { get; set; } = new();
+    private CreditWrapper CreditWrapper { get; set; } = new();
 
     protected override async Task OnParametersSetAsync()
     {
         if (MovieId is null or "") throw new Exception($"Invalid Id: {MovieId}");
-        Credits = await MovieService.GetCreditsFromMovieAsync(MovieId);
+        CreditWrapper = await MovieService.GetCreditsFromMovieAsync(MovieId);
     }
 
-    private readonly TableGroupDefinition<Cast> _groupDefinition = new()
+    private readonly TableGroupDefinition<Credit> _groupDefinition = new()
     {
         GroupName = "Job",
         Indentation = false,
