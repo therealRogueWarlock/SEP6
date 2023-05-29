@@ -85,6 +85,8 @@
 
     private void ResultClickHandler(SearchResult result)
     {
+        SearchString  = "";
+        SearchResults  = new();
         ResultClickCallBack?.Invoke(result);
     }
 

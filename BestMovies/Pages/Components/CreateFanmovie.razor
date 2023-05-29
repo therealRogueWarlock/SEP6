@@ -1,0 +1,181 @@
+﻿@using BestMovies.Models.ApiModels
+@using BestMovies.Models.DbModels
+@using BestMovies.Services
+@using Microsoft.IdentityModel.Tokens
+@using BestMovies.Models
+
+@inject IUserLoginService UserLoginService
+@inject IUserInteractionService UserInteractionService
+
+<MudPaper Elevation="0" Outlined="false" Style="margin-outside: 10em;">
+    <h3>CreateFanmovie</h3>
+   
+    <MudTextField @bind-Value="@_title" Label="Fan Movie Title"></MudTextField>
+    <MudTextField @bind-Value="@_moiveDesctription" Label="Fan Movie description"></MudTextField>
+    
+    Select
+    
+    <MudCard class="z-10">
+        <Search  ResultClickCallBack="@SelectFromSearch" />
+    </MudCard>
+    
+    @if (_stagedBeforeAdd != null)
+    {
+        <MudStack Row AlignItems="AlignItems.Center">
+            <img src="@GetImage(_stagedBeforeAdd.Image)" width="45" alt="poster"/>
+            @_stagedBeforeAdd.Name
+        </MudStack>
+    }
+    else
+    {
+        <MudStack Row AlignItems="AlignItems.Center" >
+            <img src="@GetImage("")" width="45" alt="poster"/>
+        </MudStack>
+    }
+    
+    as
+    
+    <MudTextField @bind-Value="@_roleDesctription" Label="Description"></MudTextField>
+    
+    <MudSelect T="string" AnchorOrigin="Origin.BottomCenter" @bind-Value="AsRole"
+               DisableUnderLine Margin="Margin.Dense" Style="min-width: 100px; width: 100px">
+        
+        <MudSelectItem Value="@("InspiredBy")">Inspired by</MudSelectItem>
+        <MudSelectItem Value="@("Actor")">Actor</MudSelectItem>
+        <MudSelectItem Value="@("Director")">Director</MudSelectItem>
+            
+    </MudSelect>
+    
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddToFanMovie">Add to fan movie!</MudButton>
+    
+    <MudStack Row>
+        <MudList>
+            <h3>Actors</h3>
+            @foreach (var actor in _actorsDict)
+            {
+                <MudListItem @onclick="() => { _actorsDict.Remove(actor.Key); _stagedBeforeAdd = actor.Value; }" >
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <img src="@GetImage(actor.Value.Image)" width="45" alt="poster"/>
+                        @actor.Value.Name
+                        @actor.Key.Description
+                    </MudStack>
+                </MudListItem>
+            }
+        </MudList>
+        <MudList>
+            <h3>Directors</h3>
+            @foreach (var director in _directorsDict)
+            {
+                <MudListItem @onclick="() => { _directorsDict.Remove(director.Key); _stagedBeforeAdd = director.Value; }">
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <img src="@GetImage(director.Value.Image)" width="45" alt="poster" />
+                        @director.Value.Name
+                        @director.Key.Description
+                    </MudStack>
+                </MudListItem>
+            }
+        </MudList>
+        <MudList>
+                    <h3>Inspired By</h3>
+                    @foreach (var inspiration in _inspiredByDict)
+                    {
+                        <MudListItem  @onclick="() => { _inspiredByDict.Remove(inspiration.Key); _stagedBeforeAdd = inspiration.Value; }">
+                            <MudStack Row AlignItems="AlignItems.Center">
+                                <img src="@GetImage(inspiration.Value.Image)" width="45" alt="poster"/>
+                                @inspiration.Value.Name
+                                @inspiration.Key.Description
+                            </MudStack>
+                        </MudListItem>
+                    }
+            </MudList>
+       
+    </MudStack>
+     <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="PostFanMovie">Create Fan Movie</MudButton>
+</MudPaper>
+
+@code {
+
+    private SearchResult? _stagedBeforeAdd;
+
+    private Dictionary<LinkedSubject,SearchResult> _actorsDict = new ();
+    private Dictionary<LinkedSubject,SearchResult> _directorsDict = new ();
+    private Dictionary<LinkedSubject,SearchResult> _inspiredByDict = new();
+    
+    private string _title { get; set; }
+    
+    private string _moiveDesctription { get; set; }
+    private string _roleDesctription { get; set; }
+
+    private string AsRole { get; set; } = "Actor";
+    
+    List<LinkedSubject> _linkedSubjects = new ();
+    
+    private void SelectFromSearch(SearchResult searchResult )
+    {
+
+        _stagedBeforeAdd = searchResult;
+        
+        StateHasChanged();
+    }
+
+    
+    private void AddToFanMovie()
+    {
+        
+        if(_stagedBeforeAdd == null) return;
+
+        LinkedSubject asLinkedSubject = new LinkedSubject{Id = Guid.Empty, ReferenceId = Guid.Empty, SubjectId = _stagedBeforeAdd.Id.ToString(), Description = _roleDesctription};
+        
+        if (AsRole.Equals("Actor"))
+        {
+            asLinkedSubject.Type = EntityType.Actor;
+            
+            _actorsDict.Add(asLinkedSubject, _stagedBeforeAdd);
+           
+        }
+        else if (AsRole.Equals("Director"))
+        {
+            asLinkedSubject.Type = EntityType.Director;
+
+            if(!_directorsDict.Keys.ToList().Exists(l => l.SubjectId == _stagedBeforeAdd.Id.ToString()))
+                _directorsDict.Add(asLinkedSubject, _stagedBeforeAdd);
+
+        }else if (AsRole.Equals("InspiredBy"))
+        {
+            asLinkedSubject.Type = EntityType.Movie;
+            
+            if(!_inspiredByDict.Keys.ToList().Exists(l => l.SubjectId == _stagedBeforeAdd.Id.ToString()))
+                _inspiredByDict.Add(asLinkedSubject, _stagedBeforeAdd);
+            
+        }
+        _roleDesctription = "";
+        _stagedBeforeAdd = null;
+        StateHasChanged();
+    }
+    
+
+    private async void PostFanMovie()
+    {
+        
+        var currentUser = await UserLoginService.GetCurrentUserAsync();
+        
+        _linkedSubjects.AddRange(_actorsDict.Keys);
+        _linkedSubjects.AddRange(_directorsDict.Keys);
+        _linkedSubjects.AddRange(_inspiredByDict.Keys);
+
+        FanMovie newFanMovie = new FanMovie{Id=Guid.Empty,Title = _title, UserId = currentUser.Id,Description = _moiveDesctription, LinkedEntities = _linkedSubjects};
+        UserInteractionService.AddFanMovieAsync(newFanMovie);
+
+        _actorsDict = new Dictionary<LinkedSubject, SearchResult>();
+        _directorsDict = new Dictionary<LinkedSubject, SearchResult>();
+        _inspiredByDict = new Dictionary<LinkedSubject, SearchResult>();
+        _linkedSubjects = new List<LinkedSubject>();
+    }
+    
+    private string GetImage(string? imagePath)
+    {
+        if (imagePath.IsNullOrEmpty()) return ConfigVariables.NoImage;
+        else return $"https://image.tmdb.org/t/p/w45{imagePath}";
+    }
+    
+}
