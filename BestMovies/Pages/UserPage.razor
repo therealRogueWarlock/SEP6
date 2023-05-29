@@ -22,98 +22,99 @@ else if (_userOfPage == null)
 }
 else
 {
-    <MudPaper Elevation="0" Outlined="false" Style="margin-top: 1em;">
+    <MudContainer>
+        <MudPaper Elevation="0" Outlined="false" Style="margin-top: 1em;">
 
-        <MudGrid href="@_userOfPage">
-            <MudItem xs="12" sm="6" md="4">
-                <MudCard>
-                    <MudCardHeader>
-                        <MudText Typo="Typo.h3">Info</MudText>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <!-- User information -->
-                        <MudText Typo="Typo.overline">
-                            @_userOfPage.Username
-                        </MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
+            <MudGrid href="@_userOfPage">
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard>
+                        <MudCardHeader>
+                            <MudText Typo="Typo.h3">Info</MudText>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <!-- User information -->
+                            <MudText Typo="Typo.overline">
+                                @_userOfPage.Username
+                            </MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
 
-            <MudSpacer/>
+                <MudSpacer/>
 
-            @* Right Side *@
-            <MudItem>
-                @* Favourite Movie Section *@
-                <MudCard>
-                    <MudCardContent>
-                        @if (_favouriteMovies.IsNullOrEmpty())
-                        {
-                            <MudText Typo="Typo.overline">No Favourites</MudText>
-                        }
-                        else
-                        {
-                            <MudList>
-                                @foreach (var m in _favouriteMovies)
-                                {
-                                    <MudListItem>
-                                        <p>@m.Title</p>
-                                    </MudListItem>
-                                }
-                            </MudList>
-                        }
-                    </MudCardContent>
-                </MudCard>
-
-                @* Fan Movie Section *@
-                <MudCard style="margin-top: 20px;">
-                    <MudCardContent>
-                        <MudStack AlignItems="AlignItems.Center">
-                            <MudText Typo="Typo.h3">Fan Movies</MudText>
-                            @if (_shownFanMovies.IsNullOrEmpty())
+                @* Right Side *@
+                <MudItem>
+                    @* Favourite Movie Section *@
+                    <MudCard>
+                        <MudCardContent>
+                            @if (_favouriteMovies.IsNullOrEmpty())
                             {
-                                <MudText Typo="Typo.body2">No Fan Movies</MudText>
+                                <MudText Typo="Typo.overline">No Favourites</MudText>
                             }
                             else
                             {
-                                @if (_maxFanMovieTabs > 1)
-                                {
-                                    <MudPagination Count="@_maxFanMovieTabs" @bind-Selected="FanMovieTab"/>
-                                }
-
-                                @* List of Fan Movies *@
                                 <MudList>
-                                    @foreach (var m in _shownFanMovies)
+                                    @foreach (var m in _favouriteMovies)
                                     {
                                         <MudListItem>
-                                            @* Title of the Fan Movie *@
-                                            @* If this is clicked, it should show the description and cast set for the movie *@
                                             <p>@m.Title</p>
                                         </MudListItem>
                                     }
                                 </MudList>
                             }
+                        </MudCardContent>
+                    </MudCard>
 
-                            @* Create a Fan Movie button *@
-                            @if (_isUsersOwnPage)
-                            {
-                                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CreateFanMovie">Create Fan Movie</MudButton>
+                    @* Fan Movie Section *@
+                    <MudCard style="margin-top: 20px;">
+                        <MudCardContent>
+                            <MudStack AlignItems="AlignItems.Center">
+                                <MudText Typo="Typo.h3">Fan Movies</MudText>
+                                @if (_shownFanMovies.IsNullOrEmpty())
+                                {
+                                    <MudText Typo="Typo.body2">No Fan Movies</MudText>
+                                }
+                                else
+                                {
+                                    @if (_maxFanMovieTabs > 1)
+                                    {
+                                        <MudPagination Count="@_maxFanMovieTabs" @bind-Selected="FanMovieTab"/>
+                                    }
 
-                            }
+                                    @* List of Fan Movies *@
+                                    <MudList>
+                                        @foreach (var m in _shownFanMovies)
+                                        {
+                                            <MudListItem>
+                                                @* Title of the Fan Movie *@
+                                                @* If this is clicked, it should show the description and cast set for the movie *@
+                                                <p>@m.Title</p>
+                                            </MudListItem>
+                                        }
+                                    </MudList>
+                                }
 
-                        </MudStack>
-                    </MudCardContent>
-                </MudCard>
-               
-               
-            </MudItem>
-            <MudPopover Open="@_isOpen" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.CenterCenter">
-                <MudIconButton OnClick="@ClosePopover" Class="ml-auto mr-n3 mb-1" Icon="@Icons.Material.Filled.Close" Color="Color.Error"/>
-                
-                <CreateFanmovie/>
-               
-            </MudPopover>
-        </MudGrid>
-    </MudPaper>
+                                @* Create a Fan Movie button *@
+                                @if (_isUsersOwnPage)
+                                {
+                                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CreateFanMovie">Create Fan Movie</MudButton>
+
+                                }
+
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+                   
+                   
+                </MudItem>
+                <MudPopover Open="@_isOpen" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+                    
+                    <CreateFanmovie/>
+                    <MudIconButton OnClick="@ClosePopover" Class="ml-auto mr-n3 mb-1" Icon="@Icons.Material.Filled.Close" Color="Color.Error"/>
+                </MudPopover>
+            </MudGrid>
+        </MudPaper>
+    </MudContainer>
 }
 
 @code {
