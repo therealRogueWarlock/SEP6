@@ -1,4 +1,4 @@
-﻿@page "/Search/Genres"
+﻿@page "/Genres"
 @using BestMovies.Services
 @using BestMovies.Models.ApiModels
 @using Microsoft.IdentityModel.Tokens
@@ -6,7 +6,7 @@
 @inject NavigationManager NavigationManager
 
 <MudContainer>
-    <MudText Typo="Typo.h2" Color="Color.Primary">Genre Search</MudText>
+    <MudText Typo="Typo.h2" Color="Color.Primary">Discover by genre</MudText>
     <MudExpansionPanels>
         <MudExpansionPanel Text="Genres" @bind-IsExpanded="_panelExpanded">
             <MudChipSet SelectedChipsChanged="@(SearchByGenre)" MultiSelection Filter>
@@ -52,13 +52,13 @@
 </MudContainer>
 
 @code {
-
+    
     [Parameter]
-    [SupplyParameterFromQuery]
+    [SupplyParameterFromQuery(Name = "id")]
     public int? GenreId { get; set; }
 
     private GenreWrapper GenreWrapper { get; set; } = new() {Genres = new List<Genre>()};
-    private bool _panelExpanded = true;
+    private bool _panelExpanded;
     private List<int> SelectedGenres { get; set; } = new();
 
     private SearchResultWrapper SearchResults { get; set; } = new() {Results = new List<SearchResult>()};
@@ -66,6 +66,16 @@
     protected override async Task OnInitializedAsync()
     {
         GenreWrapper = await SearchService.GetGenreListAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (GenreId is null) return;
+        _panelExpanded = false;
+        SelectedGenres.Add(GenreId.Value);
+        var chip = new MudChip();
+        chip.Value = GenreId.Value;
+        await SearchByGenre(new[] {chip});
     }
 
     private bool HideTable()

@@ -78,10 +78,10 @@
                     <MudStack AlignItems="AlignItems.Center">
                         <MudImage Width="250" disabled="@_imagePath.IsNullOrEmpty()" Src="@_imagePath"/>
 
-                        <MudChipSet ReadOnly>
+                        <MudChipSet>
                             @foreach (var genre in _genres)
                             {
-                                <MudChip Value="@(genre.Id)" Text="@(genre.Name)"/>
+                                <MudChip Value="@(genre.Id)" Text="@(genre.Name)" Href="@($"/Genres?id={genre.Id}")"/>
                             }
                         </MudChipSet>
 
