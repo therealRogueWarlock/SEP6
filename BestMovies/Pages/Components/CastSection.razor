@@ -2,14 +2,17 @@
 @using BestMovies.Models.ApiModels
 @using Microsoft.IdentityModel.Tokens
 @inject IMovieService MovieService
-
+@inject NavigationManager NavigationManager
 <MudTable Hover
           Breakpoint="Breakpoint.Sm"
           Height="650px"
           FixedHeader
           Items="@CreditWrapper.Credit"
           GroupBy="@_groupDefinition"
-          Dense>
+          Dense
+          T="Credit"
+          OnRowClick="@(c => NavigationManager.NavigateTo($"/CelebrityPage/{c.Item.Id}"))"
+          >
     <ColGroup>
         <col/>
         <col/>
@@ -27,11 +30,11 @@
     </GroupHeaderTemplate>
     <RowTemplate>
         <MudTd DataLabel="Portrait">
-            <img src="@GetImage(context.ProfilePath)" width="92" alt="portrait"/>
-        </MudTd>
-        <MudTd DataLabel="Character">@context.Character</MudTd>
-        <MudTd DataLabel="Portrayed by">@context.Name</MudTd>
-        <MudTd DataLabel="Popularity">@context.Popularity</MudTd>
+                <img src="@GetImage(context.ProfilePath)" width="92" alt="portrait"/>
+            </MudTd>
+            <MudTd DataLabel="Character">@context.Character</MudTd>
+            <MudTd DataLabel="Portrayed by">@context.Name</MudTd>
+            <MudTd DataLabel="Popularity">@context.Popularity</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager/>
