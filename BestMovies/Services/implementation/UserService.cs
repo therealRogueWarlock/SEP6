@@ -29,14 +29,19 @@ public class UserService : IUserService
         return _userDao.GetUsernameFromIdAsync(guid);
     }
 
-    public async Task AddFavorite(Favourite favourite)
+    public async Task AddFavourite(Favourite favourite)
     {
         await _favoriteDao.AddAsync(favourite);
     }
 
-    public async Task RemoveFavorite(Favourite favourite)
+    public async Task RemoveFavourite(Favourite favourite)
     {
         await _favoriteDao.DeleteAsync(favourite.Id.ToString());
+    }
+
+    public async Task UpdateFavourite(Favourite favourite)
+    {
+        await _favoriteDao.UpdateAsync(favourite);
     }
 
     public async Task<List<Favourite>> GetFavoritesOf(string guid)

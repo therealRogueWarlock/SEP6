@@ -32,7 +32,6 @@
                         <div onClick="@(() => ResultClickHandler(result))">
                             <MudStack Row AlignItems="AlignItems.Center">
                                 <img src="@GetImage(result.Image)" width="92" alt="poster"/>
-                                @result.Name
                             </MudStack>
                         </div>
                     </MudListItem>
@@ -47,7 +46,7 @@
 
     [Parameter]
     public string? MovieId { get; set; }
-
+    
     private List<SearchResult>? SimilarMovies { get; set; }
 
     protected override async Task OnParametersSetAsync()

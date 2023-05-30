@@ -268,7 +268,7 @@
 
             user.Favourites.Add(newFav);
             Console.WriteLine($"Adding {_title} as Favourite");
-            await UserService.AddFavorite(newFav);
+            await UserService.AddFavourite(newFav);
         }
         else
         {
@@ -276,7 +276,7 @@
             var favorite = user.Favourites.First(f => f.SubjectId.ToString() == _movieData.Id.ToString());
             user.Favourites.Remove(favorite);
             Console.WriteLine($"Removing {_title} from Favourites");
-            await UserService.RemoveFavorite(favorite);
+            await UserService.RemoveFavourite(favorite);
         }
 
     

@@ -1,14 +1,15 @@
 @page "/UserPage/{userOfPageID}"
-@using BestMovies.Models.ApiModels
-@using BestMovies.Models.DbModels
-@using BestMovies.Services
 @using Microsoft.IdentityModel.Tokens
+@using BestMovies.Services
+@using BestMovies.Models.DbModels
+@using BestMovies.Models.ApiModels
 @using BestMovies.Models
 
 @inject IUserLoginService UserLoginService
 @inject IUserService UserService
 @inject IUserInteractionService UserInteractionService
 @inject IMovieService MovieService
+@inject NavigationManager NavigationManager
 
 @if (_loading)
 {
@@ -40,14 +41,25 @@ else
                         </MudCardContent>
                     </MudCard>
                 </MudItem>
-
-                <MudSpacer/>
+                
 
                 @* Right Side *@
                 <MudItem>
                     @* Favourite Movie Section *@
                     <MudCard>
-                        <MudCardContent>
+                        <MudText Typo="Typo.h3">Top Three Movies</MudText>
+                        <MudCardContent style="height:650px">
+                            @if (_isUsersOwnPage)
+                            { 
+                                <MudIconButton OnClick="@ToggleOpenSelectTopThree" Class="ml-auto mr-n3 mb-1" Color="Color.Tertiary" Icon="@Icons.Material.Filled.Edit"/>
+                                <MudPopover Open="@_isOpenSelectTopThree" Fixed="true" Class="px-4 pt-4" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopCenter">
+                                    <div class="d-flex flex-column">
+                                        <FavouriteSection FavouriteMovies="@_favouriteMovies" MovieClickCallBack="@SelectNewTopThree"/>
+                                        <MudButton OnClick="@ToggleOpenSelectTopThree" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Close</MudButton>
+                                    </div>
+                                </MudPopover>
+                            }
+                            
                             @if (_favouriteMovies.IsNullOrEmpty())
                             {
                                 <MudText Typo="Typo.overline">No Favourites</MudText>
@@ -55,17 +67,25 @@ else
                             else
                             {
                                 <MudList>
-                                    @foreach (var m in _favouriteMovies)
+                                    @foreach (var movie in _favouriteMoviesTopThree)
                                     {
+                                        if (movie is null) continue;
+
                                         <MudListItem>
-                                            <p>@m.Title</p>
+                                            <MudButton OnClick="@(() => NavigateToMovie(movie))">
+                                                <img style="border-radius: 5%" src="@GetImage(movie.PosterPath)" width="92" alt="poster"/>
+                                            </MudButton>
                                         </MudListItem>
                                     }
                                 </MudList>
                             }
                         </MudCardContent>
+                        
                     </MudCard>
-
+                </MudItem>
+                
+                <MudItem>
+                    
                     @* Fan Movie Section *@
                     <MudCard style="margin-top: 20px;">
                         <MudCardContent>
@@ -99,16 +119,16 @@ else
                                 @if (_isUsersOwnPage)
                                 {
                                     <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CreateFanMovie">Create Fan Movie</MudButton>
-
                                 }
 
                             </MudStack>
                         </MudCardContent>
                     </MudCard>
-                   
-                   
+                    
                 </MudItem>
-                <MudPopover Open="@_isOpen" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+                
+                
+                <MudPopover Open="@_isOpenCreateFanMovie" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopCenter">
                     
                     <CreateFanmovie/>
                     <MudIconButton OnClick="@ClosePopover" Class="ml-auto mr-n3 mb-1" Icon="@Icons.Material.Filled.Close" Color="Color.Error"/>
@@ -116,11 +136,15 @@ else
             </MudGrid>
         </MudPaper>
     </MudContainer>
+    <MudSpacer/>
+    <FavouriteSection FavouriteMovies="@_favouriteMovies" MovieClickCallBack="@NavigateToMovie" />
+    
 }
 
 @code {
     
-    private bool _isOpen;
+    private bool _isOpenCreateFanMovie;
+    private bool _isOpenSelectTopThree;
     
     [Parameter]
     public string userOfPageID { get; set; }
@@ -135,7 +159,7 @@ else
     {
         await SetUpUserPage();
 
-        GetFanMovies();
+        await GetFanMovies();
         await GetFavouriteMovies();
         
     }
@@ -153,7 +177,8 @@ else
 
     #region Fan Movies
 
-        private const int FanMoviesShownInList = 5;
+        
+    private const int FanMoviesShownInList = 5;
 
     private int _fanMovieTab = 1;
 
@@ -173,7 +198,7 @@ else
 
     private void ClosePopover()
     {
-        _isOpen = false;
+        _isOpenCreateFanMovie = false;
     }
 
     private async Task GetFanMovies()
@@ -210,44 +235,88 @@ else
     #region Favourite Movies
 
     private List<long> _favouriteMovieIds = new();
-
+    private int _selectIndex = 1;
     private int _favouriteMoviesShownInList = 5;
     private int _favouriteMovieTab = 0;
-    private List<Movie> _favouriteMovies = new();
+    private Dictionary<Movie,Favourite> _favouriteMovies = new();
+    private Movie[] _favouriteMoviesTopThree = new Movie[3];
     private List<Movie> _shownFavMovies = new();
     private int _maxFavouriteMovieTabs;
 
+    
     private async Task GetFavouriteMovies()
     {
         var favorites = await UserService.GetFavoritesOf(userOfPageID);
         
-
         foreach (var favorite in favorites)
         {
             
             if (favorite.Type != EntityType.Movie) continue;
-            Movie m = await MovieService.GetMovieAsync(favorite.SubjectId);
-            _favouriteMovies.Add(m);
+            
+            Movie movie = await MovieService.GetMovieAsync(favorite.SubjectId);
+            
+            if (favorite.TopIndex is not null)
+            {
+                _favouriteMoviesTopThree[favorite.TopIndex.Value-1] = movie;
+            }
+            
+            _favouriteMovies.Add(movie,favorite);
         }
         
-        _maxFavouriteMovieTabs = (_favouriteMovies?.Count / _favouriteMoviesShownInList) + 1 ?? 0;
-
-    // Update what is shown
-        UpdateShownFavouriteMovies();
     }
-
-    private void UpdateShownFavouriteMovies()
-    {
-        _shownFavMovies = _favouriteMovies.Skip(_maxFavouriteMovieTabs * _favouriteMovieTab).Take(_maxFavouriteMovieTabs).ToList();
-
-        StateHasChanged();
-    }
+    
 
     #endregion
-
+    
+    private string GetImage(string? imagePath)
+    {
+        return imagePath.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{imagePath}";
+    }
+    
+    private void NavigateToMovie(Movie movie)
+    {
+        NavigationManager.NavigateTo($"/Movie/{movie.Id}");
+    }
+    
+    
     private void CreateFanMovie()
     {
-        _isOpen = !_isOpen;
+        _isOpenCreateFanMovie = !_isOpenCreateFanMovie;
     }
-
+    
+    private void ToggleOpenSelectTopThree()
+    {
+        if (_isOpenSelectTopThree)
+        {
+            _isOpenSelectTopThree = false;
+            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        }
+        else
+        {
+            _selectIndex = 1;
+            _isOpenSelectTopThree = true;
+        }
+            
+        
+    }
+    
+    private async void SelectNewTopThree(Movie movie)
+    {
+        
+        var oldFavMovie = _favouriteMoviesTopThree[_selectIndex - 1];
+        if (oldFavMovie is not null)
+        {
+            var oldFav = _favouriteMovies[oldFavMovie];
+            oldFav.TopIndex = null;
+            await UserService.UpdateFavourite(oldFav);
+        }
+        
+        var newFav = _favouriteMovies[movie];
+        newFav.TopIndex = _selectIndex;
+        await UserService.UpdateFavourite(newFav);
+        
+        if (_selectIndex < 3) _selectIndex++;
+    }
+    
+    
 }
