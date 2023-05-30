@@ -58,7 +58,7 @@
                 {
                     <MudText Typo="Typo.body1">@review.Comment.Text</MudText>
                     <MudSpacer/>
-                    <MudText Typo="Typo.body1">@review.Comment.Timestamp.Date</MudText>
+                    <MudText Typo="Typo.body1">@review.Comment.Timestamp.Date.ToShortDateString()</MudText>
                 }
             </MudStack>
         }
