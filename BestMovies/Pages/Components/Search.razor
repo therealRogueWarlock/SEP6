@@ -15,7 +15,6 @@
                    DisableUnderLine Margin="Margin.Dense" Style="min-width: 100px; width: 100px">
             <MudSelectItem Value="@("multi")">All</MudSelectItem>
             <MudSelectItem Value="@("movie")">Movies</MudSelectItem>
-            <MudSelectItem Value="@("tv")">Tv-Shows</MudSelectItem>
             <MudSelectItem Value="@("person")">Celebs</MudSelectItem>
         </MudSelect>
 
@@ -85,6 +84,8 @@
 
     private void ResultClickHandler(SearchResult result)
     {
+        SearchString  = "";
+        SearchResults  = new();
         ResultClickCallBack?.Invoke(result);
     }
 

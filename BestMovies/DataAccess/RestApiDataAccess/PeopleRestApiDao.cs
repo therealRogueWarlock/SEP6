@@ -31,4 +31,13 @@ public class PeopleRestApiDao : IPeopleDao
         var people = JsonConvert.DeserializeObject<TrendingPersonWrapper>(response.Content!);
         return people ?? new TrendingPersonWrapper();
     }
+
+    public async Task<CelebMovieCredits> GetCelebsMovieCreditsAsync(string id)
+    {
+        var url = $"person/{id}/movie_credits";
+        var response = await _api.SendRequestAsync(url);
+
+        var credits = JsonConvert.DeserializeObject<CelebMovieCredits>(response.Content!);
+        return credits ?? new CelebMovieCredits();
+    }
 }

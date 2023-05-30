@@ -2,7 +2,7 @@
 
 namespace BestMovies.Models.ApiModels;
 
-public class Cast
+public class Crew
 {
     [JsonProperty("adult")] public bool? Adult { get; set; }
 
@@ -32,11 +32,9 @@ public class Cast
 
     [JsonProperty("vote_count")] public int? VoteCount { get; set; }
 
-    [JsonProperty("cast_id")] public int? CastId { get; set; }
-    
-    [JsonProperty("character")] public string Character { get; set; }
-
     [JsonProperty("credit_id")] public string CreditId { get; set; }
 
-    [JsonProperty("order")] public int? Order { get; set; }
+    [JsonProperty("department")] public string Department { get; set; }
+
+    [JsonProperty("job")] public string Job { get; set; }
 }

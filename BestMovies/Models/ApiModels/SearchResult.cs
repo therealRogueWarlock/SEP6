@@ -8,6 +8,10 @@ public class SearchResult
     [JsonProperty("id")] public int Id { get; set; }
     [JsonProperty("name")] public string Name { get; set; }
 
+    [JsonProperty("release_date")] public DateTime ReleaseDate { get; set; }
+    
+    [JsonProperty("genre_ids")] public List<int> GenreIds { get; set; }
+
     [JsonProperty("title")]
     private string Name2
     {
@@ -40,11 +44,4 @@ public class SearchResult
 
         return FirstAirDate is not null ? EntityType.Tv : EntityType.Movie;
     }
-}
-
-public class ResultWrapper
-{
-    [JsonProperty("results")] public List<SearchResult> Results { get; set; }
-
-    [JsonProperty("page")] public int Page { get; set; }
 }
