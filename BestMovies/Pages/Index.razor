@@ -38,7 +38,7 @@
             @foreach (var person in TrendingPeople)
             {
                 
-                    <MudListItem OnClick="@(() => TrendingActorClickHandler(person.Id))" Dense="true">
+                    <MudListItem Style="cursor: pointer" OnClick="@(() => TrendingActorClickHandler(person.Id))" Dense="true">
                         <MudStack Row AlignItems="AlignItems.Center">
                             <img src="@GetImage(person.ProfilePath)" width="92" alt="Profile image"/>
                             <p class="listItem">@person.Name</p>

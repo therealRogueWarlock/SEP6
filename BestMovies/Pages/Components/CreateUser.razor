@@ -1,4 +1,3 @@
-@page "/CreateUser"
 @using System.Text.RegularExpressions
 @using BestMovies.Models.DbModels
 @using BestMovies.Pages.util
@@ -6,29 +5,27 @@
 
 @inject NavigationManager NavigationManager
 @inject IUserLoginService LoginService
+@inject ISnackbar Snackbar
 
-<MudGrid>
-    <MudItem xs="12" sm="7">
-        <MudPaper Class="pa-4">
-            <MudForm @ref="form" @bind-IsValid="@success">
-                <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!"  @ref="userName"/>
-                <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
-                                  InputType="InputType.Password"
-                                  Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
-                                  RequiredError="Password is required!"/>
-                    <MudTextField T="string"
-                                  Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
-                                  Validation="@(new Func<string, string>(PasswordMatch))"/>
-                    <div class="d-flex">
-                        <MudCheckBox T="bool" Label="Adult Content"/>
-                    </div>
-                    <div class="d-flex align-center justify-space-between">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="@(Register)" Class="ml-auto">Register</MudButton>
-                    </div>
-            </MudForm>   
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+<MudPaper Class="pb-4" Elevation="0" >
+    <MudForm @ref="form" @bind-IsValid="@success">
+        <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!"  @ref="userName"/>
+        <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
+                          InputType="InputType.Password"
+                          Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
+                          RequiredError="Password is required!"/>
+            <MudTextField T="string"
+                          Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
+                          Validation="@(new Func<string, string>(PasswordMatch))"/>
+            <div class="d-flex">
+                <MudCheckBox T="bool" Label="Adult Content"/>
+            </div>
+            <div class="d-flex align-center justify-space-between">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="@(Register)" Class="ml-auto">Register</MudButton>
+            </div>
+    </MudForm>   
+</MudPaper>
+
 
 
 @code {
@@ -36,20 +33,28 @@
     [Parameter]
     public string? NavigateTo { get; set; }
     
+    [Parameter] public Action? ConfirmCallBackListener { get; set; }
+    
     bool success;
     MudTextField<string> userName;
     MudTextField<string> pwField1;
     MudForm form;
-    
 
     private void Register()
     {
         form.Validate();
         if(!form.IsValid) return;
-        
-        LoginService.RegisterUser(new User{Username = userName.Text, PasswordHash = PasswordHashing.HashString(pwField1.Text),SecurityLevel = 1});
-        
-        NavigationManager.NavigateTo(NavigateTo ?? "/Login");
+
+        try
+        {
+            LoginService.RegisterUser(new User{Username = userName.Text, PasswordHash = PasswordHashing.HashString(pwField1.Text),SecurityLevel = 1});
+            Snackbar.Add("Account registration successful!", Severity.Success , key: "Success!");
+            ConfirmCallBackListener?.Invoke();
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add("Account registration failed!", Severity.Error , key: "Failed!");
+        }
         
     }
     
