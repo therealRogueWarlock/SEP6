@@ -8,7 +8,7 @@ public class SearchResult
     [JsonProperty("id")] public int Id { get; set; }
     [JsonProperty("name")] public string Name { get; set; }
 
-    [JsonProperty("release_date")] public DateTime ReleaseDate { get; set; }
+    [JsonProperty("release_date")] public DateTime? ReleaseDate { get; set; }
     
     [JsonProperty("genre_ids")] public List<int> GenreIds { get; set; }
 
