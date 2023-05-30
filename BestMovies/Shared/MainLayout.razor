@@ -36,7 +36,10 @@
             <MudIconButton Icon="@Icons.Material.Filled.Login" OnClick="@(() => { _isOpenLogin = !_isOpenLogin; _isOpenCreateAccount = false; })"/>
         </NotAuthorized>
     </AuthorizeView>
-    
+    <MudTooltip Text="FAQ">
+        <MudIconButton Icon="@Icons.Material.Filled.QuestionMark" Href="/Faq"/>
+    </MudTooltip>
+
     <MudPopover Class="z-10" Open="@_isOpenLogin" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.TopCenter">
         <MudContainer >
             <MudIconButton OnClick="@CloseLoginPopUp" Class="ml-auto mr-n3 mb-1" Icon="@Icons.Material.Filled.Close" Color="Color.Error"/>
@@ -52,7 +55,6 @@
         </MudContainer>
     </MudPopover>
 </MudAppBar>
-
 
 <div class="page">
     <main>
