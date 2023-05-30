@@ -33,10 +33,26 @@
             <MudIconButton Icon="@Icons.Material.Filled.Logout" href="/" OnClick="PerformLogout"/>
         </Authorized>
         <NotAuthorized>
-            <MudIconButton Icon="@Icons.Material.Filled.Login" href="/Login"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Login" OnClick="@(() => { _isOpenLogin = !_isOpenLogin; _isOpenCreateAccount = false; })"/>
         </NotAuthorized>
     </AuthorizeView>
+    
+    <MudPopover Class="z-10" Open="@_isOpenLogin" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.TopCenter">
+        <MudContainer >
+            <MudIconButton OnClick="@CloseLoginPopUp" Class="ml-auto mr-n3 mb-1" Icon="@Icons.Material.Filled.Close" Color="Color.Error"/>
+            <Login ConfirmCallBackListener="@CloseLoginPopUp"/>
+        </MudContainer>
+        <MudButton OnClick="@(() => { CloseLoginPopUp(); _isOpenCreateAccount = true; })">Don't have an acccount?</MudButton>
+    </MudPopover>
+    
+    <MudPopover Class="z-10" Open="@_isOpenCreateAccount" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.TopCenter">
+        <MudContainer >
+            <MudIconButton OnClick="@CloseCreateUserPopUp" Class="ml-auto mr-n3 mb-1" Icon="@Icons.Material.Filled.Close" Color="Color.Error"/>
+            <CreateUser ConfirmCallBackListener="@CloseCreateUserPopUp"/>
+        </MudContainer>
+    </MudPopover>
 </MudAppBar>
+
 
 <div class="page">
     <main>
@@ -47,7 +63,24 @@
 </div>
 
 @code {
+    
+    private bool _isOpenLogin;
+    private bool _isOpenCreateAccount;
 
+    
+    private void CloseLoginPopUp()
+    {
+        _isOpenLogin = false;
+        StateHasChanged();
+    }
+    
+    private void CloseCreateUserPopUp()
+    {
+        _isOpenCreateAccount = false;
+        _isOpenLogin = true;
+        StateHasChanged();
+    }
+    
     private readonly MudTheme _theme = new()
     {
         Palette = new PaletteLight
