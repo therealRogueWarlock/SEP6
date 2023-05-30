@@ -1,3 +1,4 @@
+using BestMovies.Models.ApiModels;
 using BestMovies.Models.DbModels;
 
 namespace BestMovies.Services;
@@ -14,7 +15,10 @@ public interface IUserService
     public Task RemoveFavorite(Favourite favourite);
 
     public Task<List<Favourite>> GetFavoritesOf(string guid);
+    
+    public Task<List<Movie>> GetFavoritesMoviesOf(string guid);
 
-    public Task<bool> IfFavorite(string userId, string subjectId);
+
+    public Task<bool> IsFavorite(string userId, string subjectId);
 
 }

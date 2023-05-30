@@ -1,4 +1,5 @@
 using BestMovies.DataAccess;
+using BestMovies.Models.ApiModels;
 using BestMovies.Models.DbModels;
 using Microsoft.IdentityModel.Tokens;
 
@@ -38,12 +39,17 @@ public class UserService : IUserService
         await _favoriteDao.DeleteAsync(favourite.Id.ToString());
     }
 
-    public Task<List<Favourite>> GetFavoritesOf(string guid)
+    public async Task<List<Favourite>> GetFavoritesOf(string guid)
+    {
+        return await _favoriteDao.GetFavoritesOfAsync(guid);
+    }
+
+    public Task<List<Movie>> GetFavoritesMoviesOf(string guid)
     {
         throw new NotImplementedException();
     }
-
-    public Task<bool> IfFavorite(string userId, string subjectId)
+    
+    public Task<bool> IsFavorite(string userId, string subjectId)
     {
         return _favoriteDao.CheckIfFavorite(userId, subjectId);
     }

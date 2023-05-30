@@ -38,7 +38,6 @@
                 </MudTooltip>
             </NotAuthorized>
         </AuthorizeView>
-       
     </MudStack>
 
     <MudTabs Centered Rounded>
@@ -234,7 +233,7 @@
         var currentUser = await UserLoginService.GetCurrentUserAsync();
         if (currentUser != null)
         {
-            _favourite = !await UserService.IfFavorite(currentUser.Id.ToString(),_movieData.Id.ToString());
+            _favourite = !await UserService.IsFavorite(currentUser.Id.ToString(),_movieData.Id.ToString());
         }
         
     }

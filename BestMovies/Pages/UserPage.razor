@@ -3,6 +3,7 @@
 @using BestMovies.Models.DbModels
 @using BestMovies.Services
 @using Microsoft.IdentityModel.Tokens
+@using BestMovies.Models
 
 @inject IUserLoginService UserLoginService
 @inject IUserService UserService
@@ -124,9 +125,8 @@ else
         await SetUpUserPage();
 
         GetFanMovies();
-    // GetFavouriteMovies();
-
-        await base.OnParametersSetAsync();
+        await GetFavouriteMovies();
+        
     }
 
     private async Task SetUpUserPage()
@@ -134,7 +134,7 @@ else
         // Get the 
         _currentUser = await UserLoginService.GetCurrentUserAsync();
         _userOfPage = await UserService.GetAsync(userOfPageID);
-
+        
     // Check if the user is on their own page
         _isUsersOwnPage = _userOfPage.Id == _currentUser?.Id;
 
@@ -205,12 +205,17 @@ else
 
     private async Task GetFavouriteMovies()
     {
-        _favouriteMovieIds.ForEach(async id =>
-        {
-            Movie m = await MovieService.GetMovieAsync(id.ToString());
-            _favouriteMovies.Add(m);
-        });
+        var favorites = await UserService.GetFavoritesOf(userOfPageID);
+        
 
+        foreach (var favorite in favorites)
+        {
+            
+            if (favorite.Type != EntityType.Movie) continue;
+            Movie m = await MovieService.GetMovieAsync(favorite.SubjectId);
+            _favouriteMovies.Add(m);
+        }
+        
         _maxFavouriteMovieTabs = (_favouriteMovies?.Count / _favouriteMoviesShownInList) + 1 ?? 0;
 
     // Update what is shown
