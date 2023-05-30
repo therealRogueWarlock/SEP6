@@ -37,7 +37,7 @@
         </HeaderContent>
         <RowTemplate>
             <MudTd>
-                <img src="@GetImage(context.Image)" alt="Poster"/>
+                <img src="@GetImage(context.Image)" width="92px" alt="Poster"/>
             </MudTd>
             <MudTd DataLabel="Title">@context.Name</MudTd>
             <MudTd DataLabel="Genres">
@@ -46,7 +46,7 @@
                     <MudChip Text="@genre" DisableRipple Variant="Variant.Outlined" Color="Color.Dark"/>
                 }
             </MudTd>
-            <MudTd DataLabel="ReleaseDate">@context.ReleaseDate.ToShortDateString()</MudTd>
+            <MudTd DataLabel="ReleaseDate">@context.ReleaseDate?.ToShortDateString()</MudTd>
         </RowTemplate>
         <PagerContent>
             <MudTablePager />
