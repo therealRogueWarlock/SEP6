@@ -1,0 +1,46 @@
+@using Microsoft.IdentityModel.Tokens
+@using BestMovies.Models.ApiModels
+@using BestMovies.Models.DbModels
+@using BestMovies.Services
+
+@inject NavigationManager NavigationManager
+@inject IUserService UserService
+
+@if (FavouriteMovies.IsNullOrEmpty())
+{
+    return;
+}
+<MudContainer Class="pt-4">
+    <MudText Typo="Typo.h4" Color="Color.Primary">Favorite Movies</MudText>
+    <MudPaper Elevation="1">
+        @foreach (var keyValuePar in FavouriteMovies)
+        {
+            <MudButton OnClick="@(() => OnFavoriteClick(keyValuePar.Key))">
+                    
+                <img style="border-radius: 5%" src="@GetImage(keyValuePar.Key.PosterPath)" width="92" alt="poster">
+                    
+            </MudButton>
+        }
+    </MudPaper>
+   
+</MudContainer>
+
+
+@code {
+    
+    [Parameter]
+    public Dictionary<Movie,Favourite> FavouriteMovies { get; set; }
+    
+    [Parameter] public Action<Movie> MovieClickCallBack { get; set; }
+    
+    private string GetImage(string? imagePath)
+    {
+        return imagePath.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{imagePath}";
+    }
+    
+    
+    private void OnFavoriteClick(Movie movie)
+    {
+        MovieClickCallBack.Invoke(movie);
+    }
+}

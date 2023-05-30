@@ -39,7 +39,6 @@
                 </MudTooltip>
             </NotAuthorized>
         </AuthorizeView>
-       
     </MudStack>
 
     <MudTabs Centered Rounded>
@@ -227,7 +226,7 @@
         var currentUser = await UserLoginService.GetCurrentUserAsync();
         if (currentUser != null)
         {
-            _favourite = !await UserService.IfFavorite(currentUser.Id.ToString(),_movieData.Id.ToString());
+            _favourite = !await UserService.IsFavorite(currentUser.Id.ToString(),_movieData.Id.ToString());
         }
         
     }
@@ -260,7 +259,7 @@
 
             user.Favourites.Add(newFav);
             Console.WriteLine($"Adding {_title} as Favourite");
-            await UserService.AddFavorite(newFav);
+            await UserService.AddFavourite(newFav);
         }
         else
         {
@@ -268,7 +267,7 @@
             var favorite = user.Favourites.First(f => f.SubjectId.ToString() == _movieData.Id.ToString());
             user.Favourites.Remove(favorite);
             Console.WriteLine($"Removing {_title} from Favourites");
-            await UserService.RemoveFavorite(favorite);
+            await UserService.RemoveFavourite(favorite);
         }
 
     
