@@ -11,6 +11,7 @@
 @inject IUserLoginService UserLoginService
 @inject IUserInteractionService UserInteractionService
 @inject IPeopleService PeopleService
+@inject ISnackbar Snackbar
 
 @if (_movieData is null)
 {
@@ -34,7 +35,7 @@
             </Authorized>
             <NotAuthorized>
                 <MudTooltip Text="Favourite">
-                    <MudToggleIconButton href="/login" Size="Size.Large" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Star" ToggledIcon="@Icons.Material.Filled.Star" Color="Color.Secondary"/>
+                    <MudToggleIconButton ToggledChanged="@(() => Snackbar.Add("Login to add Favorite", Severity.Warning))" Size="Size.Large" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Star" ToggledIcon="@Icons.Material.Filled.Star" Color="Color.Secondary"/>
                 </MudTooltip>
             </NotAuthorized>
         </AuthorizeView>
