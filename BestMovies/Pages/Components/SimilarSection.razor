@@ -15,8 +15,8 @@
             <MudList Dense Clickable Style="width: 50%">
                 @foreach (var result in SimilarMovies.Take(10))
                 {
-                    <MudListItem>
-                        <div onClick="@(() => ResultClickHandler(result))">
+                    <MudListItem OnClick="@(() => ResultClickHandler(result))">
+                        <div>
                             <MudStack Row AlignItems="AlignItems.Center">
                                 <img src="@GetImage(result.Image)" width="92" alt="poster"/>
                                 @result.Name
@@ -28,8 +28,8 @@
             <MudList Dense Clickable Style="width: 50%">
                 @foreach (var result in SimilarMovies.Skip(10).Take(10))
                 {
-                    <MudListItem>
-                        <div onClick="@(() => ResultClickHandler(result))">
+                    <MudListItem OnClick="@(() => ResultClickHandler(result))">
+                        <div>
                             <MudStack Row AlignItems="AlignItems.Center">
                                 <img src="@GetImage(result.Image)" width="92" alt="poster"/>
                                 @result.Name
