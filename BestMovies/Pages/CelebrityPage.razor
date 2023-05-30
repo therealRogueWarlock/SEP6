@@ -1,10 +1,11 @@
 @page "/CelebrityPage/{PersonId?}"
 @using BestMovies.Models.ApiModels
 @using BestMovies.Services
+@using Microsoft.AspNetCore.Identity
 @using Microsoft.IdentityModel.Tokens
 
 @inject IPeopleService PeopleService
-
+@inject NavigationManager NavigationManager
 
 @if (_personData is null)
 {
@@ -32,7 +33,7 @@
                 </MudTooltip>
             </NotAuthorized>
         </AuthorizeView>
-       
+
     </MudStack>
 
     <MudTabs Centered Rounded>
@@ -52,7 +53,7 @@
                             </MudText>
                         </MudPaper>
 
-                        
+
                         @* Statistics *@
                         <CelebStatsSection Celeb="_personData"/>
                     </MudStack>
@@ -63,7 +64,7 @@
                     @* Right side *@
                     <MudStack AlignItems="AlignItems.Center">
                         <MudImage Width="250" disabled="@_personData.ProfilePath.IsNullOrEmpty()" Src="@GetImage(_personData.ProfilePath)"/>
-                        
+
 
                         <MudSimpleTable Dense Bordered Striped>
                             <tbody>
@@ -72,12 +73,14 @@
                                 <MudTd Style="font-weight: bold;">Place Of Birth</MudTd><MudTd Style="font-weight: lighter">@_personData.PlaceOfBirth</MudTd>
                             </MudTr>
                             <MudTr>
-                                @if (!_personData.Homepage.IsNullOrEmpty()){
-                                    <MudTd Style="font-weight: bold;">Personal page</MudTd><MudTd Style="font-weight: lighter">
-                                                                                               <MudLink Href="@_personData.Homepage" target=”_blank”>@_personData.Homepage</MudLink>
-                                                                                               </MudTd>
+                                @if (!_personData.Homepage.IsNullOrEmpty())
+                                {
+                                    <MudTd Style="font-weight: bold;">Personal page</MudTd>
+                                    <MudTd Style="font-weight: lighter">
+                                        <MudLink Href="@_personData.Homepage" target=”_blank”>@_personData.Homepage</MudLink>
+                                    </MudTd>
                                 }
-                                
+
                             </MudTr>
                             <MudTr>
                                 <MudTd Style="font-weight: bold;">Popularity</MudTd><MudTd Style="font-weight: lighter">@_personData.Popularity</MudTd>
@@ -94,7 +97,52 @@
         @* Related Movies *@
         <MudTabPanel Text="Movies">
             <MudPaper Style="padding-top: .1em; padding-bottom: .1em;">
-                
+                <MudTable Hover
+                          SortLabel="Sort By"
+                          Height="650px"
+                          FixedHeader
+                          Items="@Movies"
+                          GroupBy="@_groupDefinition"
+                          Dense
+                          T="MovieModel"
+                          OnRowClick="@(m => NavigationManager.NavigateTo($"/Movie/{m.Item.Id}"))">
+                    <ColGroup>
+                        <col/>
+                        <col/>
+                        <col/>
+                        <col/>
+                    </ColGroup>
+                    <HeaderContent>
+                        <MudTh>Poster</MudTh>
+                        <MudTh>
+                            <MudTableSortLabel SortBy="@(new Func<MovieModel, object>(x => x.Title))">
+                                Title
+                            </MudTableSortLabel>
+                        </MudTh>
+                        <MudTh>As</MudTh>
+                        <MudTh>
+                            <MudTableSortLabel SortBy="@(new Func<MovieModel, object>(x => x.Popularity))">
+                                Popularity
+                            </MudTableSortLabel>
+                        </MudTh>
+                    </HeaderContent>
+                    <GroupHeaderTemplate>
+                        <MudTh  class="mud-table-cell-custom-group" colspan="4">
+                            @($"{context.GroupName}: {((bool) context.Key ? "Crew" : "Cast")}")
+                        </MudTh>
+                    </GroupHeaderTemplate>
+                    <RowTemplate>
+                        <MudTd DataLabel="Poster">
+                            <img src="@GetPosterImage(context.Image)" width="92" alt="Poster"/>
+                        </MudTd>
+                        <MudTd DataLabel="Title">@context.Title</MudTd>
+                        <MudTd DataLabel="As">@context.Role</MudTd>
+                        <MudTd DataLabel="Popularity">@context.Popularity</MudTd>
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager/>
+                    </PagerContent>
+                </MudTable>
             </MudPaper>
         </MudTabPanel>
 
@@ -107,37 +155,77 @@
 </MudContainer>
 
 
-
-
 @code {
-    
+
     [Parameter]
     public string PersonId { get; set; }
 
     private Person? _personData;
-    
+    private List<MovieModel> Movies { get; set; } = new();
+
     private bool _favourite;
-    
+
     bool Favourite
     {
         get => _favourite;
-        set
-        {
-            _favourite = value;
-            
-        }
+        set { _favourite = value; }
     }
 
     protected override async Task OnParametersSetAsync()
     {
-
         _personData = await PeopleService.GetPersonAsync(PersonId);
-
+        var credits = await PeopleService.GetCelebsMovieCreditsAsync(PersonId);
+        if (!credits.Cast.IsNullOrEmpty())
+        {
+            Movies.AddRange(credits.Cast.Select(c => new MovieModel
+            {
+                Id = c.Id ?? 0,
+                Image = c.PosterPath,
+                Popularity = c.Popularity ?? 0,
+                Role = c.Character,
+                Title = c.Title,
+                IsCrew = false
+            }));
+        }
+        if (!credits.Crew.IsNullOrEmpty())
+        {
+            Movies.AddRange(credits.Crew.Select(c => new MovieModel
+            {
+                Id = c.Id ?? 0,
+                Image = c.PosterPath,
+                Popularity = c.Popularity ?? 0,
+                Role = c.Job,
+                Title = c.Title,
+                IsCrew = true
+            }));
+        }
     }
+
+    private readonly TableGroupDefinition<MovieModel> _groupDefinition = new()
+    {
+        GroupName = "Job",
+        Indentation = false,
+        Expandable = false,
+        Selector = m => m.IsCrew
+    };
 
     private string GetImage(string uri)
     {
         return uri.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w200{uri}";
     }
 
+    private string GetPosterImage(string uri)
+    {
+        return uri.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{uri}";
+    }
+    
+    private class MovieModel
+    {
+        public int Id { get; set; }
+        public string Image { get; set; }
+        public string Title { get; set; }
+        public string Role { get; set; }
+        public double Popularity { get; set; }
+        public bool IsCrew { get; set; }
+    }
 }

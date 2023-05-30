@@ -7,7 +7,7 @@
           Breakpoint="Breakpoint.Sm"
           Height="650px"
           FixedHeader
-          Items="@CreditWrapper.Credit"
+          Items="@Credits"
           GroupBy="@_groupDefinition"
           Dense
           T="Credit"
@@ -46,12 +46,13 @@
     [Parameter]
     public string? MovieId { get; set; }
 
-    private CreditWrapper CreditWrapper { get; set; } = new();
+    private List<Credit> Credits { get; set; } = new();
 
     protected override async Task OnParametersSetAsync()
     {
         if (MovieId is null or "") throw new Exception($"Invalid Id: {MovieId}");
-        CreditWrapper = await MovieService.GetCreditsFromMovieAsync(MovieId);
+        var creditWrapper = await MovieService.GetCreditsFromMovieAsync(MovieId);
+        Credits = creditWrapper.Credit.OrderBy(c => c.KnownForDepartment).ToList();
     }
 
     private readonly TableGroupDefinition<Credit> _groupDefinition = new()
