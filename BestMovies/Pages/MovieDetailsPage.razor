@@ -66,7 +66,7 @@
                                 @if (Director is not null)
                                 {
                                     <MudButton Variant="Variant.Text" DisableRipple OnClick="@(() => Navigate(Director.Id.Value))">
-                                        <MudImage Width="80" Src="@($"https://image.tmdb.org/t/p/w92{Director.ProfilePath}")"/>
+                                        <MudImage Width="92" Src="@(GetImage(Director.ProfilePath))"/>
                                         <MudText Class="ml-4">@Director.Name</MudText>
                                     </MudButton>
                                 }
@@ -232,8 +232,7 @@
 
         await SetupDetails();
         await SetupCast();
-
-    // TODO: Change this to use the Service instead
+        
         _favourite = true;
         var currentUser = await UserLoginService.GetCurrentUserAsync();
         if (currentUser != null)
@@ -245,6 +244,11 @@
     private void Navigate(int id)
     {
         NavigationManager.NavigateTo($"/CelebrityPage/{id}");
+    }
+    
+    private string GetImage(string uri)
+    {
+        return uri.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{uri}";
     }
 
     private int GetIMDbRating()
@@ -279,7 +283,6 @@
         }
         else
         {
-    // TODO: Remove the Movie from the User Favourites
             var favorite = user.Favourites.First(f => f.SubjectId.ToString() == _movieData.Id.ToString());
             user.Favourites.Remove(favorite);
             Console.WriteLine($"Removing {_title} from Favourites");
