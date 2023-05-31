@@ -13,7 +13,6 @@
     <MudStack Row Spacing="0" Style="margin-left: 8px; margin-right: 8px">
         <MudSelect T="string" AnchorOrigin="Origin.BottomCenter" @bind-Value="SearchTerm"
                    DisableUnderLine Margin="Margin.Dense" Style="min-width: 100px; width: 100px">
-            <MudSelectItem Value="@("multi")">All</MudSelectItem>
             <MudSelectItem Value="@("movie")">Movies</MudSelectItem>
             <MudSelectItem Value="@("person")">Celebs</MudSelectItem>
         </MudSelect>
@@ -52,7 +51,7 @@
     
     [Parameter] public Action<SearchResult> ResultClickCallBack { get; set; }
     
-    private string SearchTerm { get; set; } = "multi";
+    private string SearchTerm { get; set; } = "movie";
     private string SearchString { get; set; } = "";
     private List<SearchResult> SearchResults { get; set; } = new();
 
