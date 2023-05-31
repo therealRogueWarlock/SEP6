@@ -10,9 +10,8 @@
           Items="@Credits"
           GroupBy="@_groupDefinition"
           Dense
-          T="Credit"
-          OnRowClick="@(c => NavigationManager.NavigateTo($"/CelebrityPage/{c.Item.Id}"))"
-          >
+          T="CreditModel"
+          OnRowClick="@(c => NavigationManager.NavigateTo($"/CelebrityPage/{c.Item.Id}"))">
     <ColGroup>
         <col/>
         <col/>
@@ -21,8 +20,8 @@
     </ColGroup>
     <HeaderContent>
         <MudTh>Portrait</MudTh>
-        <MudTh>Character</MudTh>
-        <MudTh>Portrayed by</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>As</MudTh>
         <MudTh>Popularity</MudTh>
     </HeaderContent>
     <GroupHeaderTemplate>
@@ -30,10 +29,10 @@
     </GroupHeaderTemplate>
     <RowTemplate>
         <MudTd DataLabel="Portrait">
-                <img src="@GetImage(context.ProfilePath)" width="92" alt="portrait"/>
+                <img src="@GetImage(context.Image)" width="92" alt="portrait"/>
             </MudTd>
-            <MudTd DataLabel="Character">@context.Character</MudTd>
-            <MudTd DataLabel="Portrayed by">@context.Name</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="As">@context.Role</MudTd>
             <MudTd DataLabel="Popularity">@context.Popularity</MudTd>
     </RowTemplate>
     <PagerContent>
@@ -46,25 +45,52 @@
     [Parameter]
     public string? MovieId { get; set; }
 
-    private List<Credit> Credits { get; set; } = new();
+    private List<CreditModel> Credits { get; set; } = new();
 
     protected override async Task OnParametersSetAsync()
     {
         if (MovieId is null or "") throw new Exception($"Invalid Id: {MovieId}");
         var creditWrapper = await MovieService.GetCreditsFromMovieAsync(MovieId);
-        Credits = creditWrapper.Credit.OrderBy(c => c.KnownForDepartment).ToList();
+        Credits.AddRange(creditWrapper.Cast.Select(c => new CreditModel
+        {
+            Id = c.Id ?? 0,
+            Name = c.Name ?? "",
+            Role = c.Character ?? "",
+            Department = "Actor",
+            Image = c.ProfilePath ?? "",
+            Popularity = c.Popularity ?? 0
+        }));
+        Credits.AddRange(creditWrapper.Crew.OrderBy(c => c.Department).Select(c => new CreditModel
+        {
+            Id = c.Id ?? 0,
+            Name = c.Name ?? "",
+            Role = c.Job ?? "",
+            Department = c.Department ?? "",
+            Image = c.ProfilePath ?? "",
+            Popularity = c.Popularity ?? 0
+        }));
     }
 
-    private readonly TableGroupDefinition<Credit> _groupDefinition = new()
+    private readonly TableGroupDefinition<CreditModel> _groupDefinition = new()
     {
-        GroupName = "Job",
+        GroupName = "Department",
         Indentation = false,
         Expandable = false,
-        Selector = c => c.KnownForDepartment
+        Selector = c => c.Department
     };
 
     private string GetImage(string uri)
     {
         return uri.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{uri}";
+    }
+
+    private class CreditModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Role { get; set; }
+        public string Department { get; set; }
+        public string Image { get; set; }
+        public double Popularity { get; set; }
     }
 }

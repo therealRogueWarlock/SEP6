@@ -12,6 +12,7 @@
 @inject IUserInteractionService UserInteractionService
 @inject IPeopleService PeopleService
 @inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
 
 @if (_movieData is null)
 {
@@ -62,11 +63,21 @@
                         <MudStack>
                             <MudText Typo="Typo.button">Director</MudText>
                             <MudStack Row AlignItems="AlignItems.Center">
-                                <MudImage Width="80" Src="@(ConfigVariables.NoImage)"/>
-                                <MudText>NAME OF DIRECTOR</MudText>
+                                @if (Director is not null)
+                                {
+                                    <MudButton Variant="Variant.Text" DisableRipple OnClick="@(() => Navigate(Director.Id.Value))">
+                                        <MudImage Width="92" Src="@(GetImage(Director.ProfilePath))"/>
+                                        <MudText Class="ml-4">@Director.Name</MudText>
+                                    </MudButton>
+                                }
+                                else
+                                {
+                                    <MudImage Width="80" Src="@(ConfigVariables.NoImage)"/>
+                                    <MudText>UNKNOWN</MudText>
+                                }
                             </MudStack>
                         </MudStack>
-                        
+
                         @* Statistics *@
                         <MudStack Spacing="1">
                             <MudText Typo="Typo.button">Statistics</MudText>
@@ -146,7 +157,9 @@
 
     private bool _favourite;
 
-    private List<Review> Reviews { get; set; } = new(); 
+    private List<Review> Reviews { get; set; } = new();
+
+    private Credit? Director { get; set; }
 
     bool Favourite
     {
@@ -183,12 +196,9 @@
         _genres = _movieData.Genres;
 
         _adultRating = _movieData.Adult ?? false;
-        if (_adultRating)
-        {
-            Console.WriteLine("ITS PORN");
-        }
 
-        _releaseDate = DateOnly.Parse(_movieData.ReleaseDate);
+        if (!DateOnly.TryParse(_movieData.ReleaseDate, out _releaseDate))
+            _releaseDate = DateOnly.MinValue;
 
     // Language
         var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
@@ -217,18 +227,28 @@
     {
         _movieData = await MovieService.GetMovieAsync(MovieId);
         Reviews = await UserInteractionService.GetReviewsOfAsync(MovieId);
+        var credits = await MovieService.GetCreditsFromMovieAsync(MovieId);
+        Director = credits.Crew.FirstOrDefault(c => c is {Department: "Directing", Job: "Director"});
 
         await SetupDetails();
         await SetupCast();
-
-    // TODO: Change this to use the Service instead
+        
         _favourite = true;
         var currentUser = await UserLoginService.GetCurrentUserAsync();
         if (currentUser != null)
         {
-            _favourite = !await UserService.IsFavorite(currentUser.Id.ToString(),_movieData.Id.ToString());
+            _favourite = !await UserService.IsFavorite(currentUser.Id.ToString(), _movieData.Id.ToString());
         }
-        
+    }
+
+    private void Navigate(int id)
+    {
+        NavigationManager.NavigateTo($"/CelebrityPage/{id}");
+    }
+    
+    private string GetImage(string uri)
+    {
+        return uri.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{uri}";
     }
 
     private int GetIMDbRating()
@@ -263,14 +283,11 @@
         }
         else
         {
-    // TODO: Remove the Movie from the User Favourites
             var favorite = user.Favourites.First(f => f.SubjectId.ToString() == _movieData.Id.ToString());
             user.Favourites.Remove(favorite);
             Console.WriteLine($"Removing {_title} from Favourites");
             await UserService.RemoveFavourite(favorite);
         }
-
-    
     }
 
 }
