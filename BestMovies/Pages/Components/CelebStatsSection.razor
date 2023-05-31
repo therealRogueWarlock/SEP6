@@ -5,6 +5,7 @@
 @inject IPeopleService PeopleService
 @inject ISearchService SearchService
 @inject IUserInteractionService UserInteractionService
+@inject NavigationManager NavigationManager
 
 @if (Reviews is null)
 {
@@ -23,7 +24,9 @@
         </MudStack>
         <MudStack>
             <MudText Typo="Typo.subtitle2">Genre worked most in</MudText>
-            <MudChip DisableRipple>@(GenreWrapper?.Genres.Single(g => g.Id == GetMostOccuredGenre()).Name ?? "N/A")</MudChip>
+            <MudChip DisableRipple Href="@($"/Genres?id={GenreWrapper?.Genres.Single(g => g.Id == GetMostOccuredGenre()).Id}")">
+                @(GenreWrapper?.Genres.Single(g => g.Id == GetMostOccuredGenre()).Name ?? "N/A")
+            </MudChip>
         </MudStack>
     </MudStack>
     <MudStack Spacing="16" Row>
@@ -31,20 +34,28 @@
             @if (MostPopularMovie is not null)
             {
                 <MudText Typo="Typo.subtitle2">Most Popular Movie</MudText>
-                <img src="@GetImage(MostPopularMovie.Image)" alt="Poster" width="92px"/>
-                <p>@MostPopularMovie.Title</p>
-                <p>As: @MostPopularMovie.Role</p>
-                <p>Popularity: @MostPopularMovie.Popularity</p>
+                <MudButton Variant="Variant.Text" DisableRipple OnClick="@(() => Navigate(MostPopularMovie.Id))">
+                    <MudStack AlignItems="AlignItems.Center">
+                        <img src="@GetImage(MostPopularMovie.Image)" alt="Poster" width="92px"/>
+                        <p>@MostPopularMovie.Title</p>
+                        <p>As: @MostPopularMovie.Role</p>
+                        <p>Popularity: @MostPopularMovie.Popularity</p>
+                    </MudStack>
+                </MudButton>
             }
         </MudStack>
         <MudStack>
             @if (LeastPopularMovie is not null)
             {
                 <MudText Typo="Typo.subtitle2">Least Popular Movie</MudText>
-                <img src="@GetImage(LeastPopularMovie.Image)" alt="Poster" width="92px"/>
-                <p>@LeastPopularMovie.Title</p>
-                <p>As: @LeastPopularMovie.Role</p>
-                <p>Popularity: @LeastPopularMovie.Popularity</p>
+                <MudButton Variant="Variant.Text" DisableRipple OnClick="@(() => Navigate(LeastPopularMovie.Id))">
+                    <MudStack AlignItems="AlignItems.Center">
+                        <img src="@GetImage(LeastPopularMovie.Image)" alt="Poster" width="92px"/>
+                        <p>@LeastPopularMovie.Title</p>
+                        <p>As: @LeastPopularMovie.Role</p>
+                        <p>Popularity: @LeastPopularMovie.Popularity</p>
+                    </MudStack>
+                </MudButton>
             }
         </MudStack>
     </MudStack>
@@ -160,10 +171,15 @@
             Popularity = crew.Popularity!.Value
         };
     }
-    
+
     private string GetImage(string uri)
     {
         return uri.IsNullOrEmpty() ? ConfigVariables.NoImage : $"https://image.tmdb.org/t/p/w92{uri}";
+    }
+
+    private void Navigate(int id)
+    {
+        NavigationManager.NavigateTo($"/Movie/{id}");
     }
 
     private class MovieModel
