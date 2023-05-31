@@ -85,7 +85,7 @@
     {
         var currentUser = await UserLoginService.GetCurrentUserAsync();
 
-        var newReview = new Review{Id = Guid.Empty, MovieId = SubjectId, Rating = _reviewRating, UserId = currentUser.Id, AuthorName = currentUser.Username};
+        var newReview = new Review{Id = Guid.Empty, SubjectId = SubjectId, Rating = _reviewRating, UserId = currentUser.Id, AuthorName = currentUser.Username};
 
         if (!string.IsNullOrEmpty(_newCommentText))
         {
