@@ -1,7 +1,6 @@
 @page "/CelebrityPage/{PersonId?}"
 @using BestMovies.Models.ApiModels
 @using BestMovies.Services
-@using Microsoft.AspNetCore.Identity
 @using Microsoft.IdentityModel.Tokens
 
 @inject IPeopleService PeopleService
@@ -14,7 +13,7 @@
 
 <MudContainer>
     <MudStack Row AlignItems="AlignItems.Center">
-        <MudTooltip Text="@_personData.AlsoKnownAs.First()" Arrow="true">
+        <MudTooltip Text="@(_personData.AlsoKnownAs.FirstOrDefault() ?? "")" Arrow="true">
             <MudText Align="Align.Center" Typo="Typo.h2" Color="Color.Primary">@_personData.Name</MudText>
         </MudTooltip>
         <div hidden="@(!_personData.Adult)">
