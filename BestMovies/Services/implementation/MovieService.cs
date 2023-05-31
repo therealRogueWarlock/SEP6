@@ -16,7 +16,17 @@ public class MovieService : IMovieService
 
     public async Task<Movie> GetMovieAsync(string idString)
     {
-        return await _movieDao.GetMovieAsync(idString);
+        try
+        {
+            return await _movieDao.GetMovieAsync(idString);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            
+        }
+
+        return null;
     }
 
     public async Task<TrendingMovieWrapper> GetTrendingMoviesAsync()

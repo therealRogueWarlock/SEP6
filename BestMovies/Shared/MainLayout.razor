@@ -8,6 +8,7 @@
 @inject IUserLoginService LoginService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 
 <PageTitle>BestMovies</PageTitle>
 
@@ -29,7 +30,7 @@
     @* Account *@
     <AuthorizeView>
         <Authorized>
-            <MudIconButton Icon="@Icons.Material.Filled.Person" href="@($"/UserPage/{_userId}")"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Person"  OnClick="GoToUserPage"/>
             <MudIconButton Icon="@Icons.Material.Filled.Logout" href="/" OnClick="PerformLogout"/>
         </Authorized>
         <NotAuthorized>
@@ -59,7 +60,16 @@
 <div class="page">
     <main>
         <article class="content px-4">
-            @Body
+            <ErrorBoundary>
+                <ChildContent>
+                    @Body
+                </ChildContent>
+                <ErrorContent>
+                    @{
+                        HandleError();
+                    }
+                </ErrorContent>
+            </ErrorBoundary>
         </article>
     </main>
 </div>
@@ -123,6 +133,12 @@
         }
     }
 
+    private async Task GoToUserPage()
+    {
+        var user = await LoginService.GetCurrentUserAsync();
+        NavigationManager.NavigateTo($"/UserPage/{user?.Id}");
+    }
+
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -145,4 +161,12 @@
         return base.OnAfterRenderAsync(firstRender);
     }
 
+    private async void HandleError()
+    {
+        
+        Snackbar.Add("An error occurred, reloading", Severity.Error);
+
+        await Task.Delay(2000);
+        NavigationManager.NavigateTo("/", true);
+    }
 }
