@@ -146,12 +146,7 @@
         {
             if (LoginService.IsLoggedIn)
             {
-                Console.WriteLine("+ User is Logged In");
                 _userId = LoginService.GetCurrentUserAsync().Result.Id;
-            }
-            else
-            {
-                Console.WriteLine("- User is Logged Out");
             }
         }
         catch (Exception e)

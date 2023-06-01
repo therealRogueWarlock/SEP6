@@ -232,7 +232,7 @@
 
         await SetupDetails();
         await SetupCast();
-        
+
         _favourite = true;
         var currentUser = await UserLoginService.GetCurrentUserAsync();
         if (currentUser != null)
@@ -254,7 +254,6 @@
     private int GetIMDbRating()
     {
         if (_movieData?.VoteAverage is null) return 0;
-        Console.WriteLine(_movieData.VoteAverage.Value);
         return (int) Math.Round(_movieData.VoteAverage.Value, MidpointRounding.AwayFromZero);
     }
 
@@ -278,14 +277,12 @@
             };
 
             user.Favourites.Add(newFav);
-            Console.WriteLine($"Adding {_title} as Favourite");
             await UserService.AddFavourite(newFav);
         }
         else
         {
             var favorite = user.Favourites.First(f => f.SubjectId.ToString() == _movieData.Id.ToString());
             user.Favourites.Remove(favorite);
-            Console.WriteLine($"Removing {_title} from Favourites");
             await UserService.RemoveFavourite(favorite);
         }
     }
