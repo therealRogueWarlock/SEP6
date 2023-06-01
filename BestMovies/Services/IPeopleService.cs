@@ -6,8 +6,7 @@ namespace BestMovies.Services;
 public interface IPeopleService
 {
     public Task<Person?> GetPersonAsync(string id);
-
-    public Task<List<Person>> GetCastOfLinkedSubjectAsync(List<LinkedSubject> peopleInMovie);
+    
     Task<TrendingPersonWrapper> GetTodayTrendingPeopleAsync();
     Task<CelebMovieCredits> GetCelebsMovieCreditsAsync(string id);
 }

@@ -211,17 +211,7 @@
     }
 
     #endregion Details
-
-    #region Cast
-
-    private List<Person> _actors;
-
-    private async Task SetupCast()
-    {
-        _actors = await PeopleService.GetCastOfLinkedSubjectAsync(new List<LinkedSubject>());
-    }
-
-    #endregion Cast
+    
 
     protected override async Task OnParametersSetAsync()
     {
@@ -229,10 +219,7 @@
         Reviews = await UserInteractionService.GetReviewsOfAsync(MovieId);
         var credits = await MovieService.GetCreditsFromMovieAsync(MovieId);
         Director = credits.Crew.FirstOrDefault(c => c is {Department: "Directing", Job: "Director"});
-
-        await SetupDetails();
-        await SetupCast();
-
+        
         _favourite = true;
         var currentUser = await UserLoginService.GetCurrentUserAsync();
         if (currentUser != null)

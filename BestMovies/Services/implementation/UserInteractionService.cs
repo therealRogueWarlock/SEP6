@@ -67,17 +67,7 @@ public class UserInteractionService : IUserInteractionService
     {
         throw new NotImplementedException();
     }
-
-    public Task<bool> SetFavouriteMovieAsync(string movieId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<IList<Movie>> GetFavouriteMoviesAsync()
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public void AddFanMovieAsync(FanMovie fanMovie)
     {
         _fanMovieDao.AddAsync(fanMovie);

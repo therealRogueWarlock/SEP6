@@ -28,7 +28,7 @@ namespace BestMovies.Services.implementation
         public async Task<User?> Validate(string username, string password)
         {
             _currentUser = await _userDao.GetUserAsync(username, password);
-            await CashUser(_currentUser);
+            await CacheUser(_currentUser);
             return _currentUser;
         }
 
@@ -56,14 +56,14 @@ namespace BestMovies.Services.implementation
             return _currentUser;
         }
 
-        private async Task CashUser(User? user)
+        private async Task CacheUser(User? user)
         {
             if (user != null) IsLoggedIn = true;
             string serialisedData = JsonSerializer.Serialize(user);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", serialisedData);
         }
 
-        public void ClearCashedUser()
+        public void ClearCachedUser()
         {
             _currentUser = null;
             IsLoggedIn = false;
