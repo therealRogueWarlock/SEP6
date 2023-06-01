@@ -17,9 +17,7 @@ public interface IUserService
     public Task UpdateFavourite(Favourite favourite);
 
     public Task<List<Favourite>> GetFavoritesOf(string guid);
-    
-    public Task<List<Movie>> GetFavoritesMoviesOf(string guid);
-    
+
     public Task<bool> IsFavorite(string userId, string subjectId);
 
 }

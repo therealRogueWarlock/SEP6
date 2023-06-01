@@ -50,7 +50,7 @@ namespace BestMovies.Services.implementation
         public void Logout()
         {
             _cachedAuthenticationState = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-            _userLoginService.ClearCashedUser();
+            _userLoginService.ClearCachedUser();
             NotifyAuthenticationStateChanged(Task.FromResult(_cachedAuthenticationState));
         }
 

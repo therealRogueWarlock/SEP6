@@ -9,6 +9,6 @@ namespace BestMovies.Services
 
         Task RegisterUser(User newUser);
         Task<User?> GetCurrentUserAsync();
-        void ClearCashedUser();
+        void ClearCachedUser();
     }
 }
