@@ -76,7 +76,6 @@
 
     async Task AddComment()
     {
-        Console.WriteLine("Create new comment " + _newCommentText);
         var currentUser = await UserLoginService.GetCurrentUserAsync();
         Comment newComment = new Comment { Id = Guid.Empty, SubjectId = SubjectId,AuthorName = currentUser.Username, UserId = currentUser.Id, Text = _newCommentText, Timestamp = DateTime.UtcNow };
         UserInteractionService.AddCommentAsync(newComment);

@@ -29,7 +29,6 @@ namespace BestMovies.Services.implementation
 
         public async Task ValidateLogin(string username, string password)
         {
-            Console.WriteLine("Validating log in");
             if (string.IsNullOrEmpty(username)) throw new Exception("Enter username");
             if (string.IsNullOrEmpty(password)) throw new Exception("Enter password");
             ClaimsIdentity identity = new ClaimsIdentity();
